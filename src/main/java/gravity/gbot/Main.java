@@ -23,6 +23,8 @@ public class Main {
 
 
     public static void main(String[] args) {
+        Config config = new Config();
+        config.loadConfig();
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
                 .addEventListener(new PlayerControl())
