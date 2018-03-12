@@ -1,0 +1,22 @@
+<configuration>
+    <conversionRule conversionWord="highlightex" converterClass="gravity.gbot.utils.Logging.HighlightingCompositeConverterEx" />
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>./latest.log</file>
+        <encoder>
+            <pattern>[%d{yyyy.MM.dd HH:mm}] %highlightex[%level] [%logger{0}] [%t] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%highlightex[%level] [%logger{0}] [%t] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="org.apache" level="NONE" />
+    <logger name="com.sedmelluq.*" level="INFO" />
+    <logger name="httpclient" level="NONE" />
+    <logger name="gravity.gbot.Main" level="INFO" />
+</configuration>
