@@ -18,12 +18,17 @@
   
 -------------------
 
+## Documentation
+* Coming soon!
+* For a command list visit *https://g-bot.tk/#commands*
+
 ## Support
 
-If you need any help with the bot or you think you have found a bug please join our [official Discord server](https://discord.gg/f43DKbA) and report it there
+If you need any help with the bot or you think you have found a bug please join our [official Discord server](https://discord.gg/f43DKbA) and report it there or open a new issue.
 
 ## Contributing 
-* Honestly right now i have no standard so code away submit a pull request and i'll review it if i like it i'll approve it.
+* Honestly right now i have no standard so code away submit a pull request and i'll review it if i like it i'll approve it
+*but try to keep it tidy please :).*
 
 #### **Current Maintainers**
 
