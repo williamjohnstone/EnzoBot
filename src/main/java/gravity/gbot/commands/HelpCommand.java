@@ -3,6 +3,7 @@ package gravity.gbot.commands;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -12,7 +13,7 @@ import java.awt.*;
 
 public class HelpCommand implements Command {
 
-    Config config = new Config();
+    GuildConfig config = new GuildConfig();
 
     private final String USAGE = "Help or help (command)";
     private final String DESC = "Sends you a private message containing help.";

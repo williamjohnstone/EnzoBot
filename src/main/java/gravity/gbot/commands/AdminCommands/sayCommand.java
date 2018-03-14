@@ -2,6 +2,7 @@ package gravity.gbot.commands.AdminCommands;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -14,7 +15,7 @@ public class sayCommand implements Command {
     private final String Alias = "announce";
     private final String type = "admin";
 
-    Config config = new Config();
+    GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {

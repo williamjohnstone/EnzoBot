@@ -3,7 +3,6 @@ package gravity.gbot.commands;
 import gravity.gbot.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-
 public class PingCommand implements Command {
 
         final String DESC = "Replies with Ping times this is used to check if the bot is alive.";

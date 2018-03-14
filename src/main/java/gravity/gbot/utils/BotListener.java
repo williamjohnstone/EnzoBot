@@ -41,7 +41,7 @@ public class BotListener extends ListenerAdapter {
             @Override
             public void run() { // Function runs every MINUTES minutes.
                 event.getJDA().getPresence().setGame(Game.watching(event.getJDA().getGuildCache().size() + " servers! | g-bot.tk"));
-                String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM5MTU1ODI2NTI2NTE5Mjk2MSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTIwNjk0NDU2fQ.KoEi33rwl0dlLydIymGsuQcbkBjL0URr-ZMkxNc2WQQ";
+                String token = Config.API_Key;
                 String botId = "391558265265192961";
 
                 int serverCount = (int)event.getJDA().getGuildCache().size();
@@ -91,7 +91,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
-            Config config = new Config();
+            GuildConfig config = new GuildConfig();
 
             String BotPrefix = config.getPrefix(event.getGuild().getId());
             boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
