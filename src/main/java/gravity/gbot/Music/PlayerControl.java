@@ -15,6 +15,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -82,7 +83,7 @@ public class PlayerControl extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        Config config = new Config();
+        GuildConfig config = new GuildConfig();
 
         final String musicAlias = "m";
         final String select = "select";

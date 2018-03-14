@@ -2,6 +2,7 @@ package gravity.gbot.commands.BotOwner;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -13,7 +14,7 @@ import java.awt.*;
 
 public class Eval implements Command {
 
-    Config config = new Config();
+    GuildConfig config = new GuildConfig();
 
     final String Usage = "Eval (Java/Groovy Code)";
     final String Desc = "Executes Java/Groovy Code and sends the output to a text channel.";
