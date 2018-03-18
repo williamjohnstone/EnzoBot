@@ -1,15 +1,14 @@
-#Temporary#
-#src/main/java/gravity/gbot/utils/Config.java
-
 # IntelliJ
 .idea
 target/
 *.iml
 
-# Our files
+# Private files
 logs/
 *.log
 *.json
+/src/main/resources/sentry.properties
+build/
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -22,6 +21,13 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
 
 # Windows Installer files
 *.cab

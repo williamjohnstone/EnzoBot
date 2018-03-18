@@ -10,10 +10,12 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
-
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.List;
+import io.sentry.Sentry;
+
+
 
 public class Main {
 
@@ -25,6 +27,7 @@ public class Main {
     public static void main(String[] args) {
         Config config = new Config();
         config.loadConfig();
+        Sentry.init(Config.sentry_dsn);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
                 .addEventListener(new PlayerControl())

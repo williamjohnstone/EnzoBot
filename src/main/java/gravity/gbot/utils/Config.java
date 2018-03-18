@@ -9,6 +9,7 @@ public class Config {
     public static String dbConnection;
     public static String fallback_prefix;
     public static String API_Key;
+    public static String sentry_dsn;
     public static Boolean loggingALL = false;
     public static Boolean loggingCMD = false;
 
@@ -19,6 +20,7 @@ public class Config {
             dbConnection = config.getString("Config.dbString").get();
             fallback_prefix = config.getString("Config.fallback").get();
             API_Key = config.getString("Config.api_key").get();
+            sentry_dsn = config.getString("Config.sentry_dsn").get();
         }catch (FileNotFoundException e) {
             e.printStackTrace();
         }
