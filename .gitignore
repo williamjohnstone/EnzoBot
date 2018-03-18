@@ -9,6 +9,7 @@ logs/
 *.json
 /src/main/resources/sentry.properties
 build/
+out/
 
 ### Windows ###
 # Windows thumbnail cache files
