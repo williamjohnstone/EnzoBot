@@ -22,8 +22,8 @@ public class HelpCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId());
-        String bot_prefix = config.getPrefix(event.getGuild().getId());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String bot_prefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
         EmbedBuilder builder0 = new EmbedBuilder();
 
         builder0.setTitle("Help");
@@ -76,7 +76,7 @@ public class HelpCommand implements Command {
     }
 
     public void HelpSpecific(String[] args, GuildMessageReceivedEvent event, String desc, String help, String alias) {
-        String bot_prefix = config.getPrefix(event.getGuild().getId());
+        String bot_prefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
         if (args.length < 2) {
             return;
         } else if (args.length > 2) {

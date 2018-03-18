@@ -94,7 +94,7 @@ public class PlayerControl extends ListenerAdapter {
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
-        if (!command[0].startsWith(config.getPrefix(event.getGuild().getId()) + musicAlias)) { //message doesn't start with prefix. or is too short
+        if (!command[0].startsWith(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
             return;
         }else {
             if (command.length < 2) {

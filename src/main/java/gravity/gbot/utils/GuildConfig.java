@@ -1,9 +1,14 @@
 package gravity.gbot.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.sql.*;
 
 public class GuildConfig {
-    public String getPrefix(String guild) {
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    public String getPrefix(String guild, String name) {
         Connection conn;
 
         String fallback_bot_Prefix = Config.fallback_prefix;
@@ -39,21 +44,28 @@ public class GuildConfig {
 
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            MDC.put("SQLState", ex.getSQLState());
+            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+            logger.error(ex.getMessage());
+            MDC.clear();
             // return fallback prefix and output error
-            System.out.println("[Warning] Critical Database Error! Guild not in Database" + " GUILD ID: " + guild);
+            MDC.put("GuildID", guild);
+            MDC.put("Class", name);
+            logger.error("Database Error! Guild not in Database");
+            MDC.clear();
             return fallback_bot_Prefix;
         } catch (Exception e) {
             e.printStackTrace();
             // return fallback prefix and output error
-            System.out.println("[Warning] Critical Database Error! Guild not in Database" + " GUILD ID: " + guild);
+            MDC.put("GuildID", guild);
+            MDC.put("Class", name);
+            logger.error("Database Error! Guild not in Database");
+            MDC.clear();
             return fallback_bot_Prefix;
         }
     }
 
-    public String isAdmin(String ID, String guild) {
+    public String isAdmin(String ID, String guild, String name) {
         Connection conn;
 
         try {
@@ -80,14 +92,18 @@ public class GuildConfig {
                     return admin;
                 }
             }
-            System.out.println("[Warning] Critical Database Error! Guild not in Database" + " GUILD ID: " + guild);
+            MDC.put("GuildID", guild);
+            MDC.put("Class", name);
+            logger.error("Database Error! Guild not in Database");
+            MDC.clear();
             return null;
 
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            MDC.put("SQLState", ex.getSQLState());
+            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+            logger.error(ex.getMessage());
+            MDC.clear();
         } catch (Exception e) {
             e.printStackTrace();
         }

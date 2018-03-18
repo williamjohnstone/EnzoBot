@@ -5,6 +5,10 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,6 +17,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class statsUpdater {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     public void StartupdateTimer(ReadyEvent event) {
         int MINUTES = 5; // The delay in minutes
         Timer timer = new Timer();
@@ -35,9 +42,10 @@ public class statsUpdater {
                     conn.close();
                 } catch (SQLException ex) {
                     // handle any errors
-                    System.out.println("SQLException: " + ex.getMessage());
-                    System.out.println("SQLState: " + ex.getSQLState());
-                    System.out.println("VendorError: " + ex.getErrorCode());
+                    MDC.put("SQLState", ex.getSQLState());
+                    MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+                    logger.error(ex.getMessage());
+                    MDC.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

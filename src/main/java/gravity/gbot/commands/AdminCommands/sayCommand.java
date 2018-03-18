@@ -19,7 +19,7 @@ public class sayCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -28,7 +28,7 @@ public class sayCommand implements Command {
             event.getChannel().sendMessage("Incorrect usage" + "%n" + Usage).queue();
             return;
         }
-        String[] ann = event.getMessage().getContentRaw().replace(config.getPrefix(event.getGuild().getId()) + "announce ", "").split("\\|");
+        String[] ann = event.getMessage().getContentRaw().replace(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + "announce ", "").split("\\|");
         if (event.getGuild().getId().equals("388024502921068555")) {
             event.getChannel().sendMessage("@everyone").queue();
             EmbedBuilder builder = new EmbedBuilder();

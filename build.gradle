@@ -16,7 +16,7 @@ targetCompatibility = 1.8
 shadowJar {
     baseName = "Gbot"
     classifier = null
-    //version = "2.6.5"
+    //version = null
     libsDirName = "../out"
 }
 

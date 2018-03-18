@@ -19,7 +19,7 @@ public class setRole implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;

@@ -16,7 +16,7 @@ public class isAdmin implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String userTest = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId());
+        String userTest = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
         if (userTest == null) {
             event.getChannel().sendMessage("user is not in admin list").queue();
         } else {

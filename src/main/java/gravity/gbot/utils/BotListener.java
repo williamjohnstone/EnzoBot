@@ -11,12 +11,17 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.sql.*;
 import java.util.List;
 
 public class BotListener extends ListenerAdapter {
 
     private final HelpCommand help = new HelpCommand();
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public Command getCommand(String alias) {
         for (Command command : Main.cmdlist) {
@@ -41,7 +46,7 @@ public class BotListener extends ListenerAdapter {
 
             logMsg.log(event);
 
-            String BotPrefix = config.getPrefix(event.getGuild().getId());
+            String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
             boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
             boolean notBot = !event.getMessage().getAuthor().isBot();
             boolean notMusic = !event.getMessage().getContentRaw().startsWith(BotPrefix + "m");
@@ -97,9 +102,10 @@ public class BotListener extends ListenerAdapter {
             conn.close();
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            MDC.put("SQLState", ex.getSQLState());
+            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+            logger.error(ex.getMessage());
+            MDC.clear();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,9 +123,10 @@ public class BotListener extends ListenerAdapter {
             conn.close();
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            MDC.put("SQLState", ex.getSQLState());
+            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+            logger.error(ex.getMessage());
+            MDC.clear();
         } catch (Exception e) {
             e.printStackTrace();
         }

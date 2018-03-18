@@ -5,6 +5,9 @@ import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -18,12 +21,13 @@ public class setPrefix implements Command {
     private final String Desc = "Changes the Bots Prefix";
     private final String Alias = "setprefix";
     private final String type = "admin";
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -48,9 +52,10 @@ public class setPrefix implements Command {
 
         } catch (SQLException ex) {
             // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            MDC.put("SQLState", ex.getSQLState());
+            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
+            logger.error(ex.getMessage());
+            MDC.clear();
         } catch (Exception e) {
             e.printStackTrace();
             return;
