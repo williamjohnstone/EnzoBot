@@ -35,7 +35,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         statsUpdater updater = new statsUpdater();
-        System.out.println("[GravityBot] GravityBot is running! Bot should be online.");
+        logger.info("GravityBot is running! Bot should be online.");
         updater.StartupdateTimer(event);
     }
 
