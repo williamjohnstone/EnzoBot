@@ -1,6 +1,5 @@
 package gravity.gbot.Music;
 
-import gravity.gbot.utils.Config;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -15,25 +14,22 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import gravity.gbot.utils.Config;
+import gravity.gbot.utils.EventAwaiter;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONObject;
+import org.json.JSONPointer;
 import java.awt.*;
-import java.io.*;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static java.lang.Integer.parseInt;
@@ -44,6 +40,8 @@ public class PlayerControl extends ListenerAdapter {
 
     private final AudioPlayerManager playerManager;
     private final Map<String, GuildMusicManager> musicManagers;
+    private final EventAwaiter waiter = new EventAwaiter();
+    private List<Member> hasVoted = new ArrayList<>();
 
     public PlayerControl() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
@@ -59,35 +57,13 @@ public class PlayerControl extends ListenerAdapter {
 
         musicManagers = new HashMap<>();
     }
-
-
-    //todo correct these entries
-    //Prefix for all commands: !music or !m
-    //Example:  !music play or !m play
-    //Current commands
-    // play         - Plays songs from the current queue. Starts playing again if it was previously paused
-    // play [url]   - Adds a new song to the queue and starts playing if it wasn't playing already
-    // pplay        - Adds a playlist to the queue and starts playing if not already playing
-    // pause        - Pauses audio playback
-    // stop         - Completely stops audio playback, skipping the current song.
-    // skip         - Skips the current song, automatically starting the next
-    // nowplaying   - Prints information about the currently playing song (title, current time)
-    // np           - alias for nowplaying
-    // list         - Lists the songs in the queue
-    // volume [val] - Sets the volume of the MusicPlayer [10 - 100]
-    // restart      - Restarts the current song or restarts the previous song if there is no current song playing.
-    // repeat       - Makes the player repeat the currently playing song
-    // reset        - Completely resets the player, fixing all errors and clearing the queue.
-
-
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
         GuildConfig config = new GuildConfig();
 
         final String musicAlias = "m";
-        final String select = "select";
-        int selection = 0;
+
 
         if (!event.isFromType(ChannelType.TEXT))
             return;
@@ -102,243 +78,90 @@ public class PlayerControl extends ListenerAdapter {
             }
         }
 
+        event.getMessage().delete().queue();
         Guild guild = event.getGuild();
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
         TrackScheduler scheduler = mng.scheduler;
 
-
-        //play command
-        if (command[1].equals("play") && command.length >= 3) {
+        if (command[1].toLowerCase().equals("play") && command.length >= 3) {
             if (command[2].startsWith("http://") || command[2].startsWith("https://")) {
-                VoiceChannel chan;
-                try {
-                    chan = guild.getVoiceChannelById(event.getMember().getVoiceState().getChannel().getId());
-                } catch (NullPointerException e) {
-                    event.getChannel().sendMessage("You're not currently in a voice channel please join one and try again").queue();
-                    return;
-                }
-                if (chan == null) {
-                    return;
-                } else {
-                    guild.getAudioManager().setSendingHandler(mng.sendHandler);
-                    try {
-                        guild.getAudioManager().openAudioConnection(chan);
-                    } catch (PermissionException e) {
-                        if (e.getPermission() == Permission.VOICE_CONNECT) {
-                            event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
-                            return;
-                        }
-                    }
-                }
+                join(guild, event, getMusicManager(guild));
                 {
-                    if (command[2].contains("&list=")) {
+                    if (command[2].contains("&list=") || command[2].contains("?list=")) {
                         loadAndPlay(mng, event.getChannel(), command[2], true);
-                        event.getMessage().delete().queue();
                     } else {
                         loadAndPlay(mng, event.getChannel(), command[2], false);
-                        event.getMessage().delete().queue();
                     }
                 }
             } else {
                 {
 
                     StringBuilder sb = new StringBuilder();
-                    String searchterm[] = command;
-                    for (String s: searchterm) {
-                        sb.append(s + "+");
+                    for (String s: command) {
+                        sb.append(s).append("+");
                     }
                     sb.delete(0,8);
-
-                    String link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, "AIzaSyBaQKBM51U0RuFGiGmraWPPPwPGPQiJgxM"));
-
-                    JSONObject results = new JSONObject(link);
-
-
-                    String url0 = results.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("videoId");
-                    String url1 = results.getJSONArray("items").getJSONObject(1).getJSONObject("id").getString("videoId");
-                    String url2 = results.getJSONArray("items").getJSONObject(2).getJSONObject("id").getString("videoId");
-                    String url3 = results.getJSONArray("items").getJSONObject(3).getJSONObject("id").getString("videoId");
-                    String url4 = results.getJSONArray("items").getJSONObject(4).getJSONObject("id").getString("videoId");
-
-                    String url0name = results.getJSONArray("items").getJSONObject(0).getJSONObject("snippet").getString("title");
-                    String url1name = results.getJSONArray("items").getJSONObject(1).getJSONObject("snippet").getString("title");
-                    String url2name = results.getJSONArray("items").getJSONObject(2).getJSONObject("snippet").getString("title");
-                    String url3name = results.getJSONArray("items").getJSONObject(3).getJSONObject("snippet").getString("title");
-                    String url4name = results.getJSONArray("items").getJSONObject(4).getJSONObject("snippet").getString("title");
-
-                    try {
-                        PrintWriter writer = new PrintWriter(guild.getId() + "_" + event.getAuthor().getId() + ".txt", "UTF-8");
-                        writer.println(url0);
-                        writer.println(url1);
-                        writer.println(url2);
-                        writer.println(url3);
-                        writer.println(url4);
-                        writer.close();
-                    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                    String link;
+                    String type;
+                    if (sb.toString().toLowerCase().contains("playlist")) {
+                        type = "playlist";
+                        link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
+                    } else {
+                        type = "video";
+                        link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
                     }
+
+                    if(link == null) {
+                        return;
+                    }
+                    JSONObject results = new JSONObject(link);
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Search Results");
                     builder.setColor(Color.WHITE);
-                    builder.addField("Result 1:", url0name, false);
-                    builder.addField("Result 2:", url1name, false);
-                    builder.addField("Result 3:", url2name, false);
-                    builder.addField("Result 4:", url3name, false);
-                    builder.addField("Result 5:", url4name, false);
+                    builder.addField("Result 1:", searchTitle(0, results), false);
+                    builder.addField("Result 2:", searchTitle(1, results), false);
+                    builder.addField("Result 3:", searchTitle(2, results), false);
+                    builder.addField("Result 4:", searchTitle(3, results), false);
+                    builder.addField("Result 5:", searchTitle(4, results), false);
+                    builder.setFooter("React with your selection.", event.getJDA().getSelfUser().getAvatarUrl());
 
                     event.getChannel().sendMessage(builder.build()).queue((msg -> {
-                        try {
-                            PrintWriter writer = new PrintWriter(guild.getId() + "_" + event.getAuthor().getId() + "_msgID" + ".txt", "UTF-8");
-                            writer.println(msg.getId());
-                            writer.close();
-                        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
+                        waiter.awaitEvent(event.getJDA(), MessageReactionAddEvent.class,
+                                e ->e.getUser().getId().equals(event.getAuthor().getId()) &&
+                                        (e.getReactionEmote().getName().equals("\u0031\u20E3")
+                                                || e.getReactionEmote().getName().equals("\u0032\u20E3")
+                                                || e.getReactionEmote().getName().equals("\u0033\u20E3")
+                                                || e.getReactionEmote().getName().equals("\u0034\u20E3")
+                                                || e.getReactionEmote().getName().equals("\u0035\u20E3")),
+                                e -> play(e.getReactionEmote().getName(), event, getMusicManager(guild),
+                                        searchId(0, results, type),
+                                        searchId(1, results, type),
+                                        searchId(2, results, type),
+                                        searchId(3, results, type),
+                                        searchId(4, results, type),
+                                        e.getMessageId(), event.getGuild(), type),
+                                1, TimeUnit.MINUTES, () -> msg.delete().queue());
+                        msg.addReaction("\u0031\u20E3").queue();
+                        msg.addReaction("\u0032\u20E3").queue();
+                        msg.addReaction("\u0033\u20E3").queue();
+                        msg.addReaction("\u0034\u20E3").queue();
+                        msg.addReaction("\u0035\u20E3").queue();
                     }));
-                    event.getMessage().delete().queue();
+
+
                 }
             }
-        } else if ("leave".equals(command[1]))
+        } else if ("leave".equals(command[1].toLowerCase()))
         {
             guild.getAudioManager().setSendingHandler(null);
             guild.getAudioManager().closeAudioConnection();
-        } else if (command[1].equals(select)) {
-            try {
-                FileInputStream fstream = new FileInputStream(guild.getId() + "_" + event.getAuthor().getId() + "_msgID" + ".txt");
-                DataInputStream in = new DataInputStream(fstream);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String strLine;
-                java.util.ArrayList<String> list = new java.util.ArrayList<>();
-
-                while ((strLine = br.readLine()) != null) {
-                    list.add(strLine);
-                }
-
-
-                String msgID = list.get(0);
-
-                in.close();
-
-                event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
-
-                try {
-                    Files.deleteIfExists(Paths.get(guild.getId() + "_" + event.getAuthor().getId() + "_msgID" + ".txt"));
-                } catch (NoSuchFileException | DirectoryNotEmptyException e) {
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-
-            try {
-                FileInputStream fstream = new FileInputStream(guild.getId() + "_" + event.getAuthor().getId() + ".txt");
-                DataInputStream in = new DataInputStream(fstream);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String strLine;
-                java.util.ArrayList<String> list = new java.util.ArrayList<>();
-
-                while ((strLine = br.readLine()) != null) {
-                    list.add(strLine);
-                }
-
-
-                String url0 = list.get(0);
-                String url1 = list.get(1);
-                String url2 = list.get(2);
-                String url3 = list.get(3);
-                String url4 = list.get(4);
-
-
-                in.close();
-
-                try {
-                    Files.deleteIfExists(Paths.get(guild.getId() + "_" + event.getAuthor().getId() + ".txt"));
-                } catch (NoSuchFileException | DirectoryNotEmptyException e) {
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                switch (command[2]) {
-                    case "1":
-                        selection = 1;
-                        break;
-                    case "2":
-                        selection = 2;
-                        break;
-                    case "3":
-                        selection = 3;
-                        break;
-                    case "4":
-                        selection = 4;
-                        break;
-                    case "5":
-                        selection = 5;
-                        break;
-                }
-
-                if (selection != 0) {
-                    VoiceChannel chan;
-                    try {
-                        chan = guild.getVoiceChannelById(event.getMember().getVoiceState().getChannel().getId());
-                    } catch (NullPointerException e) {
-                        event.getChannel().sendMessage("You're not currently in a voice channel please join one and try again").queue();
-                        return;
-                    }
-                    if (chan == null) {
-                        return;
-                    } else {
-                        guild.getAudioManager().setSendingHandler(mng.sendHandler);
-                        try {
-                            guild.getAudioManager().openAudioConnection(chan);
-                        } catch (PermissionException e) {
-                            if (e.getPermission() == Permission.VOICE_CONNECT) {
-                                event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
-                                return;
-                            }
-                        }
-                    }
-
-
-                    switch (selection) {
-                        case 1:
-                            loadAndPlay(mng, event.getChannel(), "https://youtube.com/watch?v=" + url0, false);
-                            event.getMessage().delete().queue();
-                            break;
-                        case 2:
-                            loadAndPlay(mng, event.getChannel(), "https://youtube.com/watch?v=" + url1, false);
-                            event.getMessage().delete().queue();
-                            break;
-                        case 3:
-                            loadAndPlay(mng, event.getChannel(), "https://youtube.com/watch?v=" + url2, false);
-                            event.getMessage().delete().queue();
-                            break;
-                        case 4:
-                            loadAndPlay(mng, event.getChannel(), "https://youtube.com/watch?v=" + url3, false);
-                            event.getMessage().delete().queue();
-                            break;
-                        case 5:
-                            loadAndPlay(mng, event.getChannel(), "https://youtube.com/watch?v=" + url4, false);
-                            event.getMessage().delete().queue();
-                            break;
-                        default:
-                            event.getTextChannel().sendMessage("Invalid Selection").queue();
-                            event.getMessage().delete().queue();
-                            break;
-                    }
-                }
-
-
-            } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-
-        } else if ("resume".equals(command[1]) | "play".equals(command[1]) && command.length == 2) //It is only the command to start playback (probably after pause)
+            hasVoted = new ArrayList<>();
+            scheduler.queue.clear();
+            player.stopTrack();
+            player.setPaused(false);
+        }  else if ("resume".equals(command[1].toLowerCase()) | "play".equals(command[1].toLowerCase()) && command.length == 2) //It is only the command to start playback (probably after pause)
         {
             if (player.isPaused()) {
                 player.setPaused(false);
@@ -347,31 +170,62 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription(":play_pause: Playback has been resumed.");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             } else if (player.getPlayingTrack() != null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Player is already playing!");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             }
-        } else if ("skip".equals(command[1])) {
-            scheduler.nextTrack();
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Info");
-            builder.setColor(Color.WHITE);
-            builder.setDescription(":fast_forward: Track Skipped!");
-            event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
-        } else if ("pause".equals(command[1])) {
+        } else if ("skip".equals(command[1].toLowerCase())) {
+            String adminCheck = config.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
+            if (adminCheck == null) {
+                List<Member> vcMembers = event.getMember().getVoiceState().getChannel().getMembers();
+                //take one due to the bot being in there as well
+                int requiredVotes = (int) Math.round((vcMembers.size() - 1) * 0.6);
+                Member voter = event.getMember();
+                if (hasVoted.contains(voter)) {
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Vote Skip");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription("You have already voted!");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                } else {
+                    if (vcMembers.contains(voter)) {
+                        hasVoted.add(voter);
+                        if (hasVoted.size() >= requiredVotes) {
+                            scheduler.nextTrack();
+                            EmbedBuilder builder = new EmbedBuilder();
+                            builder.setTitle("Info");
+                            builder.setColor(Color.WHITE);
+                            builder.setDescription(":fast_forward: Track Skipped!");
+                            event.getChannel().sendMessage(builder.build()).queue();
+                            hasVoted = new ArrayList<>();
+                            return;
+                        }
+                        EmbedBuilder builder = new EmbedBuilder();
+                        builder.setTitle("Vote Skip");
+                        builder.setColor(Color.WHITE);
+                        builder.setDescription("You have voted to skip. " + player.getPlayingTrack().getInfo().title + " " + hasVoted.size() + "/" + requiredVotes + " votes to skip.");
+                        event.getChannel().sendMessage(builder.build()).queue();
+                    }
+                }
+            } else {
+                scheduler.nextTrack();
+                hasVoted = new ArrayList<>();
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription(":fast_forward: Track Skipped!");
+                event.getChannel().sendMessage(builder.build()).queue();
+            }
+        } else if ("pause".equals(command[1].toLowerCase())) {
             if (player.getPlayingTrack() == null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Cannot pause or resume player because no track is loaded for playing.");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
                 return;
             }
 
@@ -382,17 +236,16 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription(":play_pause: The player has been paused.");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             } else {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
                 builder.setDescription(":play_pause: The player has resumed playing.");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             }
-        } else if ("stop".equals(command[1])) {
+        } else if ("stop".equals(command[1].toLowerCase())) {
             scheduler.queue.clear();
+            hasVoted = new ArrayList<>();
             player.stopTrack();
             player.setPaused(false);
             EmbedBuilder builder = new EmbedBuilder();
@@ -400,7 +253,6 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription(":stop_button: Playback has been completely stopped and the queue has been cleared.");
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
         } else if ("volume".equals(command[1])) {
             if (command.length == 2) {
                 EmbedBuilder builder = new EmbedBuilder();
@@ -408,10 +260,9 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription(":speaker: Current player volume: **" + player.getVolume() + "**");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             } else {
                 try {
-                    int newVolume = Math.max(10, Math.min(100, parseInt(command[2])));
+                    int newVolume = Math.max(5, Math.min(100, parseInt(command[2])));
                     int oldVolume = player.getVolume();
                     player.setVolume(newVolume);
                     EmbedBuilder builder = new EmbedBuilder();
@@ -419,16 +270,15 @@ public class PlayerControl extends ListenerAdapter {
                     builder.setColor(Color.WHITE);
                     builder.setDescription(":speaker: Player volume changed from `" + oldVolume + "` to `" + newVolume + "`");
                     event.getChannel().sendMessage(builder.build()).queue();
-                    event.getMessage().delete().queue();
                 } catch (NumberFormatException e) {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Info");
                     builder.setColor(Color.WHITE);
-                    builder.setDescription(":speaker: `" + command[2] + "` is not a valid integer. (10 - 100)");
+                    builder.setDescription(":speaker: `" + command[2] + "` is not a valid integer. (5 - 100)");
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
-        } else if ("restart".equals(command[1])) {
+        } else if ("restart".equals(command[1].toLowerCase())) {
             AudioTrack track = player.getPlayingTrack();
             if (track == null)
                 track = scheduler.lastTrack;
@@ -438,7 +288,6 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Restarting track: " + track.getInfo().title);
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
                 player.playTrack(track.makeClone());
             } else {
                 EmbedBuilder builder = new EmbedBuilder();
@@ -446,9 +295,8 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription("No track has been previously started, so the player cannot replay a track!");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             }
-        } else if ("reset".equals(command[1])) {
+        } else if ("reset".equals(command[1].toLowerCase())) {
             synchronized (musicManagers) {
                 scheduler.queue.clear();
                 player.destroy();
@@ -456,6 +304,7 @@ public class PlayerControl extends ListenerAdapter {
                 musicManagers.remove(guild.getId());
             }
 
+            hasVoted = new ArrayList<>();
             mng = getMusicManager(guild);
             guild.getAudioManager().setSendingHandler(mng.sendHandler);
             EmbedBuilder builder = new EmbedBuilder();
@@ -464,7 +313,7 @@ public class PlayerControl extends ListenerAdapter {
             builder.setDescription("The player has been completely reset!");
             event.getChannel().sendMessage(builder.build()).queue();
 
-        } else if ("nowplaying".equals(command[1]) || "np".equals(command[1])) {
+        } else if ("nowplaying".equals(command[1].toLowerCase()) || "np".equals(command[1].toLowerCase())) {
             AudioTrack currentTrack = player.getPlayingTrack();
             if (currentTrack != null) {
 
@@ -491,13 +340,16 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setColor(Color.WHITE);
                 builder.setDescription("The player is not currently playing anything!");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
             }
-        } else if ("queue".equals(command[1])) {
+        } else if ("queue".equals(command[1].toLowerCase()) || "q".equals(command[1].toLowerCase())) {
             Queue<AudioTrack> queue = scheduler.queue;
             synchronized (queue) {
                 if (queue.isEmpty()) {
-                    event.getChannel().sendMessage("The queue is currently empty!").queue();
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Info");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription("The queue is currently empty!");
+                    event.getChannel().sendMessage(builder.build()).queue();
                 } else {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Info");
@@ -518,17 +370,15 @@ public class PlayerControl extends ListenerAdapter {
 
                     builder.addField("Current Queue: Entries: " + queue.size(), sb.toString(), false);
                     event.getChannel().sendMessage(builder.build()).queue();
-                    event.getMessage().delete().queue();
                 }
             }
-        } else if ("shuffle".equals(command[1])) {
+        } else if ("shuffle".equals(command[1].toLowerCase())) {
             if (scheduler.queue.isEmpty()) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("The queue is currently empty!");
                 event.getChannel().sendMessage(builder.build()).queue();
-                event.getMessage().delete().queue();
                 return;
             }
 
@@ -538,8 +388,81 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription("The queue has been shuffled!");
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
         }
+    }
+
+    private void join(Guild guild, MessageReceivedEvent event, GuildMusicManager mng) {
+        VoiceChannel chan;
+        try {
+            chan = guild.getVoiceChannelById(event.getMember().getVoiceState().getChannel().getId());
+        } catch (NullPointerException e) {
+            event.getChannel().sendMessage("You're not currently in a voice channel please join one and try again").queue();
+            return;
+        }
+        if (chan != null)
+            guild.getAudioManager().setSendingHandler(mng.sendHandler);
+            try {
+                guild.getAudioManager().openAudioConnection(chan);
+            } catch (PermissionException e) {
+                if (e.getPermission() == Permission.VOICE_CONNECT) {
+                    assert chan != null;
+                    event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
+                }
+            }
+        }
+
+
+    private String searchId(int number, JSONObject results, String type) {
+        JSONPointer pointer;
+        if (type.equals("playlist")) {
+            pointer = new JSONPointer("/items/" + number + "/id/playlistId");
+        } else {
+            pointer = new JSONPointer("/items/" + number + "/id/videoId");
+        }
+        return String.valueOf(pointer.queryFrom(results));
+    }
+    private String searchTitle(int number, JSONObject results) {
+        JSONPointer pointer = new JSONPointer("/items/" + number + "/snippet/title");
+        return String.valueOf(pointer.queryFrom(results));
+    }
+    private void play(String Emoji, MessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type){
+        join(guild, event, getMusicManager(guild));
+        String start;
+        Boolean isPlaylist;
+        if (type.equals("playlist")) {
+            start = "https://www.youtube.com/playlist?list=";
+            isPlaylist = true;
+        } else {
+            start = "https://youtube.com/watch?v=";
+            isPlaylist = false;
+        }
+        if (Emoji != null && !Emoji.equals(""))
+            switch (Emoji) {
+                case "\u0031\u20E3":
+                    loadAndPlay(mng, event.getChannel(), start + url0, isPlaylist);
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+                case "\u0032\u20E3":
+                    loadAndPlay(mng, event.getChannel(), start + url1, isPlaylist);
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+                case "\u0033\u20E3":
+                    loadAndPlay(mng, event.getChannel(), start + url2, isPlaylist);
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+                case "\u0034\u20E3":
+                    loadAndPlay(mng, event.getChannel(), start + url3, isPlaylist);
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+                case "\u0035\u20E3":
+                    loadAndPlay(mng, event.getChannel(), start + url4, isPlaylist);
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+                default:
+                    event.getTextChannel().sendMessage("Invalid Selection").queue();
+                    event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
+                    break;
+            }
     }
 
     private void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, String url, final boolean addPlaylist) {
@@ -641,6 +564,4 @@ public class PlayerControl extends ListenerAdapter {
         else
             return String.format("%02d:%02d", minutes, seconds);
     }
-
-
 }
