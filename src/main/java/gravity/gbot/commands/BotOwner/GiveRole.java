@@ -5,39 +5,32 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class GiveRole implements Command {
 
-    private final String USAGE = "giveRole @role";
-    private final String DESC = "Gives the mentioned role";
-    private final String ALIAS = "giveRole";
-    private final String type = "owner";
-
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (args.length == 2) {
         if (event.getAuthor().getId().equals("205056315351891969")) {
             event.getGuild().getController().addRolesToMember(event.getMember(), event.getGuild().getRoleById(args[1].replace("<@&", "").replace(">", ""))).queue();
-            event.getMessage().delete().queue(); }
-
-
-        } else event.getMessage().delete().queue();
+            }
+        }
     }
 
     @Override
     public String cmdUsage() {
-        return USAGE;
+        return "giveRole @role";
     }
 
     @Override
     public String cmdDesc() {
-        return DESC;
+        return "Gives the mentioned role";
     }
 
     @Override
     public String getAlias() {
-        return ALIAS;
+        return "giveRole";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "owner";
     }
 }

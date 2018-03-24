@@ -17,7 +17,7 @@ public class AudioPlayerSendHandler implements AudioSendHandler
     /**
      * @param audioPlayer Audio player to wrap.
      */
-    public AudioPlayerSendHandler(AudioPlayer audioPlayer)
+    AudioPlayerSendHandler(AudioPlayer audioPlayer)
     {
         this.audioPlayer = audioPlayer;
     }

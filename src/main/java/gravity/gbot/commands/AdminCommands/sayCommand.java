@@ -1,7 +1,6 @@
 package gravity.gbot.commands.AdminCommands;
 
 import gravity.gbot.Command;
-import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -11,15 +10,12 @@ import java.awt.*;
 public class sayCommand implements Command {
 
     private final String Usage = "Announce (announcement name|message)";
-    private final String Desc = "Takes your supplied message and sends it using the bot account";
-    private final String Alias = "announce";
-    private final String type = "admin";
 
-    GuildConfig config = new GuildConfig();
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -36,7 +32,6 @@ public class sayCommand implements Command {
             builder.setColor(Color.WHITE);
             builder.addField(ann[0], ann[1], false);
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
         }else {
             event.getChannel().sendMessage("@everyone").queue();
             EmbedBuilder builder = new EmbedBuilder();
@@ -44,7 +39,6 @@ public class sayCommand implements Command {
             builder.setColor(Color.WHITE);
             builder.addField(ann[0], ann[1], false);
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
         }
 
 
@@ -57,16 +51,16 @@ public class sayCommand implements Command {
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Takes your supplied message and sends it using the bot account";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "announce";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

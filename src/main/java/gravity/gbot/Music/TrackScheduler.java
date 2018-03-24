@@ -16,14 +16,14 @@ import java.util.Queue;
 public class TrackScheduler extends AudioEventAdapter
 {
     private boolean repeating = false;
-    final AudioPlayer player;
-    final Queue<AudioTrack> queue;
+    private final AudioPlayer player;
+    public final Queue<AudioTrack> queue;
     AudioTrack lastTrack;
 
     /**
      * @param player The audio player this scheduler uses
      */
-    public TrackScheduler(AudioPlayer player)
+    TrackScheduler(AudioPlayer player)
     {
         this.player = player;
         this.queue = new LinkedList<>();

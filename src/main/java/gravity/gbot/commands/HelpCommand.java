@@ -2,27 +2,20 @@ package gravity.gbot.commands;
 
 import gravity.gbot.Command;
 import gravity.gbot.Main;
-import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
 
 public class HelpCommand implements Command {
 
-    GuildConfig config = new GuildConfig();
-
-    private final String USAGE = "Help or help (command)";
-    private final String DESC = "Sends you a private message containing help.";
-    private final String ALIAS = "help";
-    private final String type = "public";
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         String bot_prefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
         EmbedBuilder builder0 = new EmbedBuilder();
 
@@ -40,14 +33,16 @@ public class HelpCommand implements Command {
         builder3.setTitle("Bot Owner Commands");
 
         for (Command command : Main.cmdlist) {
-            if (command.cmdType().equals("public")) {
-                builder1.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
-            }
-            if (command.cmdType().equals("admin")) {
-                builder2.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
-            }
-            if (command.cmdType().equals("owner")) {
-                builder3.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
+            if (command.cmdType() != null) {
+                if (command.cmdType().equals("public")) {
+                    builder1.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
+                }
+                if (command.cmdType().equals("admin")) {
+                    builder2.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
+                }
+                if (command.cmdType().equals("owner")) {
+                    builder3.addField(bot_prefix + command.getAlias(), "**Usage:** *" + bot_prefix + command.cmdUsage() + "*, **Description:** *" + command.cmdDesc() + "*", false);
+                }
             }
         }
 
@@ -71,7 +66,6 @@ public class HelpCommand implements Command {
             if (event.getAuthor().getId().equals("205056315351891969")) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue());
             }
-            event.getMessage().delete().queue();
         }
     }
 
@@ -117,22 +111,22 @@ public class HelpCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return USAGE;
+        return "Help or help (command)";
     }
 
     @Override
     public String cmdDesc() {
-        return DESC;
+        return "Sends you a private message containing help.";
     }
 
     @Override
     public String getAlias() {
-        return ALIAS;
+        return "help";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "public";
     }
 
 

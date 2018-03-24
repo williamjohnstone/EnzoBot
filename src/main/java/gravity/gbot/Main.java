@@ -19,8 +19,6 @@ import io.sentry.Sentry;
 
 public class Main {
 
-    private static JDA jda;
-
     public static List<Command> cmdlist = new ArrayList<>();
 
 
@@ -36,7 +34,7 @@ public class Main {
                 .setStatus(OnlineStatus.ONLINE);
 
         try {
-            jda = builder.buildBlocking();
+            JDA jda = builder.buildBlocking();
             jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | g-bot.tk"));
             cmdlist.add(new PingCommand());
             cmdlist.add(new HelpCommand());

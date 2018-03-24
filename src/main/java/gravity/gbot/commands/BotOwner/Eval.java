@@ -4,7 +4,6 @@ import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.script.ScriptEngine;
@@ -14,12 +13,7 @@ import java.awt.*;
 
 public class Eval implements Command {
 
-    GuildConfig config = new GuildConfig();
-
-    final String Usage = "Eval (Java/Groovy Code)";
-    final String Desc = "Executes Java/Groovy Code and sends the output to a text channel.";
-    final String Alias = "eval";
-    private final String type = "owner";
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -59,21 +53,21 @@ public class Eval implements Command {
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "Eval (Java/Groovy Code)";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Executes Java/Groovy Code and sends the output to a text channel.";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "eval";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "owner";
     }
 }

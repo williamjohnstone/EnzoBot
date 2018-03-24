@@ -8,7 +8,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,26 +16,23 @@ import java.sql.Statement;
 
 public class setBotChannel implements Command {
 
-    private final String Usage = "setBotChat in the channel you want to use as the bot chat";
-    private final String Desc = "Changes the Bots Nickname";
-    private final String Alias = "setbotchat";
-    private final String type = "admin";
-
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private GuildConfig config = new GuildConfig();
 
-
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
+        String channel = "0";
+        if (args.length == 2) {
+            channel = event.getMessage().getMentionedChannels().get(0).getId();
+        }
         Connection conn;
 
         try {
-
 
             conn =
                     DriverManager.getConnection(Config.dbConnection);
@@ -44,7 +40,7 @@ public class setBotChannel implements Command {
             Statement stmt;
 
             stmt = conn.createStatement();
-            stmt.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + event.getChannel().getId() + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
+            stmt.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + channel + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
 
 
 
@@ -64,26 +60,25 @@ public class setBotChannel implements Command {
         builder.setColor(Color.WHITE);
         builder.setDescription("Success");
         event.getChannel().sendMessage(builder.build()).queue();
-        event.getMessage().delete().queue();
     }
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "setBotChat (#Channel) or setBotChat without any arguments to disable bot channel.";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Changes the channel the bot uses this channel is used for all commands. (Note: Admins bypass this)";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "setbotchat";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

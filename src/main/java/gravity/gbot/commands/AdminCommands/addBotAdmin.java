@@ -4,7 +4,6 @@ import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +14,12 @@ import java.sql.*;
 
 public class addBotAdmin implements Command {
 
-    private final String Usage = "addAdmin @member";
-    private final String Desc = "Adds a member to the list of bot admins for the guild.";
-    private final String Alias = "addadmin";
-    private final String type = "admin";
-
-    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    GuildConfig config = new GuildConfig();
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -84,7 +78,6 @@ public class addBotAdmin implements Command {
             builder.setColor(Color.WHITE);
             builder.setDescription("Success");
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
 
 
 
@@ -102,21 +95,21 @@ public class addBotAdmin implements Command {
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "addAdmin @member";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Adds a member to the list of bot admins for the guild.";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "addadmin";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

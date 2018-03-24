@@ -10,16 +10,11 @@ import java.awt.*;
 
 public class setNick implements Command {
 
-    private final String Usage = "setNick (Nickname)";
-    private final String Desc = "Changes the Bots Nickname";
-    private final String Alias = "setnick";
-    private final String type = "admin";
-
-    GuildConfig config = new GuildConfig();
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -30,26 +25,25 @@ public class setNick implements Command {
         builder.setColor(Color.WHITE);
         builder.setDescription("Success");
         event.getChannel().sendMessage(builder.build()).queue();
-        event.getMessage().delete().queue();
     }
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "setNick (Nickname)";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Changes the Bots Nickname";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "setnick";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

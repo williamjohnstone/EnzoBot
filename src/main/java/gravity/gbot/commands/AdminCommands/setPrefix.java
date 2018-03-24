@@ -17,17 +17,13 @@ import java.sql.Statement;
 
 public class setPrefix implements Command {
 
-    private final String Usage = "setPrefix (Prefix)";
-    private final String Desc = "Changes the Bots Prefix";
-    private final String Alias = "setprefix";
-    private final String type = "admin";
-    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -65,26 +61,25 @@ public class setPrefix implements Command {
         builder.setColor(Color.WHITE);
         builder.setDescription("Success");
         event.getChannel().sendMessage(builder.build()).queue();
-        event.getMessage().delete().queue();
     }
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "setPrefix (Prefix)";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Changes the Bots Prefix";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "setprefix";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

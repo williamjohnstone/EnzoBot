@@ -4,7 +4,6 @@ import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,18 +14,13 @@ import java.sql.*;
 
 public class removeBotAdmin implements Command {
 
-    private final String Usage = "rmAdmin @member";
-    private final String Desc = "Removes a member from the list of bot admins for the guild.";
-    private final String Alias = "rmadmin";
-    private final String type = "admin";
-
     private GuildConfig config = new GuildConfig();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (admincheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
@@ -64,6 +58,9 @@ public class removeBotAdmin implements Command {
                 }
 
                 stmt1 = conn1.createStatement();
+                if (currentAdmins == null) {
+                    return;
+                }
                 stmt1.executeUpdate("UPDATE `Config` SET `bot_Admins` = '" + currentAdmins.replace("," + mentionToID, "") + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
 
 
@@ -85,7 +82,6 @@ public class removeBotAdmin implements Command {
             builder.setColor(Color.WHITE);
             builder.setDescription("Success");
             event.getChannel().sendMessage(builder.build()).queue();
-            event.getMessage().delete().queue();
 
 
 
@@ -102,21 +98,21 @@ public class removeBotAdmin implements Command {
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "rmAdmin @member";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Removes a member from the list of bot admins for the guild.";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "rmadmin";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "admin";
     }
 }

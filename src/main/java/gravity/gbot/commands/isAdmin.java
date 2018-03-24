@@ -1,22 +1,16 @@
 package gravity.gbot.commands;
 
 import gravity.gbot.Command;
-import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class isAdmin implements Command {
 
-    final String Usage = "isAdmin (user)";
-    final String Desc = "Checks whether or not the user is in the current admins list.";
-    final String Alias = "isadmin";
-    private final String type = "public";
-
-    GuildConfig config = new GuildConfig();
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String userTest = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), this.getClass().getName());
+        String userTest = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         if (userTest == null) {
             event.getChannel().sendMessage("user is not in admin list").queue();
         } else {
@@ -26,21 +20,21 @@ public class isAdmin implements Command {
 
     @Override
     public String cmdUsage() {
-        return Usage;
+        return "isAdmin (user)";
     }
 
     @Override
     public String cmdDesc() {
-        return Desc;
+        return "Checks whether or not the user is in the current admins list.";
     }
 
     @Override
     public String getAlias() {
-        return Alias;
+        return "isadmin";
     }
 
     @Override
     public String cmdType() {
-        return type;
+        return "public";
     }
 }

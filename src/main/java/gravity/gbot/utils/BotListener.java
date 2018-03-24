@@ -1,22 +1,20 @@
 package gravity.gbot.utils;
-
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.commands.HelpCommand;
 import gravity.gbot.utils.Logging.msgLogger;
-import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 import java.sql.*;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BotListener extends ListenerAdapter {
 
@@ -43,7 +41,8 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
             GuildConfig config = new GuildConfig();
             msgLogger logMsg = new msgLogger();
-
+            String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+            String admin = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
             logMsg.log(event);
 
             String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
@@ -57,18 +56,53 @@ public class BotListener extends ListenerAdapter {
                 Command cmd = getCommand(args[0].toLowerCase().replace(BotPrefix, ""));
                 String msg = event.getMessage().getContentRaw().toLowerCase();
 
+                if (cmd != null) {
+                    if (channelBot != null) {
+                        if (!channelBot.equals(event.getChannel().getId())) {
+                            if (admin == null) {
+                                event.getMessage().delete().queue();
+                                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg1 ->
+                                {
+                                    Timer timer = new Timer();
+                                    timer.schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            msg1.delete().queue();
+                                        }
+                                    }, 5000);
+                                }));
+                                return;
+                            }
+                        }
+                    }
+                }
                 if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
-                    cmd.execute(args, event);
+                    try {
+                        cmd.execute(args, event);
+                        event.getMessage().delete().queue();
+                    }catch (InsufficientPermissionException e) {
+                        return;
+                    }
                 }
 
                     //Help Command
                      if (msg.startsWith(BotPrefix + "help")) {
                         if (args.length == 1 && cmd != null) {
-                            cmd.execute(args, event);
+                            try {
+                                cmd.execute(args, event);
+                                event.getMessage().delete().queue();
+                            }catch (InsufficientPermissionException e) {
+                                return;
+                            }
                         } else {
                             Command Help_cmd = getCommand(args[1].toLowerCase());
                             if (Help_cmd != null)
-                                help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
+                                try {
+                                    help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
+                                    event.getMessage().delete().queue();
+                                }catch (InsufficientPermissionException e) {
+                                    return;
+                                }
                             }
                         }
                     }
@@ -77,17 +111,24 @@ public class BotListener extends ListenerAdapter {
 
 
 
-    @Override
+    /*@Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         VoiceChannel chan;
-        Guild guild = event.getGuild();
         chan = event.getChannelLeft();
+        Guild guild = event.getGuild();
         List<Member> memList = chan.getMembers();
         if (memList.stream().allMatch(guild.getSelfMember()::equals)) {
+            PlayerControl plyer = new PlayerControl();
+            GuildMusicManager mng = plyer.getMusicManager(event.getGuild());
+            AudioPlayer player = mng.player;
+            TrackScheduler scheduler = mng.scheduler;
+            scheduler.queue.clear();
+            player.stopTrack();
+            player.setPaused(false);
             guild.getAudioManager().setSendingHandler(null);
             guild.getAudioManager().closeAudioConnection();
         }
-    }
+    }*/
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
