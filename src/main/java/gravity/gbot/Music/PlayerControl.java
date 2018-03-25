@@ -70,7 +70,7 @@ public class PlayerControl extends ListenerAdapter {
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
-        if (!command[0].startsWith(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
+        if (!command[0].toLowerCase().startsWith(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
             return;
         }else {
             if (command.length < 2) {
@@ -369,6 +369,20 @@ public class PlayerControl extends ListenerAdapter {
                         }
                     }
                     sb.append("\n").append("Total Queue Time Length: ").append(getTimestamp(queueLength));
+                    String queueString = sb.toString();
+                    if (queueString.length() > 800) {
+                        trackCount = 0;
+                        queueLength = 0;
+                        sb = new StringBuilder();
+                        for (AudioTrack track : queue) {
+                            queueLength += track.getDuration();
+                            if (trackCount < 5) {
+                                sb.append("`[").append(getTimestamp(track.getDuration())).append("]` ");
+                                sb.append(track.getInfo().title).append("\n");
+                                trackCount++;
+                            }
+                        }
+                    }
 
                     builder.addField("Current Queue: Entries: " + queue.size(), sb.toString(), false);
                     event.getChannel().sendMessage(builder.build()).queue();

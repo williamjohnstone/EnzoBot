@@ -2,6 +2,8 @@ package gravity.gbot.utils;
 
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -116,7 +118,16 @@ public class GuildConfig {
 
     public String isAdmin(String ID, String guild, JDA jda) {
         Connection conn;
-        if (jda.getGuildById(guild).getMemberById(ID).hasPermission(Permission.ADMINISTRATOR)) {
+        if (jda == null) {
+            return null;
+        }
+        Guild Guild = jda.getGuildById(guild);
+        if (Guild == null)
+            return null;
+        Member member = Guild.getMemberById(ID);
+        if (member == null)
+            return null;
+        if (member.hasPermission(Permission.ADMINISTRATOR)) {
             return ID;
         }
 
