@@ -24,13 +24,19 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.json.JSONObject;
 import org.json.JSONPointer;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 
@@ -41,7 +47,8 @@ public class PlayerControl extends ListenerAdapter {
     private final AudioPlayerManager playerManager;
     private final Map<String, GuildMusicManager> musicManagers;
     private final EventAwaiter waiter = new EventAwaiter();
-    private List<Member> hasVoted = new ArrayList<>();
+    public List<Member> hasVoted = new ArrayList<>();
+    private static final Pattern timeRegex = Pattern.compile("^([0-9]*):?([0-9]*)?:?([0-9]*)?$");
 
     public PlayerControl() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
@@ -57,6 +64,7 @@ public class PlayerControl extends ListenerAdapter {
 
         musicManagers = new HashMap<>();
     }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
@@ -72,7 +80,7 @@ public class PlayerControl extends ListenerAdapter {
 
         if (!command[0].toLowerCase().startsWith(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
             return;
-        }else {
+        } else {
             if (command.length < 2) {
                 return;
             }
@@ -98,10 +106,10 @@ public class PlayerControl extends ListenerAdapter {
                 {
 
                     StringBuilder sb = new StringBuilder();
-                    for (String s: command) {
+                    for (String s : command) {
                         sb.append(s).append("+");
                     }
-                    sb.delete(0,8);
+                    sb.delete(0, 8);
                     String link;
                     String type;
                     if (sb.toString().toLowerCase().contains("playlist")) {
@@ -112,7 +120,7 @@ public class PlayerControl extends ListenerAdapter {
                         link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
                     }
 
-                    if(link == null) {
+                    if (link == null) {
                         return;
                     }
                     JSONObject results = new JSONObject(link);
@@ -129,7 +137,7 @@ public class PlayerControl extends ListenerAdapter {
 
                     event.getChannel().sendMessage(builder.build()).queue((msg -> {
                         waiter.awaitEvent(event.getJDA(), MessageReactionAddEvent.class,
-                                e ->e.getUser().getId().equals(event.getAuthor().getId()) &&
+                                e -> e.getUser().getId().equals(event.getAuthor().getId()) &&
                                         (e.getReactionEmote().getName().equals("\u0031\u20E3")
                                                 || e.getReactionEmote().getName().equals("\u0032\u20E3")
                                                 || e.getReactionEmote().getName().equals("\u0033\u20E3")
@@ -153,15 +161,14 @@ public class PlayerControl extends ListenerAdapter {
 
                 }
             }
-        } else if ("leave".equals(command[1].toLowerCase()))
-        {
+        } else if ("leave".equals(command[1].toLowerCase())) {
             guild.getAudioManager().setSendingHandler(null);
             guild.getAudioManager().closeAudioConnection();
             hasVoted = new ArrayList<>();
             scheduler.queue.clear();
             player.stopTrack();
             player.setPaused(false);
-        }  else if ("resume".equals(command[1].toLowerCase()) | "play".equals(command[1].toLowerCase()) && command.length == 2) //It is only the command to start playback (probably after pause)
+        } else if ("resume".equals(command[1].toLowerCase()) | "play".equals(command[1].toLowerCase()) && command.length == 2) //It is only the command to start playback (probably after pause)
         {
             if (player.isPaused()) {
                 player.setPaused(false);
@@ -213,13 +220,15 @@ public class PlayerControl extends ListenerAdapter {
                     }
                 }
             } else {
-                scheduler.nextTrack();
-                hasVoted = new ArrayList<>();
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Info");
-                builder.setColor(Color.WHITE);
-                builder.setDescription(":fast_forward: Track Skipped!");
-                event.getChannel().sendMessage(builder.build()).queue();
+                if (command.length == 2) {
+                    scheduler.nextTrack();
+                    hasVoted = new ArrayList<>();
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Info");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription(":fast_forward: Track Skipped!");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                }
             }
         } else if ("pause".equals(command[1].toLowerCase())) {
             if (player.getPlayingTrack() == null) {
@@ -404,7 +413,84 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription("The queue has been shuffled!");
             event.getChannel().sendMessage(builder.build()).queue();
+        } else if ("seek".equals(command[1].toLowerCase())) {
+            Long millis = parseTime(command[2]);
+            if (millis == null || millis > Integer.MAX_VALUE) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("You have entered an invalid duration to skip to!");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
+            AudioTrack t = player.getPlayingTrack();
+            if (t == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("There is no song currently playing!");
+                event.getChannel().sendMessage(builder.build()).queue();
+            } else {
+                if (t.getInfo().isStream) {
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Info");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription("Cannot seek on a livestream!");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                } else if (!t.isSeekable()) {
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Info");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription("Cannot seek on this track!");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                } else {
+                    if (millis >= t.getDuration()) {
+                        EmbedBuilder builder = new EmbedBuilder();
+                        builder.setTitle("Info");
+                        builder.setColor(Color.WHITE);
+                        builder.setDescription("The duration specified is bigger than the length of the video!");
+                        event.getChannel().sendMessage(builder.build()).queue();
+                    } else {
+                        t.setPosition(millis);
+                        EmbedBuilder builder = new EmbedBuilder();
+                        builder.setTitle("Info");
+                        builder.setColor(Color.WHITE);
+                        builder.setDescription("The track has been skipped to: " + "`[" + getTimestamp(millis) + "]`");
+                        event.getChannel().sendMessage(builder.build()).queue();
+                    }
+                }
+            }
+
         }
+    }
+
+    private static Long parseTime(String time) {
+        Matcher digitMatcher = timeRegex.matcher(time);
+        if (digitMatcher.matches()) {
+            try {
+                return new PeriodFormatterBuilder()
+                        .appendHours().appendSuffix(":")
+                        .appendMinutes().appendSuffix(":")
+                        .appendSeconds()
+                        .toFormatter()
+                        .parsePeriod(time)
+                        .toStandardDuration().getMillis();
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .appendHours().appendSuffix("h")
+                .appendMinutes().appendSuffix("m")
+                .appendSeconds().appendSuffix("s")
+                .toFormatter();
+        Period period;
+        try {
+            period = formatter.parsePeriod(time);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return period.toStandardDuration().getMillis();
     }
 
     private void join(Guild guild, MessageReceivedEvent event, GuildMusicManager mng) {
@@ -417,15 +503,15 @@ public class PlayerControl extends ListenerAdapter {
         }
         if (chan != null)
             guild.getAudioManager().setSendingHandler(mng.sendHandler);
-            try {
-                guild.getAudioManager().openAudioConnection(chan);
-            } catch (PermissionException e) {
-                if (e.getPermission() == Permission.VOICE_CONNECT) {
-                    assert chan != null;
-                    event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
-                }
+        try {
+            guild.getAudioManager().openAudioConnection(chan);
+        } catch (PermissionException e) {
+            if (e.getPermission() == Permission.VOICE_CONNECT) {
+                assert chan != null;
+                event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
             }
         }
+    }
 
 
     private String searchId(int number, JSONObject results, String type) {
@@ -437,11 +523,13 @@ public class PlayerControl extends ListenerAdapter {
         }
         return String.valueOf(pointer.queryFrom(results));
     }
+
     private String searchTitle(int number, JSONObject results) {
         JSONPointer pointer = new JSONPointer("/items/" + number + "/snippet/title");
         return String.valueOf(pointer.queryFrom(results));
     }
-    private void play(String Emoji, MessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type){
+
+    private void play(String Emoji, MessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type) {
         join(guild, event, getMusicManager(guild));
         String start;
         Boolean isPlaylist;
