@@ -12,7 +12,7 @@ public class inviteCommand implements Command{
         builder.setTitle("Invite Me");
         builder.setDescription("Use the provided invite link to add me to your server.");
         builder.addField("To invite me:", "[Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591)", false);
-        event.getAuthor().openPrivateChannel().queue((priv -> priv.sendMessage(builder.build()).queue()));
+        event.getAuthor().openPrivateChannel().queue((priv -> priv.sendMessage(builder.build()).queue(null, failure -> event.getChannel().sendMessage( event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue())));
 
     }
 

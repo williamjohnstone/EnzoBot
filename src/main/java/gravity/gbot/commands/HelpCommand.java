@@ -48,23 +48,22 @@ public class HelpCommand implements Command {
 
 
         if (event.getChannelType() == ChannelType.PRIVATE) {
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue());
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue());
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(null, failure -> {}));
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
             if (admincheck != null) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue());
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {}));
             }
             if (event.getAuthor().getId().equals("205056315351891969")) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue());
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {}));
             }
         } else if (event.getChannelType() == ChannelType.TEXT) {
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue();
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue());
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue());
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
             if (admincheck != null) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue());
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {}));
             }
             if (event.getAuthor().getId().equals("205056315351891969")) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue());
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {}));
             }
         }
     }

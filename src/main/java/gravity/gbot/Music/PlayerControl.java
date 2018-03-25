@@ -206,7 +206,9 @@ public class PlayerControl extends ListenerAdapter {
                         EmbedBuilder builder = new EmbedBuilder();
                         builder.setTitle("Vote Skip");
                         builder.setColor(Color.WHITE);
-                        builder.setDescription("You have voted to skip. " + player.getPlayingTrack().getInfo().title + " " + hasVoted.size() + "/" + requiredVotes + " votes to skip.");
+                        if (player.getPlayingTrack() != null) {
+                            builder.setDescription("You have voted to skip. " + player.getPlayingTrack().getInfo().title + " " + hasVoted.size() + "/" + requiredVotes + " votes to skip.");
+                        }
                         event.getChannel().sendMessage(builder.build()).queue();
                     }
                 }
