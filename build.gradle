@@ -26,6 +26,7 @@ repositories {
      maven { url "https://jitpack.io" }
      maven { url "mvnrepository.com" }
      maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
 }
 dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.8'
