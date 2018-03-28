@@ -328,10 +328,27 @@ public class PlayerControl extends ListenerAdapter {
             AudioTrack currentTrack = player.getPlayingTrack();
             if (currentTrack != null) {
 
+                Long current = currentTrack.getPosition();
+                Long total = currentTrack.getDuration();
+                int ActiveBlocks = (int)((float)current / total * 15);
+                StringBuilder sb = new StringBuilder();
+                int i = 0;
+                int inactive = 0;
+                while (ActiveBlocks > i) {
+                    sb.append("[\u25AC](https://g-bot.tk/)");
+                    i++;
+                }
+                int remaining = 15 - i;
+                while (remaining > inactive) {
+                    sb.append("\u25AC");
+                    inactive++;
+                }
+
                 String position = getTimestamp(currentTrack.getPosition());
                 String duration = getTimestamp(currentTrack.getDuration());
 
-                String Time = String.format("Current Time: [%s / %s]", position, duration);
+                String Time = String.format("(%s / %s)", position, duration);
+                String progressBar = sb.toString();
 
                 EmbedBuilder builder = new EmbedBuilder();
 
@@ -342,7 +359,7 @@ public class PlayerControl extends ListenerAdapter {
                 builder.addField("Author", currentTrack.getInfo().author, true);
                 builder.addField("Duration", getTimestamp(currentTrack.getDuration()), true);
                 builder.addField("URL", currentTrack.getInfo().uri, true);
-                builder.addField("Time", Time, true);
+                builder.addField("Time", progressBar + " " + Time, false);
                 event.getChannel().sendMessage(builder.build()).queue();
 
             } else {
@@ -462,6 +479,23 @@ public class PlayerControl extends ListenerAdapter {
             }
 
         }
+    }
+
+    private String getProgressBar(Long current, Long total) {
+        int ActiveBlocks = (int)((float)current / total * 15);
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        int inactive = 0;
+        while (ActiveBlocks > i) {
+            sb.append("[\u25AC](https://g-bot.tk/)");
+            i++;
+        }
+        int remaining = 15 - i;
+        while (remaining > inactive) {
+            sb.append("\u25AC");
+            inactive++;
+        }
+        return sb.toString();
     }
 
     private static Long parseTime(String time) {
