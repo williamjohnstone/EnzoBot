@@ -1,11 +1,4 @@
 <configuration>
-    <conversionRule conversionWord="highlightex" converterClass="gravity.gbot.utils.Logging.HighlightingCompositeConverterEx" />
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>./latest.log</file>
-        <encoder>
-            <pattern>[%d{yyyy.MM.dd HH:mm}] [%level] [%logger{0}] [%t] %msg%n</pattern>
-        </encoder>
-    </appender>
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
@@ -18,7 +11,6 @@
     </appender>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="Sentry"/>
     </root>
     <logger name="org.apache" level="NONE" />
