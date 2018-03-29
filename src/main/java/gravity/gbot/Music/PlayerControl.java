@@ -330,25 +330,12 @@ public class PlayerControl extends ListenerAdapter {
 
                 Long current = currentTrack.getPosition();
                 Long total = currentTrack.getDuration();
-                int ActiveBlocks = (int)((float)current / total * 15);
-                StringBuilder sb = new StringBuilder();
-                int i = 0;
-                int inactive = 0;
-                while (ActiveBlocks > i) {
-                    sb.append("[\u25AC](https://g-bot.tk/)");
-                    i++;
-                }
-                int remaining = 15 - i;
-                while (remaining > inactive) {
-                    sb.append("\u25AC");
-                    inactive++;
-                }
 
                 String position = getTimestamp(currentTrack.getPosition());
                 String duration = getTimestamp(currentTrack.getDuration());
 
                 String Time = String.format("(%s / %s)", position, duration);
-                String progressBar = sb.toString();
+                String progressBar = getProgressBar(current, total);
 
                 EmbedBuilder builder = new EmbedBuilder();
 
