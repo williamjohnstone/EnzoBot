@@ -86,7 +86,6 @@ public class PlayerControl extends ListenerAdapter {
             }
         }
 
-        event.getMessage().delete().queue();
         Guild guild = event.getGuild();
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;

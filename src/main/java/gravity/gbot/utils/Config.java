@@ -32,20 +32,18 @@ public class Config {
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
             String jenkins_api = getJson.getLink(config.getString("Config.jenkins_gbot_api").get());
-            if (jenkins_api != null) {
-                JSONObject jenkins = new JSONObject(jenkins_api);
-                JSONObject gh = new JSONObject(github_api);
-                JSONPointer jenkinsPointer = new JSONPointer("/builds/0/number");
-                JSONPointer ghPointer = new JSONPointer("/sha");
-                String jenkins_build = String.valueOf(jenkinsPointer.queryFrom(jenkins));
-                if (Main.userVerString != null) {
-                    version = Main.userVerString;
-                } else {
-                    version = "3.12.0_" + jenkins_build;
-                }
+            JSONObject jenkins = new JSONObject(jenkins_api);
+            JSONObject gh = new JSONObject(github_api);
+            JSONPointer jenkinsPointer = new JSONPointer("/builds/0/number");
+            JSONPointer ghPointer = new JSONPointer("/sha");
+            String jenkins_build = String.valueOf(jenkinsPointer.queryFrom(jenkins));
+            if (Main.userVerString != null) {
+                version = Main.userVerString;
+            } else {
+                version = "3.13.2_" + jenkins_build;
                 gh_commit = String.valueOf(ghPointer.queryFrom(gh));
             }
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }

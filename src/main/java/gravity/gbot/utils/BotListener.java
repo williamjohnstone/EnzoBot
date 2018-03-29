@@ -79,7 +79,6 @@ public class BotListener extends ListenerAdapter {
                 if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
                     try {
                         cmd.execute(args, event);
-                        event.getMessage().delete().queue();
                     }catch (InsufficientPermissionException e) {
                         return;
                     }
@@ -90,7 +89,6 @@ public class BotListener extends ListenerAdapter {
                         if (args.length == 1 && cmd != null) {
                             try {
                                 cmd.execute(args, event);
-                                event.getMessage().delete().queue();
                             }catch (InsufficientPermissionException e) {
                                 return;
                             }
@@ -99,7 +97,6 @@ public class BotListener extends ListenerAdapter {
                             if (Help_cmd != null)
                                 try {
                                     help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
-                                    event.getMessage().delete().queue();
                                 }catch (InsufficientPermissionException e) {
                                     return;
                                 }
