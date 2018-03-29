@@ -6,6 +6,7 @@ import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
 import java.awt.*;
 
@@ -47,7 +48,7 @@ public class HelpCommand implements Command {
         }
 
 
-        if (event.getChannelType() == ChannelType.PRIVATE) {
+        if (event.getChannel().getType() == ChannelType.PRIVATE) {
             event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(null, failure -> {}));
             event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
             if (admincheck != null) {
@@ -56,8 +57,12 @@ public class HelpCommand implements Command {
             if (event.getAuthor().getId().equals("205056315351891969")) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {}));
             }
-        } else if (event.getChannelType() == ChannelType.TEXT) {
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
+        } else if (event.getChannel().getType() == ChannelType.TEXT) {
+            try {
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
+            } catch (InsufficientPermissionException e) {
+
+            }
             event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
             if (admincheck != null) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {}));
@@ -84,9 +89,9 @@ public class HelpCommand implements Command {
                     .setColor(Color.GREEN)
                     .addField("Usage:", bot_prefix + "Help or " + bot_prefix + "help (command)", true)
                     .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
-            if (event.getChannelType() == ChannelType.PRIVATE) {
+            if (event.getChannel().getType() == ChannelType.PRIVATE) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage("This command is guild only").queue());
-            } else if (event.getChannelType() == ChannelType.TEXT) {
+            } else if (event.getChannel().getType() == ChannelType.TEXT) {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
 
@@ -99,9 +104,9 @@ public class HelpCommand implements Command {
                     .setColor(Color.GREEN)
                     .addField("Usage:", bot_prefix + help, true)
                     .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
-            if (event.getChannelType() == ChannelType.PRIVATE) {
+            if (event.getChannel().getType() == ChannelType.PRIVATE) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage("This command is guild only").queue());
-            } else if (event.getChannelType() == ChannelType.TEXT) {
+            } else if (event.getChannel().getType() == ChannelType.TEXT) {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         }
