@@ -6,7 +6,7 @@ import org.apache.commons.io.IOUtils;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 
-public class getYT {
+public class getJson {
     public static String getLink(String getUrl) {
         try {
             HttpsURLConnection conn = (HttpsURLConnection) new URL(getUrl).openConnection();

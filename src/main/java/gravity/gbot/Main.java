@@ -20,9 +20,13 @@ import io.sentry.Sentry;
 public class Main {
 
     public static List<Command> cmdlist = new ArrayList<>();
+    public static String userVerString = null;
 
 
     public static void main(String[] args) {
+        if (args.length >= 1) {
+            userVerString = args[0];
+        }
         Config config = new Config();
         config.loadConfig();
         Sentry.init(Config.sentry_dsn);
@@ -49,6 +53,7 @@ public class Main {
             cmdlist.add(new isAdmin());
             cmdlist.add(new sayCommand());
             cmdlist.add(new inviteCommand());
+            cmdlist.add(new botInfoCommand());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }

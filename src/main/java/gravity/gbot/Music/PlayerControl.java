@@ -114,10 +114,10 @@ public class PlayerControl extends ListenerAdapter {
                     String type;
                     if (sb.toString().toLowerCase().contains("playlist")) {
                         type = "playlist";
-                        link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
+                        link = getJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
                     } else {
                         type = "video";
-                        link = getYT.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
+                        link = getJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
                     }
 
                     if (link == null) {
