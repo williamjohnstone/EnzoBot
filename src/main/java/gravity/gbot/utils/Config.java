@@ -31,12 +31,9 @@ public class Config {
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
-            String jenkins_api = getJson.getLink(config.getString("Config.jenkins_gbot_api").get());
-            JSONObject jenkins = new JSONObject(jenkins_api);
             JSONObject gh = new JSONObject(github_api);
-            JSONPointer jenkinsPointer = new JSONPointer("/builds/0/number");
             JSONPointer ghPointer = new JSONPointer("/sha");
-            String jenkins_build = String.valueOf(jenkinsPointer.queryFrom(jenkins));
+            String jenkins_build = "34";
             if (Main.userVerString != null) {
                 version = Main.userVerString;
             } else {
