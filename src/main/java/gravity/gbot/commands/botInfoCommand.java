@@ -13,20 +13,14 @@ import java.lang.management.RuntimeMXBean;
 
 public class botInfoCommand implements Command {
 
-    private RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
-    private long uptimems = mxBean.getUptime();
-    private long s = uptimems / 1000;
-    private long m = s / 60;
-    private long h = m / 60;
-    private long d = h / 24;
-    private String uptimeString = d + "d " + h % 24 + "h " + m % 60 + "m " + s % 60 + "s";
     private int userCnt = 0;
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         for (Guild g : event.getJDA().getGuildCache()) {
-            userCnt =+ g.getMembers().size();
+            userCnt = userCnt + g.getMembers().size();
         }
+
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Bot Info");
         builder.setColor(Color.cyan);
@@ -38,8 +32,9 @@ public class botInfoCommand implements Command {
         builder.addField("User Count", String.valueOf(userCnt), true);
         builder.addField("Version", Config.version, true);
         builder.addField("Latest Github Commit", Config.gh_commit, true);
-        builder.addField("Uptime", uptimeString, true);
+        builder.addField("Uptime", getUptime(), true);
         event.getChannel().sendMessage(builder.build()).queue();
+        userCnt = 0;
     }
 
     @Override
@@ -60,5 +55,15 @@ public class botInfoCommand implements Command {
     @Override
     public String cmdType() {
         return "public";
+    }
+
+    private String getUptime () {
+        RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
+        long uptimems = mxBean.getUptime();
+        long s = uptimems / 1000;
+        long m = s / 60;
+        long h = m / 60;
+        long d = h / 24;
+        return d + "d " + h % 24 + "h " + m % 60 + "m " + s % 60 + "s";
     }
 }

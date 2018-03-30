@@ -1,6 +1,5 @@
 package gravity.gbot.utils;
 
-import gravity.gbot.Main;
 import gravity.gbot.Music.getJson;
 import io.github.binaryoverload.JSONConfig;
 import org.json.JSONObject;
@@ -33,13 +32,9 @@ public class Config {
             google_api = config.getString("Config.google_key").get();
             JSONObject gh = new JSONObject(github_api);
             JSONPointer ghPointer = new JSONPointer("/sha");
-            String jenkins_build = "34";
-            if (Main.userVerString != null) {
-                version = Main.userVerString;
-            } else {
-                version = "3.13.2_" + jenkins_build;
-                gh_commit = String.valueOf(ghPointer.queryFrom(gh));
-            }
+            String jenkins_build = "36";
+            version = "3.14.3_" + jenkins_build;
+            gh_commit = String.valueOf(ghPointer.queryFrom(gh));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

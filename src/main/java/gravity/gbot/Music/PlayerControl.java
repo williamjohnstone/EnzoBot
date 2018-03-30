@@ -93,7 +93,10 @@ public class PlayerControl extends ListenerAdapter {
 
         if (command[1].toLowerCase().equals("play") && command.length >= 3) {
             if (command[2].startsWith("http://") || command[2].startsWith("https://")) {
-                join(guild, event, getMusicManager(guild));
+                String join = join(guild, event, getMusicManager(guild));
+                if (join.equals("fail")) {
+                    return;
+                }
                 {
                     if (command[2].contains("&list=") || command[2].contains("?list=")) {
                         loadAndPlay(mng, event.getChannel(), command[2], true);
@@ -513,13 +516,13 @@ public class PlayerControl extends ListenerAdapter {
         return period.toStandardDuration().getMillis();
     }
 
-    private void join(Guild guild, MessageReceivedEvent event, GuildMusicManager mng) {
+    private String join(Guild guild, MessageReceivedEvent event, GuildMusicManager mng) {
         VoiceChannel chan;
         try {
             chan = guild.getVoiceChannelById(event.getMember().getVoiceState().getChannel().getId());
         } catch (NullPointerException e) {
             event.getChannel().sendMessage("You're not currently in a voice channel please join one and try again").queue();
-            return;
+            return "fail";
         }
         if (chan != null)
             guild.getAudioManager().setSendingHandler(mng.sendHandler);
@@ -529,8 +532,10 @@ public class PlayerControl extends ListenerAdapter {
             if (e.getPermission() == Permission.VOICE_CONNECT) {
                 assert chan != null;
                 event.getChannel().sendMessage("I don't have permission to connect to: " + chan.getName()).queue();
+                return "fail";
             }
         }
+        return "success";
     }
 
 
@@ -550,7 +555,10 @@ public class PlayerControl extends ListenerAdapter {
     }
 
     private void play(String Emoji, MessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type) {
-        join(guild, event, getMusicManager(guild));
+        String join = join(guild, event, getMusicManager(guild));
+        if (join.equals("fail")) {
+            return;
+        }
         String start;
         Boolean isPlaylist;
         if (type.equals("playlist")) {
