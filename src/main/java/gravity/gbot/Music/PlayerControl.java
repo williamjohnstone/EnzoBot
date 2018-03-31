@@ -17,6 +17,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.EventAwaiter;
 import gravity.gbot.utils.GuildConfig;
+import gravity.gbot.utils.getJson;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
@@ -476,12 +477,12 @@ public class PlayerControl extends ListenerAdapter {
         int i = 0;
         int inactive = 0;
         while (ActiveBlocks > i) {
-            sb.append("[\u25AC](https://g-bot.tk/)");
+            sb.append("[\u2500](https://g-bot.tk/)");
             i++;
         }
         int remaining = 15 - i;
         while (remaining > inactive) {
-            sb.append("\u25AC");
+            sb.append("\u2500");
             inactive++;
         }
         return sb.toString();

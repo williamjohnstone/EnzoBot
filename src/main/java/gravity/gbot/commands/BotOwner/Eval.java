@@ -1,5 +1,6 @@
 package gravity.gbot.commands.BotOwner;
 
+import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
@@ -17,7 +18,7 @@ public class Eval implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!event.getAuthor().getId().equals("205056315351891969")) {
+        if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
 

@@ -1,5 +1,6 @@
 package gravity.gbot;
 
+import gravity.gbot.Music.MusicMaps;
 import gravity.gbot.Music.PlayerControl;
 import gravity.gbot.utils.*;
 import gravity.gbot.commands.AdminCommands.*;
@@ -13,9 +14,8 @@ import net.dv8tion.jda.core.entities.Game;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.List;
+
 import io.sentry.Sentry;
-
-
 
 public class Main {
 
@@ -23,7 +23,9 @@ public class Main {
 
     public static void main(String[] args) {
         Config config = new Config();
+        MusicMaps mcmds = new MusicMaps();
         config.loadConfig();
+        mcmds.add();
         Sentry.init(Config.sentry_dsn);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())

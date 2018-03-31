@@ -42,24 +42,30 @@ public class setBotChannel implements Command {
             stmt = conn.createStatement();
             stmt.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + channel + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
 
-
-
         } catch (SQLException ex) {
             // handle any errors
             MDC.put("SQLState", ex.getSQLState());
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
+            return;
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("Bot Channel Set");
-        builder.setColor(Color.WHITE);
-        builder.setDescription("Success");
-        event.getChannel().sendMessage(builder.build()).queue();
+        if (!channel.equals("0")) {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Bot Channel Set");
+            builder.setColor(Color.WHITE);
+            builder.setDescription("Success");
+            event.getChannel().sendMessage(builder.build()).queue();
+        } else {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Bot Channel Removed");
+            builder.setColor(Color.WHITE);
+            builder.setDescription("Success");
+            event.getChannel().sendMessage(builder.build()).queue();
+        }
     }
 
     @Override
