@@ -39,8 +39,8 @@ public class botInfoCommand implements Command {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Bot Info");
-        builder.setColor(Color.cyan);
-        builder.setThumbnail("https://g-sc.tk/u/Gravity-11:45:34AM.png");
+        builder.setColor(Config.GBot_Blue);
+        builder.setThumbnail(Config.EmbedGbotLogo);
         builder.addField("Username", event.getGuild().getSelfMember().getEffectiveName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
         builder.addField("Commands", String.valueOf(Main.cmdlist.size() + MusicMaps.musicCmds.size()), true);

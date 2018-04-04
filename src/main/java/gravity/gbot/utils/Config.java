@@ -2,6 +2,7 @@ package gravity.gbot.utils;
 
 import io.github.binaryoverload.JSONConfig;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 
 public class Config {
@@ -14,6 +15,8 @@ public class Config {
     public static String google_api;
     public static Boolean loggingALL = false;
     public static Boolean loggingCMD = false;
+    public static String EmbedGbotLogo = "https://cdn.discordapp.com/attachments/391558952757886978/431071158549348373/favicon.png";
+    public static Color GBot_Blue = new Color(51, 102, 153);
 
     public void loadConfig() {
         try {

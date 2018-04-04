@@ -48,9 +48,10 @@ public class Main {
             cmdlist.add(new addBotAdmin());
             cmdlist.add(new removeBotAdmin());
             cmdlist.add(new isAdmin());
-            cmdlist.add(new sayCommand());
             cmdlist.add(new inviteCommand());
             cmdlist.add(new botInfoCommand());
+            cmdlist.add(new UserInfoCommand());
+            cmdlist.add(new GuildInfoCommand());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }

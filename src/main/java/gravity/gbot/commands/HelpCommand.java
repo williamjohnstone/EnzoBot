@@ -3,6 +3,7 @@ package gravity.gbot.commands;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.Music.MusicMaps;
+import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -24,18 +25,23 @@ public class HelpCommand implements Command {
         builder0.setTitle("Help");
         builder0.setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl());
         builder0.setDescription("Here are all the commands currently available.");
+        builder0.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder1 = new EmbedBuilder();
         builder1.setTitle("Basic Commands");
+        builder1.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder2 = new EmbedBuilder();
         builder2.setTitle("Music Commands");
+        builder2.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder3 = new EmbedBuilder();
         builder3.setTitle("Admin Commands");
+        builder3.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder4 = new EmbedBuilder();
         builder4.setTitle("Bot Owner Commands");
+        builder4.setColor(Config.GBot_Blue);
 
         for (Command command : Main.cmdlist) {
             if (command.cmdType() != null) {

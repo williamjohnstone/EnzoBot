@@ -477,12 +477,12 @@ public class PlayerControl extends ListenerAdapter {
         int i = 0;
         int inactive = 0;
         while (ActiveBlocks > i) {
-            sb.append("[\u2500](https://g-bot.tk/)");
+            sb.append("[\u25AC](https://g-bot.tk/)");
             i++;
         }
         int remaining = 15 - i;
         while (remaining > inactive) {
-            sb.append("\u2500");
+            sb.append("\u25AC");
             inactive++;
         }
         return sb.toString();

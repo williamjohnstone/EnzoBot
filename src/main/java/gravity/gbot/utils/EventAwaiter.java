@@ -3,7 +3,6 @@ package gravity.gbot.utils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.*;
 import net.dv8tion.jda.core.hooks.EventListener;
-
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
