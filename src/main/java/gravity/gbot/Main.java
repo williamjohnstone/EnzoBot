@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,13 @@ public class Main {
     public static List<Command> cmdlist = new ArrayList<>();
 
     public static void main(String[] args) {
-        if (args[0].equals("--dev")) {
-            Config.dev_mode = true;
-            System.out.println("[INFO] Running in Development Mode");
-        } else {
-            Config.config_file = "config.json";
+        if (args.length > 0) {
+            if (args[0].equals("--dev")) {
+                Config.dev_mode = true;
+                System.out.println("[INFO] Running in Development Mode");
+            } else {
+                Config.config_file = "config.json";
+            }
         }
         Config config = new Config();
         MusicMaps mcmds = new MusicMaps();
