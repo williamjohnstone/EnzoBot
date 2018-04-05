@@ -27,9 +27,9 @@ public class Main {
             if (args[0].equals("--dev")) {
                 Config.dev_mode = true;
                 System.out.println("[INFO] Running in Development Mode");
-            } else {
-                Config.config_file = "config.json";
             }
+        } else {
+            Config.config_file = "config.json";
         }
         Config config = new Config();
         MusicMaps mcmds = new MusicMaps();
