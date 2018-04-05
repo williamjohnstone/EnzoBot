@@ -46,8 +46,10 @@ public class BotListener extends ListenerAdapter {
                 return;
             }
         } else {
-            if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
-                return;
+            if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
+                if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                    return;
+                }
             }
         }
         GuildConfig config = new GuildConfig();

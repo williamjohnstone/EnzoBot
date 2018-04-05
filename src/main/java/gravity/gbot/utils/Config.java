@@ -19,7 +19,7 @@ public class Config {
     public static Color GBot_Blue = new Color(51, 102, 153);
     public static String config_file;
     public static Boolean dev_mode = false;
-    public static String dev_bot_channel;
+    public static String dev_bot_channel = "391558952757886978";
 
     public void loadConfig() {
         try {
@@ -31,7 +31,6 @@ public class Config {
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
-            if (dev_mode) dev_bot_channel = config.getString("Config.dev-channel-id").get();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
