@@ -17,16 +17,21 @@ public class Config {
     public static Boolean loggingCMD = false;
     public static String EmbedGbotLogo = "https://cdn.discordapp.com/attachments/391558952757886978/431071158549348373/favicon.png";
     public static Color GBot_Blue = new Color(51, 102, 153);
+    public static String config_file;
+    public static Boolean dev_mode = false;
+    public static String dev_bot_channel;
 
     public void loadConfig() {
         try {
-            JSONConfig config = new JSONConfig("config.json");
+            if (dev_mode) config_file = "dev_config.json";
+            JSONConfig config = new JSONConfig(config_file);
             Discord_Token = config.getString("Config.token").get();
             dbConnection = config.getString("Config.dbString").get();
             fallback_prefix = config.getString("Config.fallback").get();
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
+            if (dev_mode) dev_bot_channel = config.getString("Config.dev-channel-id").get();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

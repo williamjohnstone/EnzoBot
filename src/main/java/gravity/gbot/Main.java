@@ -22,11 +22,17 @@ public class Main {
     public static List<Command> cmdlist = new ArrayList<>();
 
     public static void main(String[] args) {
+        if (args[0].equals("--dev")) {
+            Config.dev_mode = true;
+            System.out.println("[INFO] Running in Development Mode");
+        } else {
+            Config.config_file = "config.json";
+        }
         Config config = new Config();
         MusicMaps mcmds = new MusicMaps();
         config.loadConfig();
-        mcmds.add();
         Sentry.init(Config.sentry_dsn);
+        mcmds.add();
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
                 .addEventListener(new PlayerControl())

@@ -1,4 +1,5 @@
 package gravity.gbot.utils;
+
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.commands.HelpCommand;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
 import java.sql.*;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,71 +41,80 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-            GuildConfig config = new GuildConfig();
-            msgLogger logMsg = new msgLogger();
-            String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
-            String admin = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-            logMsg.log(event);
+        if (Config.dev_mode) {
+            if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                return;
+            }
+        } else {
+            if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                return;
+            }
+        }
+        GuildConfig config = new GuildConfig();
+        msgLogger logMsg = new msgLogger();
+        String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+        String admin = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        logMsg.log(event);
 
-            String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
-            boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
-            boolean notBot = !event.getMessage().getAuthor().isBot();
-            boolean notMusic = !event.getMessage().getContentRaw().startsWith(BotPrefix + "m");
+        String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
+        boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
+        boolean notBot = !event.getMessage().getAuthor().isBot();
+        boolean notMusic = !event.getMessage().getContentRaw().startsWith(BotPrefix + "m");
 
-            if (startsWithPrefix && notBot && notMusic) {
+        if (startsWithPrefix && notBot && notMusic) {
 
-                String args[] = event.getMessage().getContentRaw().split(" +");
-                Command cmd = getCommand(args[0].toLowerCase().replace(BotPrefix, ""));
-                String msg = event.getMessage().getContentRaw().toLowerCase();
+            String args[] = event.getMessage().getContentRaw().split(" +");
+            Command cmd = getCommand(args[0].toLowerCase().replace(BotPrefix, ""));
+            String msg = event.getMessage().getContentRaw().toLowerCase();
 
-                if (cmd != null) {
-                    if (channelBot != null) {
-                        if (!channelBot.equals(event.getChannel().getId())) {
-                            if (admin == null) {
-                                event.getMessage().delete().queue();
-                                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg1 ->
-                                {
-                                    Timer timer = new Timer();
-                                    timer.schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            msg1.delete().queue();
-                                        }
-                                    }, 5000);
-                                }));
-                                return;
-                            }
+            if (cmd != null) {
+                if (channelBot != null) {
+                    if (!channelBot.equals(event.getChannel().getId())) {
+                        if (admin == null) {
+                            event.getMessage().delete().queue();
+                            event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg1 ->
+                            {
+                                Timer timer = new Timer();
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        msg1.delete().queue();
+                                    }
+                                }, 5000);
+                            }));
+                            return;
                         }
                     }
                 }
-                if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
+            }
+            if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
+                try {
+                    cmd.execute(args, event);
+                } catch (InsufficientPermissionException e) {
+                    return;
+                }
+            }
+
+            //Help Command
+            if (msg.startsWith(BotPrefix + "help")) {
+                if (args.length == 1 && cmd != null) {
                     try {
                         cmd.execute(args, event);
-                    }catch (InsufficientPermissionException e) {
+                    } catch (InsufficientPermissionException e) {
                         return;
                     }
-                }
-
-                    //Help Command
-                     if (msg.startsWith(BotPrefix + "help")) {
-                        if (args.length == 1 && cmd != null) {
-                            try {
-                                cmd.execute(args, event);
-                            }catch (InsufficientPermissionException e) {
-                                return;
-                            }
-                        } else {
-                            Command Help_cmd = getCommand(args[1].toLowerCase());
-                            if (Help_cmd != null)
-                                try {
-                                    help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
-                                }catch (InsufficientPermissionException e) {
-                                    return;
-                                }
-                            }
+                } else {
+                    Command Help_cmd = getCommand(args[1].toLowerCase());
+                    if (Help_cmd != null)
+                        try {
+                            help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
+                        } catch (InsufficientPermissionException e) {
+                            return;
                         }
-                    }
                 }
+            }
+        }
+    }
 
 
 
@@ -132,7 +143,7 @@ public class BotListener extends ListenerAdapter {
         try {
             event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> event.getGuild().getTextChannels().get(0).createInvite().queue((invite -> priv.sendMessage("https://discord.gg/invite/" + invite.getCode()).queue()))));
         } catch (InsufficientPermissionException e) {
-            event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName()+ ", Member count: " + event.getGuild().getMembers().size()).queue()));
+            event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
         }
         Connection conn;
         try {
