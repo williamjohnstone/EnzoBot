@@ -19,7 +19,7 @@ public class Config {
     public static Color GBot_Blue = new Color(51, 102, 153);
     public static String config_file;
     public static Boolean dev_mode = false;
-    public static String dev_bot_channel = "391558952757886978";
+    public static String dev_bot_channel = "431463562393944064";
 
     public void loadConfig() {
         try {
