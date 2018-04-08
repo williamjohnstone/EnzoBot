@@ -41,7 +41,7 @@ public class botInfoCommand implements Command {
         builder.setTitle("Bot Info");
         builder.setColor(Config.GBot_Blue);
         builder.setThumbnail(Config.EmbedGbotLogo);
-        builder.addField("Username", event.getGuild().getSelfMember().getEffectiveName(), true);
+        builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
         builder.addField("Commands", String.valueOf(Main.cmdlist.size() + MusicMaps.musicCmds.size()), true);
         builder.addField("Server Count", String.valueOf(event.getJDA().getGuildCache().size()), true);
