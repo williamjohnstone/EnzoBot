@@ -23,10 +23,12 @@ public class BotListener extends ListenerAdapter {
     private final HelpCommand help = new HelpCommand();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public Command getCommand(String alias) {
+    public Command getCommand(String alias, String BotPrefix, GuildMessageReceivedEvent event) {
         for (Command command : Main.cmdlist) {
             if (command.getAlias().equals(alias)) {
-                return command;
+                if (event.getMessage().getContentRaw().equals(BotPrefix + alias)) {
+                    return command;
+                }
             }
         }
         return null;
@@ -56,9 +58,9 @@ public class BotListener extends ListenerAdapter {
         msgLogger logMsg = new msgLogger();
         String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
         String admin = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        logMsg.log(event);
-
         String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
+        logMsg.log(event, BotPrefix);
+
         boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
         boolean notBot = !event.getMessage().getAuthor().isBot();
         boolean notMusic = !event.getMessage().getContentRaw().startsWith(BotPrefix + "m");
@@ -66,7 +68,7 @@ public class BotListener extends ListenerAdapter {
         if (startsWithPrefix && notBot && notMusic) {
 
             String args[] = event.getMessage().getContentRaw().split(" +");
-            Command cmd = getCommand(args[0].toLowerCase().replace(BotPrefix, ""));
+            Command cmd = getCommand(args[0].toLowerCase().replace(BotPrefix, ""), BotPrefix, event);
             String msg = event.getMessage().getContentRaw().toLowerCase();
 
             if (cmd != null) {
@@ -106,7 +108,7 @@ public class BotListener extends ListenerAdapter {
                         return;
                     }
                 } else {
-                    Command Help_cmd = getCommand(args[1].toLowerCase());
+                    Command Help_cmd = getCommand(args[1].toLowerCase(), BotPrefix, event);
                     if (Help_cmd != null)
                         try {
                             help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
@@ -117,28 +119,6 @@ public class BotListener extends ListenerAdapter {
             }
         }
     }
-
-
-
-
-    /*@Override
-    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        VoiceChannel chan;
-        chan = event.getChannelLeft();
-        Guild guild = event.getGuild();
-        List<Member> memList = chan.getMembers();
-        if (memList.stream().allMatch(guild.getSelfMember()::equals)) {
-            PlayerControl plyer = new PlayerControl();
-            GuildMusicManager mng = plyer.getMusicManager(event.getGuild());
-            AudioPlayer player = mng.player;
-            TrackScheduler scheduler = mng.scheduler;
-            scheduler.queue.clear();
-            player.stopTrack();
-            player.setPaused(false);
-            guild.getAudioManager().setSendingHandler(null);
-            guild.getAudioManager().closeAudioConnection();
-        }
-    }*/
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {

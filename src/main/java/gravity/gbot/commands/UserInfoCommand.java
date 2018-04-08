@@ -88,7 +88,8 @@ public class UserInfoCommand implements Command {
     private static String getOrder(GuildMessageReceivedEvent event, User u) {
         StringBuilder joinOrder = new StringBuilder();
         List<Member> joins = event.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate)).collect(Collectors.toList());
-        int index = joins.indexOf(u);
+        Member m = event.getGuild().getMember(u);
+        int index = joins.indexOf(m);
         index -= 3;
         if (index < 0)
             index = 0;
