@@ -61,6 +61,10 @@ public class Main {
             cmdlist.add(new botInfoCommand());
             cmdlist.add(new UserInfoCommand());
             cmdlist.add(new GuildInfoCommand());
+            //cmdlist.add(new testKick());
+            cmdlist.add(new ShutdownCommand());
+            cmdlist.add(new UpdateCommand());
+            cmdlist.add(new RestartCommand());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,7 @@
 <configuration>
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
+            <level>ERROR</level>
         </filter>
     </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

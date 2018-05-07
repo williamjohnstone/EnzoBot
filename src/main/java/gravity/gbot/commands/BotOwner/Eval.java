@@ -47,11 +47,6 @@ public class Eval implements Command {
     }
 
 
-
-
-
-
-
     @Override
     public String cmdUsage() {
         return "Eval (Java/Groovy Code)";

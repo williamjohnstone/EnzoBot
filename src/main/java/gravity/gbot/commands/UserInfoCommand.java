@@ -16,7 +16,7 @@ public class UserInfoCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         Member member;
-        if (event.getMessage().getMentionedMembers().get(0) != null) {
+        if (event.getMessage().getMentionedMembers().size() != 0) {
             member = event.getMessage().getMentionedMembers().get(0);
         } else {
             member = event.getGuild().getMember(event.getAuthor());
