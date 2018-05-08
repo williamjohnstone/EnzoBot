@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'gravity.bot'
-version = "3.21.3_${getGitHashShort()}"
+version = "3.22.0_${getGitHashShort()}"
 
 mainClassName = 'gravity.gbot.Main'
 
