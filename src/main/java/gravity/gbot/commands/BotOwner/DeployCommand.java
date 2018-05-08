@@ -2,6 +2,7 @@ package gravity.gbot.commands.BotOwner;
 
 import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
+import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -10,6 +11,9 @@ import java.awt.*;
 public class DeployCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
+        if (!Config.dev_mode) {
+            return;
+        }
         if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
