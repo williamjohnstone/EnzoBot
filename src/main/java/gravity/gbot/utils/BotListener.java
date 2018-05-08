@@ -66,27 +66,27 @@ public class BotListener extends ListenerAdapter {
         if (startsWithPrefix && notBot && notMusic) {
 
             String msg = event.getMessage().getContentRaw().toLowerCase();
-            String args[] = event.getMessage().getContentRaw().split(" +");
-            if(msg.startsWith(BotPrefix)) {
-                msg = msg.substring(BotPrefix.length());
+            String msg1 = event.getMessage().getContentRaw().toLowerCase();
+            String args[] = event.getMessage().getContentRaw().split("\\s+");
+            if (msg1.startsWith(BotPrefix)) {
+                msg1 = msg1.substring(BotPrefix.length());
             }
-            String[] parts = msg.split(" +");
+            String[] parts = msg1.split("\\s+");
             String commandName = parts[0];
             Command cmd = getCommand(commandName);
-
 
             if (cmd != null) {
                 if (channelBot != null) {
                     if (!channelBot.equals(event.getChannel().getId())) {
                         if (admin == null) {
                             event.getMessage().delete().queue();
-                            event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg1 ->
+                            event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
                             {
                                 Timer timer = new Timer();
                                 timer.schedule(new TimerTask() {
                                     @Override
                                     public void run() {
-                                        msg1.delete().queue();
+                                        msg2.delete().queue();
                                     }
                                 }, 5000);
                             }));

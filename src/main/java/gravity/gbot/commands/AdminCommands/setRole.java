@@ -20,7 +20,7 @@ public class setRole implements Command {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
-        if (event.getChannelType() == ChannelType.PRIVATE | event.getChannelType() == ChannelType.GROUP) {
+        if (event.getChannel().getType() == ChannelType.PRIVATE | event.getChannel().getType() == ChannelType.GROUP) {
             event.getChannel().sendMessage("Sorry this is *Guild Only* Command").queue();
             return;
         }
