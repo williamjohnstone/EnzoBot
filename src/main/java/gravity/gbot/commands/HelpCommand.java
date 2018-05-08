@@ -106,7 +106,7 @@ public class HelpCommand implements Command {
             builder.setTitle(bot_prefix + alias)
                     .setDescription(desc)
                     .setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl())
-                    .setColor(Color.GREEN)
+                    .setColor(Config.GBot_Blue)
                     .addField("Usage:", bot_prefix + "Help or " + bot_prefix + "help (command)", true)
                     .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
             if (event.getChannel().getType() == ChannelType.PRIVATE) {
