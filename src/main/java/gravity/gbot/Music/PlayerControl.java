@@ -327,6 +327,7 @@ public class PlayerControl extends ListenerAdapter {
             builder.setTitle("Info");
             builder.setColor(Color.white);
             builder.setDescription("Player is: " + (scheduler.isRepeating() ? "repeating" : "not repeating"));
+            event.getChannel().sendMessage(builder.build()).queue();
         } else if ("reset".equals(command[1].toLowerCase())) {
             synchronized (musicManagers) {
                 scheduler.queue.clear();
