@@ -20,6 +20,7 @@ public class MusicMaps {
         musicCmds.add("nowplaying|Displays the currently playing track.|nowplaying or np");
         musicCmds.add("queue|Displays the player queue.|queue or q");
         musicCmds.add("shuffle|Shuffles the player.|shuffle");
+        musicCmds.add("loop|Loops the currently playing track.|loop");
     }
 
 }

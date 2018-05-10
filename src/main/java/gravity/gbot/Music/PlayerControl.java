@@ -68,6 +68,17 @@ public class PlayerControl extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (Config.dev_mode) {
+            if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                return;
+            }
+        } else {
+            if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
+                if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                    return;
+                }
+            }
+        }
 
         GuildConfig config = new GuildConfig();
 
@@ -292,7 +303,7 @@ public class PlayerControl extends ListenerAdapter {
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
-        } else if ("restart".equals(command[1].toLowerCase())) {
+        } else if ("restart".equals(command[1].toLowerCase()) | "replay".equals(command[1].toLowerCase()) ) {
             AudioTrack track = player.getPlayingTrack();
             if (track == null)
                 track = scheduler.lastTrack;
@@ -310,6 +321,12 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setDescription("No track has been previously started, so the player cannot replay a track!");
                 event.getChannel().sendMessage(builder.build()).queue();
             }
+        } else if ("repeat".equals(command[1].toLowerCase()) | "loop".equals(command[1].toLowerCase())) {
+            scheduler.setRepeating(!scheduler.isRepeating());
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Info");
+            builder.setColor(Color.white);
+            builder.setDescription("Player is: " + (scheduler.isRepeating() ? "repeating" : "not repeating"));
         } else if ("reset".equals(command[1].toLowerCase())) {
             synchronized (musicManagers) {
                 scheduler.queue.clear();
