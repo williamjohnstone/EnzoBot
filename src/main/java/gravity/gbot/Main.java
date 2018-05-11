@@ -17,12 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.sentry.Sentry;
+import net.dv8tion.jda.core.exceptions.ErrorResponseException;
+import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.utils.JDALogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
     public static List<Command> cmdlist = new ArrayList<>();
+    private static Logger logger = LoggerFactory.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
+        RestAction.DEFAULT_FAILURE = t ->
+        {
+            Logger LOG = JDALogger.getLog(RestAction.class);
+            if (t instanceof ErrorResponseException && ((ErrorResponseException) t).getErrorCode() != 10008) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.error("RestAction queue returned failure", t);
+                } else {
+                    LOG.error("RestAction queue returned failure: [{}] {}", t.getClass().getSimpleName(), t.getMessage());
+                }
+            }
+        };
+
+
         if (args.length > 0) {
             if (args[0].equals("--dev")) {
                 Config.dev_mode = true;

@@ -48,7 +48,7 @@ public class PlayerControl extends ListenerAdapter {
     private final AudioPlayerManager playerManager;
     private final Map<String, GuildMusicManager> musicManagers;
     private final EventAwaiter waiter = new EventAwaiter();
-    public List<Member> hasVoted = new ArrayList<>();
+    List<Member> hasVoted = new ArrayList<>();
     private static final Pattern timeRegex = Pattern.compile("^([0-9]*):?([0-9]*)?:?([0-9]*)?$");
 
     public PlayerControl() {
@@ -69,7 +69,7 @@ public class PlayerControl extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (Config.dev_mode) {
-            if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+            if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.dev_bot_channel)) {
                 return;
             }
         } else {

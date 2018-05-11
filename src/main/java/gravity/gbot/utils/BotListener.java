@@ -112,13 +112,15 @@ public class BotListener extends ListenerAdapter {
                         return;
                     }
                 } else {
-                    Command Help_cmd = getCommand(args[1].toLowerCase());
-                    if (Help_cmd != null)
-                        try {
-                            help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
-                        } catch (InsufficientPermissionException e) {
-                            return;
-                        }
+                    if (args.length == 2) {
+                        Command Help_cmd = getCommand(args[1].toLowerCase());
+                        if (Help_cmd != null)
+                            try {
+                                help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
+                            } catch (InsufficientPermissionException e) {
+                                return;
+                            }
+                    }
                 }
             }
         }
