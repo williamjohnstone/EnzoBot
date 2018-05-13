@@ -85,6 +85,7 @@ public class Main {
             cmdlist.add(new UpdateCommand());
             cmdlist.add(new RestartCommand());
             cmdlist.add(new DeployCommand());
+            cmdlist.add(new QuoteCommand());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }

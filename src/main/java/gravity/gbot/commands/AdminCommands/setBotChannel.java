@@ -28,7 +28,18 @@ public class setBotChannel implements Command {
         }
         String channel = "0";
         if (args.length == 2) {
-            channel = event.getMessage().getMentionedChannels().get(0).getId();
+            if (args[1].equals("off")) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Bot Channel Removed");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("Success");
+                event.getChannel().sendMessage(builder.build()).queue();
+                channel = "0";
+            } else {
+                channel = event.getMessage().getMentionedChannels().get(0).getId();
+            }
+        } else if (args.length == 1) {
+            channel = event.getMessage().getChannel().getId();
         }
         Connection conn;
 
@@ -70,7 +81,7 @@ public class setBotChannel implements Command {
 
     @Override
     public String cmdUsage() {
-        return "setBotChat (#Channel) or setBotChat without any arguments to disable bot channel.";
+        return "'setBotChat (#Channel)' or 'setBotChat off' to disable bot channel.";
     }
 
     @Override

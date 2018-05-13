@@ -5,6 +5,7 @@ import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.Music.MusicMaps;
+import gravity.gbot.Music.PlayerControl;
 import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
@@ -23,6 +24,7 @@ public class botInfoCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
+        PlayerControl player = new PlayerControl();
 
         String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
                 " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
@@ -50,6 +52,7 @@ public class botInfoCommand implements Command {
         builder.addField("OS", OS, true);
         builder.addField("CPU Usage", cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)" + "\n", false);
         builder.addField("RAM Usage", ram0 + "MB/" + ram1 + "MB" + "\n", false);
+        builder.addField("Audio Connections", String.valueOf(player.getActiveConnections(event)), false);
         builder.addField("Language & Library versions", "**Coded in: ** Java (version " + System.getProperty("java.version") + ")" + "\n" + "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version: **" + PlayerLibrary.VERSION + "\n", false);
         builder.addField("Latest Github Commit", "[" + BuildConfig.ghCommitShort + "](https://github.com/GravityGamer/GravityBot/commit/" + BuildConfig.ghCommit + ")", true);
         builder.addField("Uptime", getUptime(), true);

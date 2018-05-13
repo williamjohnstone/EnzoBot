@@ -22,9 +22,11 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.managers.AudioManager;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -68,6 +70,11 @@ public class PlayerControl extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        Guild guild = event.getGuild();
+        GuildConfig config = new GuildConfig();
+        String adminCheck = config.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
+        String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+
         if (Config.dev_mode) {
             if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.dev_bot_channel)) {
                 return;
@@ -80,10 +87,7 @@ public class PlayerControl extends ListenerAdapter {
             }
         }
 
-        GuildConfig config = new GuildConfig();
-
         final String musicAlias = "m";
-
 
         if (!event.isFromType(ChannelType.TEXT))
             return;
@@ -98,7 +102,25 @@ public class PlayerControl extends ListenerAdapter {
             }
         }
 
-        Guild guild = event.getGuild();
+        if (channelBot != null) {
+            if (!channelBot.equals(event.getChannel().getId())) {
+                if (adminCheck == null) {
+                    event.getMessage().delete().queue();
+                    event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
+                    {
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                msg2.delete().queue();
+                            }
+                        }, 5000);
+                    }));
+                    return;
+                }
+            }
+        }
+
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
         TrackScheduler scheduler = mng.scheduler;
@@ -164,18 +186,24 @@ public class PlayerControl extends ListenerAdapter {
                                         searchId(3, results, type),
                                         searchId(4, results, type),
                                         e.getMessageId(), event.getGuild(), type),
-                                1, TimeUnit.MINUTES, () -> msg.delete().queue());
+                                30, TimeUnit.SECONDS, () -> msg.delete().queue());
                         msg.addReaction("\u0031\u20E3").queue();
                         msg.addReaction("\u0032\u20E3").queue();
                         msg.addReaction("\u0033\u20E3").queue();
                         msg.addReaction("\u0034\u20E3").queue();
                         msg.addReaction("\u0035\u20E3").queue();
                     }));
-
-
                 }
             }
         } else if ("leave".equals(command[1].toLowerCase())) {
+            if (player.getPlayingTrack() == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("Cannot leave voice channel when a song is currently playing.");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
             guild.getAudioManager().setSendingHandler(null);
             guild.getAudioManager().closeAudioConnection();
             hasVoted = new ArrayList<>();
@@ -199,7 +227,14 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         } else if ("skip".equals(command[1].toLowerCase())) {
-            String adminCheck = config.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
+            if (player.getPlayingTrack() == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("No Track is currently playing.");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
             if (adminCheck == null) {
                 List<Member> vcMembers = event.getMember().getVoiceState().getChannel().getMembers();
                 //take one due to the bot being in there as well
@@ -253,7 +288,6 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
                 return;
             }
-
             player.setPaused(!player.isPaused());
             if (player.isPaused()) {
                 EmbedBuilder builder = new EmbedBuilder();
@@ -269,6 +303,13 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         } else if ("stop".equals(command[1].toLowerCase())) {
+            if (adminCheck == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("You do not have the permission to do that!");
+                return;
+            }
             scheduler.queue.clear();
             hasVoted = new ArrayList<>();
             player.stopTrack();
@@ -329,13 +370,19 @@ public class PlayerControl extends ListenerAdapter {
             builder.setDescription("Player is: " + (scheduler.isRepeating() ? "repeating" : "not repeating"));
             event.getChannel().sendMessage(builder.build()).queue();
         } else if ("reset".equals(command[1].toLowerCase())) {
+            if (adminCheck == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("You do not have the permission to do that!");
+                return;
+            }
             synchronized (musicManagers) {
                 scheduler.queue.clear();
                 player.destroy();
                 guild.getAudioManager().setSendingHandler(null);
                 musicManagers.remove(guild.getId());
             }
-
             hasVoted = new ArrayList<>();
             mng = getMusicManager(guild);
             guild.getAudioManager().setSendingHandler(mng.sendHandler);
@@ -344,7 +391,6 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription("The player has been completely reset!");
             event.getChannel().sendMessage(builder.build()).queue();
-
         } else if ("nowplaying".equals(command[1].toLowerCase()) || "np".equals(command[1].toLowerCase())) {
             AudioTrack currentTrack = player.getPlayingTrack();
             if (currentTrack != null) {
@@ -431,7 +477,6 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
                 return;
             }
-
             scheduler.shuffle();
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Info");
@@ -487,6 +532,16 @@ public class PlayerControl extends ListenerAdapter {
             }
 
         }
+    }
+
+    public int getActiveConnections(GuildMessageReceivedEvent event) {
+        int activeCnt = 0;
+        for (AudioManager mng : event.getJDA().getAudioManagerCache()) {
+            if (mng.isConnected()) {
+                activeCnt++;
+            }
+        }
+        return activeCnt;
     }
 
     private String getProgressBar(Long current, Long total) {
