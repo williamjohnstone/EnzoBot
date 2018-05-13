@@ -196,7 +196,7 @@ public class PlayerControl extends ListenerAdapter {
                 }
             }
         } else if ("leave".equals(command[1].toLowerCase())) {
-            if (player.getPlayingTrack() == null) {
+            if (player.getPlayingTrack() != null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
