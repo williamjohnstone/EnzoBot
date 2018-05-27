@@ -35,7 +35,7 @@ buildConfig {
     buildConfigField("String", "ownerId", "205056315351891969")
     buildConfigField("String", "ghCommit", "${getGitHash()}")
     buildConfigField("String", "ghCommitShort", "${getGitHashShort()}")
-    packageName = project.group
+    packageName = 'gravity.gbot'
     charset = 'UTF-8'
     clsName = 'BuildConfig'
 }
