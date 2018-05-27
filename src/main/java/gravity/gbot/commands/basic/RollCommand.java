@@ -5,6 +5,8 @@ import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.concurrent.TimeUnit;
+
 public class RollCommand implements Command {
 
     @Override
@@ -22,17 +24,12 @@ public class RollCommand implements Command {
             event.getChannel().sendTyping().queue();
 
             outcome = (int) (Math.random() * max + 1);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                return;
-            }
 
             EmbedBuilder result = new EmbedBuilder();
             result.setColor(Config.GBot_Blue);
             result.setTitle("Success");
             result.setDescription("Your number is " + outcome + "!");
-            event.getChannel().sendMessage(result.build()).queue();
+            event.getChannel().sendMessage(result.build()).queueAfter(2, TimeUnit.SECONDS);
 
         } else {
             EmbedBuilder error = new EmbedBuilder();
