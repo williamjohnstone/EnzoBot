@@ -22,6 +22,11 @@ public class RollCommand implements Command {
             event.getChannel().sendTyping().queue();
 
             outcome = (int) (Math.random() * max + 1);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                return;
+            }
 
             EmbedBuilder result = new EmbedBuilder();
             result.setColor(Config.GBot_Blue);
@@ -40,7 +45,7 @@ public class RollCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Roll (Maximum Number)";
+        return "roll (Maximum Number)";
     }
 
     @Override

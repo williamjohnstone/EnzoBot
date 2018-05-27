@@ -16,7 +16,7 @@ public class PingCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Ping";
+        return "ping";
     }
 
     @Override

@@ -49,7 +49,7 @@ public class Eval implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Eval (Java/Groovy Code)";
+        return "eval (Java/Groovy Code)";
     }
 
     @Override

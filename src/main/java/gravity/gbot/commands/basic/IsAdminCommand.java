@@ -20,7 +20,7 @@ public class IsAdminCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "IsAdminCommand (user)";
+        return "isAdminCommand (user)";
     }
 
     @Override

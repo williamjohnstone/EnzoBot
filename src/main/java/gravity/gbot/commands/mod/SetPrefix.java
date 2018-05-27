@@ -29,22 +29,15 @@ public class SetPrefix implements Command {
             return;
         }
         Connection conn;
-
         try {
-
-
             conn =
                     DriverManager.getConnection(Config.dbConnection);
-
             Statement stmt;
-
             stmt = conn.createStatement();
             if (event.getMessage().getContentRaw().replace(args[0] + " ", "").contains(" ")) {
                 event.getChannel().sendMessage("Error guild prefix CANNOT contain a space!").queue();
             }
             stmt.executeUpdate("UPDATE `Config` SET `Prefix` = '" + args[1] + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
-
-
 
         } catch (SQLException ex) {
             // handle any errors
@@ -65,7 +58,7 @@ public class SetPrefix implements Command {
 
     @Override
     public String cmdUsage() {
-        return "SetPrefix (Prefix)";
+        return "setPrefix (Prefix)";
     }
 
     @Override

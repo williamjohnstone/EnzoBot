@@ -25,7 +25,7 @@ public class ShutdownCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Shutdown";
+        return "shutdown";
     }
 
     @Override

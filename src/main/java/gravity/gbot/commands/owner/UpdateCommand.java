@@ -29,7 +29,7 @@ public class UpdateCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Update";
+        return "update";
     }
 
     @Override

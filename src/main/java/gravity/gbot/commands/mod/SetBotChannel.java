@@ -81,7 +81,7 @@ public class SetBotChannel implements Command {
 
     @Override
     public String cmdUsage() {
-        return "'setBotChat (#Channel)' or 'setBotChat off' to disable bot channel.";
+        return "setBotChat (#Channel) or 'setBotChat off' to disable bot channel.";
     }
 
     @Override

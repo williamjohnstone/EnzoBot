@@ -30,7 +30,7 @@ public class HelpCommand implements Command {
         builder1.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder2 = new EmbedBuilder();
-        builder2.setTitle("music Commands");
+        builder2.setTitle("Music Commands");
         builder2.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder3 = new EmbedBuilder();
@@ -133,7 +133,7 @@ public class HelpCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Help or help (command)";
+        return "help or help (command)";
     }
 
     @Override

@@ -25,7 +25,7 @@ public class RestartCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Restart";
+        return "restart";
     }
 
     @Override

@@ -29,7 +29,7 @@ public class SetNick implements Command {
 
     @Override
     public String cmdUsage() {
-        return "SetNick (Nickname)";
+        return "setNick (Nickname)";
     }
 
     @Override

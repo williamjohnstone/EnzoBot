@@ -29,7 +29,7 @@ public class DeployCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Deploy";
+        return "deploy";
     }
 
     @Override

@@ -11,7 +11,7 @@ public class QuoteCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        event.getChannel().getMessageById(args[1]).queue(success -> msg = success, failure -> msg = null);
+        event.getChannel().getMessageById(args[1]).queue(success -> msg = success);
         if (msg != null) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(event.getGuild().getMember(msg.getAuthor()).getColor());
@@ -27,7 +27,7 @@ public class QuoteCommand implements Command {
 
     @Override
     public String cmdUsage() {
-        return "Quote (MessageID)";
+        return "quote (MessageID)";
     }
 
     @Override

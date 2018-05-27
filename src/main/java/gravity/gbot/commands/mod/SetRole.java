@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.exceptions.HierarchyException;
 
 public class SetRole implements Command {
 
-    private final String USAGE = "SetRole (@member) (@role)";
+    private final String USAGE = "setRole (@member) (@role)";
 
     private GuildConfig config = new GuildConfig();
 
