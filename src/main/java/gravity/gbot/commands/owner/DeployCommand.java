@@ -1,6 +1,6 @@
 package gravity.gbot.commands.owner;
 
-import gravity.bot.BuildConfig;
+import gravity.gbot.BuildConfig;
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;

@@ -5,6 +5,7 @@ import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.OptionalInt;
 import java.util.concurrent.TimeUnit;
 
 public class RollCommand implements Command {
@@ -12,7 +13,17 @@ public class RollCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (args.length == 2) {
-            int max = Integer.parseInt(args[1]);
+            int max;
+            try {
+                max = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                EmbedBuilder error = new EmbedBuilder();
+                error.setTitle("Error");
+                error.setDescription("Invalid command usage!");
+                error.setColor(Config.GBot_Blue);
+                event.getChannel().sendMessage(error.build()).queue();
+                return;
+            }
 
             int outcome;
 

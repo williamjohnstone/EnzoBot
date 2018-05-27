@@ -1,7 +1,7 @@
 package gravity.gbot.commands.basic;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
-import gravity.bot.BuildConfig;
+import gravity.gbot.BuildConfig;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.music.MusicMaps;
