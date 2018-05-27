@@ -41,7 +41,6 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        System.out.println(event.getMessage().getContentRaw());
         if (Config.dev_mode) {
             if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
                 return;
