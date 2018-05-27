@@ -16,7 +16,7 @@ import java.sql.Statement;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class statsUpdater {
+public class StatsUpdater {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 

@@ -1,4 +1,4 @@
-package gravity.gbot.commands.BotOwner;
+package gravity.gbot.commands.owner;
 
 import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
@@ -8,10 +8,10 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
 
-public class UpdateCommand implements Command {
+public class DeployCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!Config.dev_mode) {
+        if (Config.dev_mode) {
             return;
         }
         if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
@@ -20,26 +20,26 @@ public class UpdateCommand implements Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Updating Gbot.");
+            builder.setDescription("Deploying Gbot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
-            System.exit(0x89);
+            System.exit(0x29);
         }
     }
 
     @Override
     public String cmdUsage() {
-        return "Update";
+        return "Deploy";
     }
 
     @Override
     public String cmdDesc() {
-        return "Updates Gbot";
+        return "Deploys test bot version to production";
     }
 
     @Override
     public String getAlias() {
-        return "update";
+        return "deploy";
     }
 
     @Override

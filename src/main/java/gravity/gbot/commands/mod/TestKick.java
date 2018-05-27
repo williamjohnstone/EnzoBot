@@ -1,4 +1,4 @@
-package gravity.gbot.commands.AdminCommands;
+package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class testKick  implements Command {
+public class TestKick implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 

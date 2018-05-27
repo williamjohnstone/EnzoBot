@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'gravity.bot'
-version = "3.27.1_${getGitHashShort()}"
+version = "3.29.0_${getGitHashShort()}"
 
 mainClassName = 'gravity.gbot.Main'
 
@@ -42,7 +42,7 @@ buildConfig {
 
 dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.8'
-    compile group: 'net.dv8tion', name: 'JDA', version:'3.6.0_362'
+    compile group: 'net.dv8tion', name: 'JDA', version:'3.6.0_367'
     compile group: 'com.google.apis', name: 'google-api-services-customsearch', version:'v1-rev55-1.22.0'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'LATEST'
     compile group: 'com.mashape.unirest', name: 'unirest-java', version:'1.4.9'

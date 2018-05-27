@@ -1,24 +1,23 @@
-package gravity.gbot.commands;
+package gravity.gbot.commands.basic;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
-import gravity.gbot.Music.MusicMaps;
-import gravity.gbot.Music.PlayerControl;
+import gravity.gbot.music.MusicMaps;
+import gravity.gbot.music.PlayerControl;
 import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-import java.awt.*;
 import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
 
-public class botInfoCommand implements Command {
+public class BotInfoCommand implements Command {
 
     private int userCnt = 0;
 

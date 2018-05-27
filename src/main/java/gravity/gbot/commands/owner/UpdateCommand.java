@@ -1,41 +1,45 @@
-package gravity.gbot.commands.BotOwner;
+package gravity.gbot.commands.owner;
 
 import gravity.bot.BuildConfig;
 import gravity.gbot.Command;
+import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
 
-public class RestartCommand implements Command {
+public class UpdateCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
+        if (!Config.dev_mode) {
+            return;
+        }
         if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Restarting Gbot.");
+            builder.setDescription("Updating Gbot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
-            System.exit(0x44);
+            System.exit(0x89);
         }
     }
 
     @Override
     public String cmdUsage() {
-        return "Restart";
+        return "Update";
     }
 
     @Override
     public String cmdDesc() {
-        return "Restarts Gbot";
+        return "Updates Gbot";
     }
 
     @Override
     public String getAlias() {
-        return "restart";
+        return "update";
     }
 
     @Override

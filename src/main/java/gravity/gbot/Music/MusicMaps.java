@@ -1,4 +1,4 @@
-package gravity.gbot.Music;
+package gravity.gbot.music;
 
 import java.util.ArrayList;
 import java.util.List;

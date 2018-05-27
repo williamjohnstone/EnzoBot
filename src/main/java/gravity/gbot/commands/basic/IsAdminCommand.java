@@ -1,10 +1,10 @@
-package gravity.gbot.commands;
+package gravity.gbot.commands.basic;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class isAdmin implements Command {
+public class IsAdminCommand implements Command {
 
     private GuildConfig config = new GuildConfig();
 
@@ -20,7 +20,7 @@ public class isAdmin implements Command {
 
     @Override
     public String cmdUsage() {
-        return "isAdmin (user)";
+        return "IsAdminCommand (user)";
     }
 
     @Override

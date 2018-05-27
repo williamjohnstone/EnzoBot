@@ -1,4 +1,4 @@
-package gravity.gbot.commands.AdminCommands;
+package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
@@ -15,7 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class setPrefix implements Command {
+public class SetPrefix implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -65,7 +65,7 @@ public class setPrefix implements Command {
 
     @Override
     public String cmdUsage() {
-        return "setPrefix (Prefix)";
+        return "SetPrefix (Prefix)";
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gravity.gbot.commands.AdminCommands;
+package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.GuildConfig;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.*;
 
 
-public class setNick implements Command {
+public class SetNick implements Command {
 
     private GuildConfig config = new GuildConfig();
 
@@ -29,7 +29,7 @@ public class setNick implements Command {
 
     @Override
     public String cmdUsage() {
-        return "setNick (Nickname)";
+        return "SetNick (Nickname)";
     }
 
     @Override

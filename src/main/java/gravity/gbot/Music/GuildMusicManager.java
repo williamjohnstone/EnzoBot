@@ -1,4 +1,4 @@
-package gravity.gbot.Music;
+package gravity.gbot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -14,7 +14,7 @@ public class GuildMusicManager {
     /**
      * Track scheduler for the player.
      */
-    public final gravity.gbot.Music.TrackScheduler scheduler;
+    public final gravity.gbot.music.TrackScheduler scheduler;
     /**
      * Wrapper around AudioPlayer to use it as an AudioSendHandler.
      */
@@ -27,7 +27,7 @@ public class GuildMusicManager {
     GuildMusicManager(AudioPlayerManager manager)
     {
         player = manager.createPlayer();
-        scheduler = new gravity.gbot.Music.TrackScheduler(player);
+        scheduler = new gravity.gbot.music.TrackScheduler(player);
         sendHandler = new AudioPlayerSendHandler(player);
         player.addListener(scheduler);
     }

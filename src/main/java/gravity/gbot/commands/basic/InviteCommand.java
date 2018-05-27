@@ -1,11 +1,11 @@
-package gravity.gbot.commands;
+package gravity.gbot.commands.basic;
 
 import gravity.gbot.Command;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
-public class inviteCommand implements Command{
+public class InviteCommand implements Command{
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {

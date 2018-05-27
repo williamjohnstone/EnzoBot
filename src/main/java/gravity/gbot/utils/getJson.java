@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 
-public class getJson {
+public class GetJson {
     public static String getLink(String getUrl) {
         try {
             HttpsURLConnection conn = (HttpsURLConnection) new URL(getUrl).openConnection();

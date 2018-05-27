@@ -1,16 +1,14 @@
-package gravity.gbot.commands;
+package gravity.gbot.commands.basic;
 
 import gravity.gbot.Command;
 import gravity.gbot.Main;
-import gravity.gbot.Music.MusicMaps;
+import gravity.gbot.music.MusicMaps;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
-
-import java.awt.*;
 
 public class HelpCommand implements Command {
 
@@ -32,7 +30,7 @@ public class HelpCommand implements Command {
         builder1.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder2 = new EmbedBuilder();
-        builder2.setTitle("Music Commands");
+        builder2.setTitle("music Commands");
         builder2.setColor(Config.GBot_Blue);
 
         EmbedBuilder builder3 = new EmbedBuilder();

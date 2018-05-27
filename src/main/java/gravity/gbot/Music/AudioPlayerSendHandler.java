@@ -1,4 +1,4 @@
-package gravity.gbot.Music;
+package gravity.gbot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;

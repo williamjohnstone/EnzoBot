@@ -1,4 +1,4 @@
-package gravity.gbot.commands.AdminCommands;
+package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
@@ -12,11 +12,10 @@ import org.slf4j.MDC;
 import java.awt.*;
 import java.sql.*;
 
-public class removeBotAdmin implements Command {
+public class AddBotAdmin implements Command {
 
-    private GuildConfig config = new GuildConfig();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
+    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -58,10 +57,7 @@ public class removeBotAdmin implements Command {
                 }
 
                 stmt1 = conn1.createStatement();
-                if (currentAdmins == null) {
-                    return;
-                }
-                stmt1.executeUpdate("UPDATE `Config` SET `bot_Admins` = '" + currentAdmins.replace("," + mentionToID, "") + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
+                stmt1.executeUpdate("UPDATE `Config` SET `bot_Admins` = '" + currentAdmins + "," + mentionToID + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
 
 
 
@@ -78,7 +74,7 @@ public class removeBotAdmin implements Command {
             }
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Bot Admin Removed");
+            builder.setTitle("Bot Admin Added");
             builder.setColor(Color.WHITE);
             builder.setDescription("Success");
             event.getChannel().sendMessage(builder.build()).queue();
@@ -94,21 +90,22 @@ public class removeBotAdmin implements Command {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
     public String cmdUsage() {
-        return "rmAdmin @member";
+        return "addAdmin @member";
     }
 
     @Override
     public String cmdDesc() {
-        return "Removes a member from the list of bot admins for the guild.";
+        return "Adds a member to the list of bot admins for the guild.";
     }
 
     @Override
     public String getAlias() {
-        return "rmadmin";
+        return "addadmin";
     }
 
     @Override

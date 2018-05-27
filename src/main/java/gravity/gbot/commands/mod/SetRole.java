@@ -1,4 +1,4 @@
-package gravity.gbot.commands.AdminCommands;
+package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.GuildConfig;
@@ -7,9 +7,9 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 
-public class setRole implements Command {
+public class SetRole implements Command {
 
-    private final String USAGE = "setRole (@member) (@role)";
+    private final String USAGE = "SetRole (@member) (@role)";
 
     private GuildConfig config = new GuildConfig();
 

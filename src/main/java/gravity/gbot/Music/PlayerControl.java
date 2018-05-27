@@ -1,4 +1,4 @@
-package gravity.gbot.Music;
+package gravity.gbot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -17,11 +17,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.EventAwaiter;
 import gravity.gbot.utils.GuildConfig;
-import gravity.gbot.utils.getJson;
+import gravity.gbot.utils.GetJson;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
@@ -69,7 +68,7 @@ public class PlayerControl extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
         GuildConfig config = new GuildConfig();
         String adminCheck = config.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
@@ -88,9 +87,6 @@ public class PlayerControl extends ListenerAdapter {
         }
 
         final String musicAlias = "m";
-
-        if (!event.isFromType(ChannelType.TEXT))
-            return;
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
@@ -150,10 +146,10 @@ public class PlayerControl extends ListenerAdapter {
                     String type;
                     if (sb.toString().toLowerCase().contains("playlist")) {
                         type = "playlist";
-                        link = getJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
+                        link = GetJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
                     } else {
                         type = "video";
-                        link = getJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
+                        link = GetJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
                     }
 
                     if (link == null) {
@@ -590,7 +586,7 @@ public class PlayerControl extends ListenerAdapter {
         return period.toStandardDuration().getMillis();
     }
 
-    private String join(Guild guild, MessageReceivedEvent event, GuildMusicManager mng) {
+    private String join(Guild guild, GuildMessageReceivedEvent event, GuildMusicManager mng) {
         VoiceChannel chan;
         try {
             chan = guild.getVoiceChannelById(event.getMember().getVoiceState().getChannel().getId());
@@ -628,7 +624,7 @@ public class PlayerControl extends ListenerAdapter {
         return String.valueOf(pointer.queryFrom(results));
     }
 
-    private void play(String Emoji, MessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type) {
+    private void play(String Emoji, GuildMessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type) {
         String join = join(guild, event, getMusicManager(guild));
         if (join.equals("fail")) {
             return;
@@ -665,7 +661,7 @@ public class PlayerControl extends ListenerAdapter {
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 default:
-                    event.getTextChannel().sendMessage("Invalid Selection").queue();
+                    event.getChannel().sendMessage("Invalid Selection").queue();
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
             }

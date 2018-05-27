@@ -1,4 +1,4 @@
-package gravity.gbot.commands;
+package gravity.gbot.commands.basic;
 
 import gravity.gbot.Command;
 import net.dv8tion.jda.core.EmbedBuilder;

@@ -1,4 +1,4 @@
-package gravity.gbot.commands.BotOwner;
+package gravity.gbot.commands.owner;
 
 import gravity.bot.BuildConfig;
 import gravity.gbot.Command;

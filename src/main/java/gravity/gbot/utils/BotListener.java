@@ -2,7 +2,7 @@ package gravity.gbot.utils;
 
 import gravity.gbot.Command;
 import gravity.gbot.Main;
-import gravity.gbot.commands.HelpCommand;
+import gravity.gbot.commands.basic.HelpCommand;
 import gravity.gbot.utils.Logging.msgLogger;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
@@ -34,13 +34,14 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        statsUpdater updater = new statsUpdater();
+        StatsUpdater updater = new StatsUpdater();
         logger.info("GravityBot is running! Bot should be online.");
         updater.StartupdateTimer(event);
     }
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        System.out.println(event.getMessage().getContentRaw());
         if (Config.dev_mode) {
             if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
                 return;
