@@ -19,19 +19,17 @@ public class SetPrefix implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (admincheck == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
         Connection conn;
         try {
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
+            conn = DriverManager.getConnection(Config.dbConnection);
             Statement stmt;
             stmt = conn.createStatement();
             if (event.getMessage().getContentRaw().replace(args[0] + " ", "").contains(" ")) {
@@ -57,12 +55,12 @@ public class SetPrefix implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "setPrefix (Prefix)";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Changes the Bots Prefix";
     }
 
@@ -72,7 +70,7 @@ public class SetPrefix implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

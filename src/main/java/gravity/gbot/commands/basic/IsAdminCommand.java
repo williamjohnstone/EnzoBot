@@ -6,25 +6,23 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class IsAdminCommand implements Command {
 
-    private GuildConfig config = new GuildConfig();
-
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String userTest = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (userTest == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getChannel().sendMessage("user is not in admin list").queue();
         } else {
-            event.getChannel().sendMessage("user: " + event.getGuild().getMemberById(userTest).getAsMention() + " is on the admin list!").queue();
+            event.getChannel().sendMessage("user: " + event.getGuild().getMemberById(adminCheck).getAsMention() + " is on the admin list!").queue();
         }
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "isAdminCommand (user)";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Checks whether or not the user is in the current admins list.";
     }
 
@@ -34,7 +32,7 @@ public class IsAdminCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 }

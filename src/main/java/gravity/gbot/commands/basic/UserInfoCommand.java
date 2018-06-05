@@ -21,14 +21,9 @@ public class UserInfoCommand implements Command {
         } else {
             member = event.getGuild().getMember(event.getAuthor());
         }
-        String bot;
+        boolean isBot = member.getUser().isBot();
         String time = member.getUser().getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        String joined = member.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        if (member.getUser().isBot()) {
-            bot = "Yes";
-        } else {
-            bot = "No";
-        }
+        String joinDate = member.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("User Info");
         builder.setThumbnail(member.getUser().getEffectiveAvatarUrl());
@@ -37,22 +32,22 @@ public class UserInfoCommand implements Command {
         builder.addField("Name + Discriminator", member.getUser().getName() + "#" + member.getUser().getDiscriminator(), true);
         builder.addField("Display Name", member.getEffectiveName(), true);
         builder.addField("Online Status", member.getOnlineStatus().toString(), true);
-        builder.addField("Status", gameStatus(member.getGame()), true);
+        builder.addField("Status", getGameStatus(member.getGame()), true);
         builder.addField("Account Created", time, true);
-        builder.addField("Joined Server", joined, true);
+        builder.addField("Joined Server", joinDate, true);
         builder.addField("User ID", member.getUser().getId(), true);
-        builder.addField("Bot?", bot, true);
+        builder.addField("Bot?", (isBot ? "Yes" : "No"), true);
         builder.addField("Join Order", getOrder(event, member.getUser()), true);
         event.getChannel().sendMessage(builder.build()).queue();
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "userInfo (@user)";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Displays info on specified user.";
     }
 
@@ -62,27 +57,27 @@ public class UserInfoCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 
-    private static String gameStatus(Game game) {
+    private static String getGameStatus(Game game) {
         if (game == null) return "Idle";
 
-        String Type = "Playing";
+        String type = "Playing";
         switch (game.getType().getKey()) {
             case 1:
-                Type = "Streaming";
+                type = "Streaming";
                 break;
             case 2:
-                Type = "Listening to";
+                type = "Listening to";
                 break;
             case 3:
-                Type = "Watching";
+                type = "Watching";
         }
 
         String gameName = game.getName();
-        return Type + " " + gameName;
+        return type + " " + gameName;
     }
 
     private static String getOrder(GuildMessageReceivedEvent event, User u) {

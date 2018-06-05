@@ -14,7 +14,7 @@ public class DeployCommand implements Command {
         if (Config.dev_mode) {
             return;
         }
-        if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
+        if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
             EmbedBuilder builder = new EmbedBuilder();
@@ -28,12 +28,12 @@ public class DeployCommand implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "deploy";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Deploys test bot version to production";
     }
 
@@ -43,7 +43,7 @@ public class DeployCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "owner";
     }
 }

@@ -10,7 +10,7 @@ import java.awt.*;
 public class ShutdownCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
+        if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
             EmbedBuilder builder = new EmbedBuilder();
@@ -24,12 +24,12 @@ public class ShutdownCommand implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "shutdown";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Shuts Down the Gbot";
     }
 
@@ -39,7 +39,7 @@ public class ShutdownCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "owner";
     }
 }

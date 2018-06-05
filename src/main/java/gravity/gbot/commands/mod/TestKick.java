@@ -57,12 +57,12 @@ public class TestKick implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "no usage";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "test kick";
     }
 
@@ -72,7 +72,7 @@ public class TestKick implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

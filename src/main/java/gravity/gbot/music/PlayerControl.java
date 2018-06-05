@@ -70,17 +70,16 @@ public class PlayerControl extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
-        GuildConfig config = new GuildConfig();
-        String adminCheck = config.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
-        String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
+        String channelBot = GuildConfig.isBotChannel(event.getGuild().getId(), this.getClass().getName());
 
         if (Config.dev_mode) {
-            if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.dev_bot_channel)) {
+            if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return;
             }
         } else {
             if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
-                if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                if (event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                     return;
                 }
             }
@@ -90,7 +89,7 @@ public class PlayerControl extends ListenerAdapter {
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
-        if (!command[0].toLowerCase().startsWith(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
+        if (!command[0].toLowerCase().startsWith(GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
             return;
         } else {
             if (command.length < 2) {

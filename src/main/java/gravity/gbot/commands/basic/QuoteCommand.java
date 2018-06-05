@@ -26,12 +26,12 @@ public class QuoteCommand implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "quote (MessageID)";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Quotes the supplied message.";
     }
 
@@ -41,7 +41,7 @@ public class QuoteCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 }

@@ -25,7 +25,7 @@ public class BotInfoCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         PlayerControl player = new PlayerControl();
 
-        String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
+        String os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
                 " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
                 " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
         String cpu0 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getProcessCpuLoad());
@@ -40,32 +40,32 @@ public class BotInfoCommand implements Command {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Bot Info");
-        builder.setColor(Config.GBot_Blue);
-        builder.setThumbnail(Config.EmbedGbotLogo);
+        builder.setColor(Config.GBOT_BLUE);
+        builder.setThumbnail(Config.GBOT_EMBED_LOGO);
         builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
         builder.addField("Commands", String.valueOf(Main.cmdlist.size() + MusicMaps.musicCmds.size()), true);
         builder.addField("Server Count", String.valueOf(event.getJDA().getGuildCache().size()), true);
         builder.addField("User Count", String.valueOf(userCnt), true);
         builder.addField("Version", BuildConfig.VERSION, true);
-        builder.addField("OS", OS, true);
+        builder.addField("OS", os, true);
         builder.addField("CPU Usage", cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)" + "\n", false);
         builder.addField("RAM Usage", ram0 + "MB/" + ram1 + "MB" + "\n", false);
         builder.addField("Audio Connections", String.valueOf(player.getActiveConnections(event)), false);
         builder.addField("Language & Library versions", "**Coded in: ** Java (version " + System.getProperty("java.version") + ")" + "\n" + "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version: **" + PlayerLibrary.VERSION + "\n", false);
-        builder.addField("Latest Github Commit", "[" + BuildConfig.ghCommitShort + "](https://github.com/GravityGamer/GravityBot/commit/" + BuildConfig.ghCommit + ")", true);
+        builder.addField("Latest Github Commit", "[" + BuildConfig.GH_COMMIT_SHORT + "](https://github.com/GravityGamer/GravityBot/commit/" + BuildConfig.GH_COMMIT + ")", true);
         builder.addField("Uptime", getUptime(), true);
         event.getChannel().sendMessage(builder.build()).queue();
         userCnt = 0;
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "botInfo";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Displays info about Gbot.";
     }
 
@@ -75,14 +75,14 @@ public class BotInfoCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 
     private String getUptime () {
         RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
-        long uptimems = mxBean.getUptime();
-        long s = uptimems / 1000;
+        long uptimeMs = mxBean.getUptime();
+        long s = uptimeMs / 1000;
         long m = s / 60;
         long h = m / 60;
         long d = h / 24;

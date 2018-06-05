@@ -15,7 +15,7 @@ public class GuildInfoCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         Guild g = event.getGuild();
         String time = g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        int usercnt = (int)g.getMemberCache().size();
+        int userCnt = (int)g.getMemberCache().size();
         int active = 0;
         int bots = 0;
         for (Member mem : g.getMemberCache()) {
@@ -33,18 +33,18 @@ public class GuildInfoCommand implements Command {
         builder.addField("Owner", g.getOwner().getAsMention(), true);
         builder.addField("Region", g.getRegion().getName(), true);
         builder.addField("Date Created", time, true);
-        builder.addField("Users", usercnt + " (" + active + " Online, " + bots + " bots)", true);
+        builder.addField("Users", userCnt + " (" + active + " Online, " + bots + " bots)", true);
         event.getChannel().sendMessage(builder.build()).queue();
 
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "guildInfo";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Displays info about the current guild.";
     }
 
@@ -54,7 +54,7 @@ public class GuildInfoCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 }

@@ -14,14 +14,13 @@ import java.sql.*;
 
 public class RemoveBotAdmin implements Command {
 
-    private GuildConfig config = new GuildConfig();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (admincheck == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
@@ -97,12 +96,12 @@ public class RemoveBotAdmin implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "rmAdmin @member";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Removes a member from the list of bot admins for the guild.";
     }
 
@@ -112,7 +111,7 @@ public class RemoveBotAdmin implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

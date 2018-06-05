@@ -11,9 +11,9 @@ import org.slf4j.MDC;
 import java.sql.*;
 
 public class GuildConfig {
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
 
-    public String isBotChannel(String guild, String name) {
+    public static String isBotChannel(String guild, String name) {
         Connection conn;
         try {
             conn =
@@ -59,7 +59,7 @@ public class GuildConfig {
         }
         return null;
     }
-    public String getPrefix(String guild, String name) {
+    public static String getPrefix(String guild, String name) {
         Connection conn;
 
         String fallback_bot_Prefix = Config.fallback_prefix;
@@ -116,7 +116,7 @@ public class GuildConfig {
         }
     }
 
-    public String isAdmin(String ID, String guild, JDA jda) {
+    public static String isAdmin(String ID, String guild, JDA jda) {
         Connection conn;
         if (jda == null) {
             return null;

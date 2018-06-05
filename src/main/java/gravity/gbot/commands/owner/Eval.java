@@ -14,11 +14,9 @@ import java.awt.*;
 
 public class Eval implements Command {
 
-    private GuildConfig config = new GuildConfig();
-
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!event.getAuthor().getId().equals(BuildConfig.ownerId)) {
+        if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {
 
@@ -31,7 +29,7 @@ public class Eval implements Command {
             try {
                 engine.put("Config", Config.class);
                 engine.put("event", event);
-                Object out = engine.eval(event.getMessage().getContentRaw().replace(config.getPrefix(event.getGuild().getId(), this.getClass().getName()) + "eval ", ""));
+                Object out = engine.eval(event.getMessage().getContentRaw().replace(GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName()) + "eval ", ""));
                 if (out != null) {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Successfully Evaluated");
@@ -48,12 +46,12 @@ public class Eval implements Command {
 
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "eval (Java/Groovy Code)";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Executes Java/Groovy Code and sends the output to a text channel.";
     }
 
@@ -63,7 +61,7 @@ public class Eval implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "owner";
     }
 }

@@ -1,6 +1,7 @@
 package gravity.gbot.commands.basic;
 
 import gravity.gbot.Command;
+import gravity.gbot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
@@ -11,6 +12,7 @@ public class InviteCommand implements Command{
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Invite Me");
+        builder.setColor(Config.GBOT_BLUE);
         builder.setDescription("Use the provided invite link to add me to your server.");
         builder.addField("To invite me:", "[Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591)", false);
         try {
@@ -21,12 +23,12 @@ public class InviteCommand implements Command{
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "invite";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Replies with a link to add Gbot to your server.";
     }
 
@@ -36,7 +38,7 @@ public class InviteCommand implements Command{
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 }

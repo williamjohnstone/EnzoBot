@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'gravity.bot'
-version = "3.30.2_${getGitHashShort()}"
+version = "3.32.0_${getGitHashShort()}"
 
 mainClassName = 'gravity.gbot.Main'
 
@@ -23,7 +23,7 @@ shadowJar {
 }
 
 repositories {
-     maven { url "http://jcenter.bintray.com" }
+     maven { url 'http://jcenter.bintray.com' }
      maven { url "https://jitpack.io" }
      maven { url "mvnrepository.com" }
      maven { url "http://repo.maven.apache.org/maven2" }
@@ -32,9 +32,9 @@ repositories {
 buildConfig {
     appName = project.name
     version = project.version
-    buildConfigField("String", "ownerId", "205056315351891969")
-    buildConfigField("String", "ghCommit", "${getGitHash()}")
-    buildConfigField("String", "ghCommitShort", "${getGitHashShort()}")
+    buildConfigField("String", "OWNER_ID", "205056315351891969")
+    buildConfigField("String", "GH_COMMIT", "${getGitHash()}")
+    buildConfigField("String", "GH_COMMIT_SHORT", "${getGitHashShort()}")
     packageName = 'gravity.gbot'
     charset = 'UTF-8'
     clsName = 'BuildConfig'

@@ -9,19 +9,19 @@ public class GiveRole implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (args.length == 2) {
-        if (event.getAuthor().getId().equals(BuildConfig.ownerId)) {
+        if (event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getGuild().getController().addRolesToMember(event.getMember(), event.getGuild().getRoleById(args[1].replace("<@&", "").replace(">", ""))).queue();
             }
         }
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "giveRole @role";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Gives the mentioned role";
     }
 
@@ -31,7 +31,7 @@ public class GiveRole implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "owner";
     }
 }

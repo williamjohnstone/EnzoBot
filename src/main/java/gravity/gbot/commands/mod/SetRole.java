@@ -11,12 +11,10 @@ public class SetRole implements Command {
 
     private final String USAGE = "setRole (@member) (@role)";
 
-    private GuildConfig config = new GuildConfig();
-
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (admincheck == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
@@ -55,12 +53,12 @@ public class SetRole implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Changes the specified member's role.";
     }
 
@@ -70,7 +68,7 @@ public class SetRole implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

@@ -5,13 +5,13 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 public interface Command {
     void execute(String[] args, GuildMessageReceivedEvent event);
 
-    String cmdUsage();
+    String getUsage();
 
-    String cmdDesc();
+    String getDesc();
 
     String getAlias();
 
-    String cmdType();
+    String getType();
 }
 
 

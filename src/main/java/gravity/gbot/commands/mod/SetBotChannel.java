@@ -17,12 +17,11 @@ import java.sql.Statement;
 public class SetBotChannel implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (admincheck == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
@@ -80,12 +79,12 @@ public class SetBotChannel implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "setBotChat (#Channel) or 'setBotChat off' to disable bot channel.";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Changes the channel the bot uses this channel is used for all commands. (Note: Admins bypass this)";
     }
 
@@ -95,7 +94,7 @@ public class SetBotChannel implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

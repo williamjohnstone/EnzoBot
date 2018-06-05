@@ -3,7 +3,7 @@ package gravity.gbot.utils;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.commands.basic.HelpCommand;
-import gravity.gbot.utils.Logging.msgLogger;
+import gravity.gbot.utils.Logging.MessageLogger;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -20,10 +20,9 @@ import java.util.TimerTask;
 
 public class BotListener extends ListenerAdapter {
 
-    private final HelpCommand help = new HelpCommand();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public Command getCommand(String alias) {
+    public static Command getCommand(String alias) {
         for (Command command : Main.cmdlist) {
             if (command.getAlias().equals(alias)) {
                 return command;
@@ -42,22 +41,20 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if (Config.dev_mode) {
-            if (event.getChannel() != event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+            if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return;
             }
         } else {
             if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
-                if (event.getChannel() == event.getGuild().getTextChannelById(Config.dev_bot_channel)) {
+                if (event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                     return;
                 }
             }
         }
-        GuildConfig config = new GuildConfig();
-        msgLogger logMsg = new msgLogger();
-        String channelBot = config.isBotChannel(event.getGuild().getId(), this.getClass().getName());
-        String admin = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        String BotPrefix = config.getPrefix(event.getGuild().getId(), this.getClass().getName());
-        logMsg.log(event, BotPrefix);
+        String channelBot = GuildConfig.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+        String admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        String BotPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
+        MessageLogger.log(event, BotPrefix);
 
         boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
         boolean notBot = !event.getMessage().getAuthor().isBot();
@@ -116,7 +113,7 @@ public class BotListener extends ListenerAdapter {
                         Command Help_cmd = getCommand(args[1].toLowerCase());
                         if (Help_cmd != null)
                             try {
-                                help.HelpSpecific(args, event, Help_cmd.cmdDesc(), Help_cmd.cmdUsage(), Help_cmd.getAlias());
+                                HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAlias());
                             } catch (InsufficientPermissionException e) {
                                 return;
                             }

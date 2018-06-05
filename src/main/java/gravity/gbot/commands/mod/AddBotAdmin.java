@@ -15,12 +15,11 @@ import java.sql.*;
 public class AddBotAdmin implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private GuildConfig config = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String admincheck = config.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (admincheck == null) {
+        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (adminCheck == null) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
@@ -94,12 +93,12 @@ public class AddBotAdmin implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "addAdmin @member";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Adds a member to the list of bot admins for the guild.";
     }
 
@@ -109,7 +108,7 @@ public class AddBotAdmin implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "admin";
     }
 }

@@ -15,12 +15,12 @@ public class PingCommand implements Command {
     }
 
     @Override
-    public String cmdUsage() {
+    public String getUsage() {
         return "ping";
     }
 
     @Override
-    public String cmdDesc() {
+    public String getDesc() {
         return "Replies with Ping times this is used to check if the bot is alive.";
     }
 
@@ -30,7 +30,7 @@ public class PingCommand implements Command {
     }
 
     @Override
-    public String cmdType() {
+    public String getType() {
         return "public";
     }
 }
