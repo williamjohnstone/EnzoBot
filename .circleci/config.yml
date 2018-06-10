@@ -39,4 +39,7 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
         
       # run tests!
-      - run: gradle test
+      - run: gradle clean shadowJar
+
+       - store_artifacts:
+          path: /repo/out/Gbot-dev.jar
