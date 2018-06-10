@@ -15,7 +15,7 @@ public class HelpCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        boolean adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         String botPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
         EmbedBuilder builder0 = new EmbedBuilder();
 
@@ -69,7 +69,7 @@ public class HelpCommand implements Command {
             }
             event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
             event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {}));
-            if (adminCheck != null) {
+            if (adminCheck) {
                 event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {}));
             }
             if (event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
