@@ -13,7 +13,7 @@ import java.sql.*;
 public class GuildConfig {
     private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
 
-    public static String isBotChannel(String guild, String name) {
+    public static String getBotChannel(String guild, String name) {
         Connection conn;
         try {
             conn =
@@ -116,19 +116,19 @@ public class GuildConfig {
         }
     }
 
-    public static String isAdmin(String ID, String guild, JDA jda) {
+    public static boolean isAdmin(String ID, String guild, JDA jda) {
         Connection conn;
         if (jda == null) {
-            return null;
+            return false;
         }
         Guild Guild = jda.getGuildById(guild);
         if (Guild == null)
-            return null;
+            return false;
         Member member = Guild.getMemberById(ID);
         if (member == null)
-            return null;
+            return false;
         if (member.hasPermission(Permission.ADMINISTRATOR)) {
-            return ID;
+            return true;
         }
 
         try {
@@ -148,13 +148,13 @@ public class GuildConfig {
             }
             conn.close();
             if (result == null) {
-                return null;
+                return false;
             }
             String[] dbData = result.split(",");
 
             for (String admin : dbData) {
                 if (ID.equals(admin)) {
-                    return admin;
+                    return true;
                 }
             }
 
@@ -165,11 +165,11 @@ public class GuildConfig {
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
-            return null;
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
-        return null;
+        return false;
     }
 }

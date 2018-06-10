@@ -70,8 +70,8 @@ public class PlayerControl extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
-        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
-        String channelBot = GuildConfig.isBotChannel(event.getGuild().getId(), this.getClass().getName());
+        boolean adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
+        String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
 
         if (Config.dev_mode) {
             if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.BOT_DEV_CHANNEL)) {
@@ -99,7 +99,7 @@ public class PlayerControl extends ListenerAdapter {
 
         if (channelBot != null) {
             if (!channelBot.equals(event.getChannel().getId())) {
-                if (adminCheck == null) {
+                if (!adminCheck) {
                     event.getMessage().delete().queue();
                     event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
                     {
@@ -230,7 +230,7 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
                 return;
             }
-            if (adminCheck == null) {
+            if (!adminCheck) {
                 List<Member> vcMembers = event.getMember().getVoiceState().getChannel().getMembers();
                 //take one due to the bot being in there as well
                 int requiredVotes = (int) Math.round((vcMembers.size() - 1) * 0.6);
@@ -298,7 +298,7 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         } else if ("stop".equals(command[1].toLowerCase())) {
-            if (adminCheck == null) {
+            if (!adminCheck) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
@@ -365,7 +365,7 @@ public class PlayerControl extends ListenerAdapter {
             builder.setDescription("Player is: " + (scheduler.isRepeating() ? "repeating" : "not repeating"));
             event.getChannel().sendMessage(builder.build()).queue();
         } else if ("reset".equals(command[1].toLowerCase())) {
-            if (adminCheck == null) {
+            if (!adminCheck) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);

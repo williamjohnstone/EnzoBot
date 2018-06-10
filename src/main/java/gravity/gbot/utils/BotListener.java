@@ -51,8 +51,8 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
-        String channelBot = GuildConfig.isBotChannel(event.getGuild().getId(), this.getClass().getName());
-        String admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
+        boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         String BotPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
         MessageLogger.log(event, BotPrefix);
 
@@ -75,7 +75,7 @@ public class BotListener extends ListenerAdapter {
             if (cmd != null) {
                 if (channelBot != null) {
                     if (!channelBot.equals(event.getChannel().getId())) {
-                        if (admin == null) {
+                        if (!admin) {
                             event.getMessage().delete().queue();
                             event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
                             {

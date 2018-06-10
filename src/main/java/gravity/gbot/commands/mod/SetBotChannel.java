@@ -20,8 +20,8 @@ public class SetBotChannel implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        String adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        if (adminCheck == null) {
+        boolean adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (!adminCheck) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
