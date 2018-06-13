@@ -64,7 +64,7 @@ public class UserInfoCommand implements Command {
     private static String getGameStatus(Game game) {
         if (game == null) return "Idle";
 
-        String type = "Playing";
+        String type;
         switch (game.getType().getKey()) {
             case 1:
                 type = "Streaming";
@@ -74,6 +74,10 @@ public class UserInfoCommand implements Command {
                 break;
             case 3:
                 type = "Watching";
+                break;
+            default:
+                type = "Playing";
+                break;
         }
 
         String gameName = game.getName();

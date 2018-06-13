@@ -8,10 +8,8 @@ public class GiveRole implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (args.length == 2) {
-        if (event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
+        if (args.length == 2 && event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getGuild().getController().addRolesToMember(event.getMember(), event.getGuild().getRoleById(args[1].replace("<@&", "").replace(">", ""))).queue();
-            }
         }
     }
 

@@ -44,11 +44,9 @@ public class BotListener extends ListenerAdapter {
             if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return;
             }
-        } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
-                if (event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
-                    return;
-                }
-            }
+        } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild() && event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
+            return;
+        }
 
         String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
         boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
@@ -71,25 +69,22 @@ public class BotListener extends ListenerAdapter {
             String commandName = parts[0];
             Command cmd = getCommand(commandName);
 
-            if (cmd != null) {
-                if (channelBot != null) {
-                    if (!channelBot.equals(event.getChannel().getId())) {
-                        if (!admin) {
-                            event.getMessage().delete().queue();
-                            event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
-                            {
-                                Timer timer = new Timer();
-                                timer.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        msg2.delete().queue();
-                                    }
-                                }, 5000);
-                            }));
-                            return;
+            if (cmd != null && channelBot != null && !channelBot.equals(event.getChannel().getId()) && !admin) {
+
+                event.getMessage().delete().queue();
+                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
+                {
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            msg2.delete().queue();
                         }
-                    }
-                }
+                    }, 5000);
+                }));
+                return;
+
+
             }
             if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
                 try {

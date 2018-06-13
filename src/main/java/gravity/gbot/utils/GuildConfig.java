@@ -29,10 +29,8 @@ public class GuildConfig {
                 result = rs.getString("bot_Channel_ID");
             }
             conn.close();
-            if (result != null) {
-                if (result.equals("0")) {
+            if ("0".equals(result)) {
                     return null;
-                }
             }
             return result;
 
@@ -85,7 +83,7 @@ public class GuildConfig {
                 if (result.contains(" ")) {
                     return fallback_bot_Prefix;
                 }
-                if (result.equals("")) {
+                if ("".equals(result)) {
                     return fallback_bot_Prefix;
                 }
             }
