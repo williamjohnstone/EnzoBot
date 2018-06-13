@@ -3,7 +3,7 @@ package gravity.gbot.utils;
 import gravity.gbot.Command;
 import gravity.gbot.Main;
 import gravity.gbot.commands.basic.HelpCommand;
-import gravity.gbot.utils.Logging.MessageLogger;
+import gravity.gbot.utils.logging.MessageLogger;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -44,13 +44,12 @@ public class BotListener extends ListenerAdapter {
             if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return;
             }
-        } else {
-            if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
+        } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild()) {
                 if (event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                     return;
                 }
             }
-        }
+
         String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
         boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
         String BotPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());

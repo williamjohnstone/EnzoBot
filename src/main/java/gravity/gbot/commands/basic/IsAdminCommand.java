@@ -34,9 +34,10 @@ public class IsAdminCommand implements Command {
         }
         boolean adminCheck = GuildConfig.isAdmin(user.getId(), event.getGuild().getId(), event.getJDA());
         EmbedBuilder adminBuilder = new EmbedBuilder();
-        adminBuilder.setTitle("");
+        adminBuilder.setTitle("Admin Check");
         adminBuilder.setColor(Config.GBOT_BLUE);
-        adminBuilder.setDescription(user.getAsMention() + "is " + (adminCheck ? "an admin." : "not an admin."));
+        adminBuilder.setDescription(user.getAsMention() + " is " + (adminCheck ? "an admin." : "not an admin."));
+        event.getChannel().sendMessage(adminBuilder.build()).queue();
     }
 
     @Override
