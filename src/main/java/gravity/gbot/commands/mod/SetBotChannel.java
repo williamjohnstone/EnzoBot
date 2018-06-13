@@ -63,7 +63,7 @@ public class SetBotChannel implements Command {
             e.printStackTrace();
             return;
         }
-        if (!channel.equals("0")) {
+        if (!"0".equals(channel)) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Bot Channel Set");
             builder.setColor(Color.WHITE);
