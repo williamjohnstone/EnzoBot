@@ -12,9 +12,7 @@ import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
-import java.sql.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,53 +38,24 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (Config.dev_mode) {
-            if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
-                return;
-            }
-        } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild() && event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
-            return;
+
+        String botPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
+        MessageLogger.logMessage(event, botPrefix);
+
+        String substringMessage = "";
+        String msg = event.getMessage().getContentRaw().toLowerCase();
+        String args[] = event.getMessage().getContentRaw().split("\\s+");
+        if (msg.startsWith(botPrefix)) {
+            substringMessage = msg.substring(botPrefix.length());
         }
+        String[] parts = substringMessage.split("\\s+");
+        String commandName = parts[0];
+        Command cmd = getCommand(commandName);
 
-        String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
-        boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-        String BotPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
-        MessageLogger.log(event, BotPrefix);
+        boolean checks = runChecks(event, botPrefix, cmd);
+        if (checks) {
 
-        boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(BotPrefix);
-        boolean notBot = !event.getMessage().getAuthor().isBot();
-        boolean notMusic = !event.getMessage().getContentRaw().startsWith(BotPrefix + "m");
-
-        if (startsWithPrefix && notBot && notMusic) {
-
-            String msg = event.getMessage().getContentRaw().toLowerCase();
-            String msg1 = event.getMessage().getContentRaw().toLowerCase();
-            String args[] = event.getMessage().getContentRaw().split("\\s+");
-            if (msg1.startsWith(BotPrefix)) {
-                msg1 = msg1.substring(BotPrefix.length());
-            }
-            String[] parts = msg1.split("\\s+");
-            String commandName = parts[0];
-            Command cmd = getCommand(commandName);
-
-            if (cmd != null && channelBot != null && !channelBot.equals(event.getChannel().getId()) && !admin) {
-
-                event.getMessage().delete().queue();
-                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
-                {
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            msg2.delete().queue();
-                        }
-                    }, 5000);
-                }));
-                return;
-
-
-            }
-            if (cmd != null && !msg.startsWith(BotPrefix + "help")) {
+            if (cmd != null && !msg.startsWith(botPrefix + "help")) {
                 try {
                     cmd.execute(args, event);
                 } catch (InsufficientPermissionException e) {
@@ -95,26 +64,59 @@ public class BotListener extends ListenerAdapter {
             }
 
             //Help Command
-            if (msg.startsWith(BotPrefix + "help")) {
+            if (msg.startsWith(botPrefix + "help")) {
                 if (args.length == 1 && cmd != null) {
-                    try {
-                        cmd.execute(args, event);
-                    } catch (InsufficientPermissionException e) {
-                        return;
-                    }
+                    cmd.execute(args, event);
                 } else {
                     if (args.length == 2) {
                         Command Help_cmd = getCommand(args[1].toLowerCase());
                         if (Help_cmd != null)
-                            try {
-                                HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAlias());
-                            } catch (InsufficientPermissionException e) {
-                                return;
-                            }
+                            HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAlias());
+
                     }
                 }
             }
         }
+    }
+
+    private boolean runChecks(GuildMessageReceivedEvent event, String botPrefix, Command cmd) {
+
+        boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(botPrefix);
+        boolean notBot = !event.getMessage().getAuthor().isBot();
+        boolean notMusic = !event.getMessage().getContentRaw().startsWith(botPrefix + "m");
+
+        if (startsWithPrefix && notBot && notMusic) {
+            return true;
+        }
+
+        if (Config.dev_mode) {
+            if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
+                return false;
+            }
+        } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild() && event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
+            return false;
+        }
+
+        String botChannel = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
+        boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        if (cmd != null && botChannel != null && !botChannel.equals(event.getChannel().getId()) && !admin) {
+
+            event.getMessage().delete().queue();
+            event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(botChannel).getAsMention() + " for bot commands!").queue((msg2 ->
+            {
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        msg2.delete().queue();
+                    }
+                }, 5000);
+            }));
+            return false;
+
+
+        }
+        return false;
     }
 
     @Override
@@ -124,44 +126,18 @@ public class BotListener extends ListenerAdapter {
         } catch (InsufficientPermissionException e) {
             event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
         }
-        Connection conn;
-        try {
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-            Statement stmt;
-            stmt = conn.createStatement();
-            stmt.executeUpdate("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '" + event.getGuild().getId() + "', '!', '0', '" + event.getGuild().getOwner().getUser().getId() + "');");
-            conn.close();
-        } catch (SQLException ex) {
-            // handle any errors
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Database db = new Database(Config.dbConnection);
+        db.init();
+        db.executeUpdate("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '" + event.getGuild().getId() + "', '!', '0', '" + event.getGuild().getOwner().getUser().getId() + "');");
+        db.close();
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        Connection conn;
-        try {
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-            Statement stmt;
-            stmt = conn.createStatement();
-            stmt.executeUpdate("DELETE FROM `Config` WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
-            conn.close();
-        } catch (SQLException ex) {
-            // handle any errors
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Database db = new Database(Config.dbConnection);
+        db.init();
+        db.executeUpdate("DELETE FROM `Config` WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
+        db.close();
     }
 }
 

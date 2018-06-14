@@ -2,23 +2,13 @@ package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.Database;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class SetPrefix implements Command {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -27,26 +17,15 @@ public class SetPrefix implements Command {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
-        Connection conn;
-        try {
-            conn = DriverManager.getConnection(Config.dbConnection);
-            Statement stmt;
-            stmt = conn.createStatement();
-            if (event.getMessage().getContentRaw().replace(args[0] + " ", "").contains(" ")) {
-                event.getChannel().sendMessage("Error guild prefix CANNOT contain a space!").queue();
-            }
-            stmt.executeUpdate("UPDATE `Config` SET `Prefix` = '" + args[1] + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
 
-        } catch (SQLException ex) {
-            // handle any errors
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
+        Database db = new Database(Config.dbConnection);
+        db.init();
+        if (event.getMessage().getContentRaw().replace(args[0] + " ", "").contains(" ")) {
+            event.getChannel().sendMessage("Error guild prefix CANNOT contain a space!").queue();
         }
+        db.executeUpdate("UPDATE `Config` SET `Prefix` = '" + args[1] + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
+        db.close();
+
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Bot Prefix Set");
         builder.setColor(Color.WHITE);

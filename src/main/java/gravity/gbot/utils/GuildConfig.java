@@ -14,71 +14,45 @@ public class GuildConfig {
     private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
 
     public static String getBotChannel(String guild, String name) {
-        Connection conn;
         try {
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-            Statement stmt;
-            ResultSet rs;
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
+            Database db = new Database(Config.dbConnection);
+            db.init();
+            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
 
             String result = null;
             if (rs.next()) {
                 result = rs.getString("bot_Channel_ID");
             }
-            conn.close();
+            db.close();
             if ("0".equals(result)) {
-                    return null;
+                return null;
             }
             return result;
 
-
         } catch (SQLException ex) {
-            // handle any errors
             MDC.put("SQLState", ex.getSQLState());
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
-            // return fallback prefix and output error
             MDC.put("GuildID", guild);
             MDC.put("Class", name);
             logger.error("Database Error!");
             MDC.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-            // return fallback prefix and output error
-            MDC.put("GuildID", guild);
-            MDC.put("Class", name);
-            logger.error("Database Error!");
-            MDC.clear();
-
+            return null;
         }
-        return null;
     }
-    public static String getPrefix(String guild, String name) {
-        Connection conn;
 
+    public static String getPrefix(String guild, String name) {
         String fallback_bot_Prefix = Config.fallback_prefix;
         try {
-
-
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-
-            Statement stmt;
-            ResultSet rs;
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
-
+            Database db = new Database(Config.dbConnection);
+            db.init();
+            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
             String result = null;
             if (rs.next()) {
                 result = rs.getString("Prefix");
             }
-            conn.close();
-            //checks if the prefix is null and if not proceeds to make sure the prefix is not empty nor contain any spaces
+            db.close();
             if (result != null) {
                 if (result.contains(" ")) {
                     return fallback_bot_Prefix;
@@ -87,25 +61,14 @@ public class GuildConfig {
                     return fallback_bot_Prefix;
                 }
             }
-            //return the non null prefix
             return result;
 
 
         } catch (SQLException ex) {
-            // handle any errors
             MDC.put("SQLState", ex.getSQLState());
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
-            // return fallback prefix and output error
-            MDC.put("GuildID", guild);
-            MDC.put("Class", name);
-            logger.error("Database Error!");
-            MDC.clear();
-            return fallback_bot_Prefix;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // return fallback prefix and output error
             MDC.put("GuildID", guild);
             MDC.put("Class", name);
             logger.error("Database Error!");
@@ -115,7 +78,6 @@ public class GuildConfig {
     }
 
     public static boolean isAdmin(String ID, String guild, JDA jda) {
-        Connection conn;
         if (jda == null) {
             return false;
         }
@@ -130,21 +92,15 @@ public class GuildConfig {
         }
 
         try {
-
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-
-            Statement stmt;
-            ResultSet rs;
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
+            Database db = new Database(Config.dbConnection);
+            db.init();
+            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
 
             String result = null;
             if (rs.next()) {
                 result = rs.getString("bot_Admins");
             }
-            conn.close();
+            db.close();
             if (result == null) {
                 return false;
             }
@@ -155,17 +111,11 @@ public class GuildConfig {
                     return true;
                 }
             }
-
-
         } catch (SQLException ex) {
-            // handle any errors
             MDC.put("SQLState", ex.getSQLState());
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
         return false;

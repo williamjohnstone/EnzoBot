@@ -2,21 +2,14 @@ package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.Database;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
+
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class SetBotChannel implements Command {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -40,29 +33,11 @@ public class SetBotChannel implements Command {
         } else if (args.length == 1) {
             channel = event.getMessage().getChannel().getId();
         }
-        Connection conn;
 
-        try {
-
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-
-            Statement stmt;
-
-            stmt = conn.createStatement();
-            stmt.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + channel + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
-
-        } catch (SQLException ex) {
-            // handle any errors
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        Database db = new Database(Config.dbConnection);
+        db.init();
+        db.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + channel + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
+        db.close();
         if (!"0".equals(channel)) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Bot Channel Set");

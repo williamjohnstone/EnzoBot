@@ -18,37 +18,22 @@ import java.util.TimerTask;
 
 public class StatsUpdater {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
     public void StartupdateTimer(ReadyEvent event) {
-        int MINUTES = 5; // The delay in minutes
+        int MINUTES = 5;
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
-            public void run() { // Function runs every MINUTES minutes.
+            public void run() {
                 event.getJDA().getPresence().setGame(Game.watching(event.getJDA().getGuildCache().size() + " servers! | g-bot.tk"));
                 String token = Config.API_Key;
                 String botId = "391558265265192961";
 
-                int serverCount = (int)event.getJDA().getGuildCache().size();
+                int serverCount = (int) event.getJDA().getGuildCache().size();
 
-                Connection conn;
-                try {
-                    conn =
-                            DriverManager.getConnection(Config.dbConnection);
-                    Statement stmt;
-                    stmt = conn.createStatement();
-                    stmt.executeUpdate("UPDATE `API` SET `server_count` = '" + serverCount + "' WHERE `API`.`ID` = 1;");
-                    conn.close();
-                } catch (SQLException ex) {
-                    // handle any errors
-                    MDC.put("SQLState", ex.getSQLState());
-                    MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-                    logger.error(ex.getMessage());
-                    MDC.clear();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Database db = new Database(Config.dbConnection);
+                db.init();
+                db.executeUpdate("UPDATE `API` SET `server_count` = '" + serverCount + "' WHERE `API`.`ID` = 1;");
+                db.close();
 
                 JSONObject obj = new JSONObject()
                         .put("server_count", serverCount);
@@ -64,6 +49,5 @@ public class StatsUpdater {
                 }
             }
         }, 0, 1000 * 60 * MINUTES);
-        // 1000 milliseconds in a second * 60 per minute * the MINUTES variable.
     }
 }

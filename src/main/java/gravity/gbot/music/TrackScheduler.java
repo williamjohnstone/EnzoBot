@@ -15,7 +15,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final PlayerControl playerC = new PlayerControl();
     public final Queue<AudioTrack> queue;
-    AudioTrack lastTrack;
+    protected AudioTrack lastTrack;
 
     /**
      * @param player The audio player this scheduler uses

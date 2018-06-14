@@ -2,6 +2,7 @@ package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
+import gravity.gbot.utils.Database;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -23,73 +24,33 @@ public class AddBotAdmin implements Command {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
-        Connection conn;
+        Database db = new Database(Config.dbConnection);
+        db.init();
+        ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + event.getGuild().getId() + ";");
+        String currentAdmins = null;
+        String mentionToID = args[1].replace("<", "").replace("@", "").replace("!", "").replace(">", "");
 
         try {
-
-
-            conn =
-                    DriverManager.getConnection(Config.dbConnection);
-
-            Statement stmt;
-            ResultSet rs;
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM `Config` where guild_ID = " + event.getGuild().getId() + ";");
-
-            Connection conn1;
-
-            try {
-
-
-                conn1 =
-                        DriverManager.getConnection(Config.dbConnection);
-
-                Statement stmt1;
-
-                String currentAdmins = null;
-
-                String mentionToID = args[1].replace("<", "").replace("@", "").replace("!", "").replace(">", "");
-
-                if(rs.next()){
-                    currentAdmins = rs.getString("bot_Admins");
-                }
-
-                stmt1 = conn1.createStatement();
-                stmt1.executeUpdate("UPDATE `Config` SET `bot_Admins` = '" + currentAdmins + "," + mentionToID + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() +";");
-
-
-
-            } catch (SQLException ex) {
-                // handle any errors
-                MDC.put("SQLState", ex.getSQLState());
-                MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-                logger.error(ex.getMessage());
-                MDC.clear();
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
+            if (rs.next()) {
+                currentAdmins = rs.getString("bot_Admins");
             }
-
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Bot Admin Added");
-            builder.setColor(Color.WHITE);
-            builder.setDescription("Success");
-            event.getChannel().sendMessage(builder.build()).queue();
-
-
-
         } catch (SQLException ex) {
             // handle any errors
             MDC.put("SQLState", ex.getSQLState());
             MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
             logger.error(ex.getMessage());
             MDC.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return;
         }
 
+        db.executeUpdate("UPDATE `Config` SET `bot_Admins` = '" + currentAdmins + "," + mentionToID + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
+        db.close();
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("Bot Admin Added");
+        builder.setColor(Color.WHITE);
+        builder.setDescription("Success");
+        event.getChannel().sendMessage(builder.build()).queue();
     }
 
     @Override

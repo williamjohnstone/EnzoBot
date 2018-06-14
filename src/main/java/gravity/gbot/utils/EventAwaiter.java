@@ -50,13 +50,13 @@ public class EventAwaiter implements EventListener  {
         }
     }
     private class AwaitingTask<T extends Event> {
-        final Predicate<T> check;
-        final Consumer<T> action;
+        private final Predicate<T> check;
+        private final Consumer<T> action;
         AwaitingTask(Predicate<T> check, Consumer<T> action) {
             this.check = check;
             this.action = action;
         }
-        boolean check(T event) {
+        private boolean check(T event) {
             if (check.test(event)) {
                 action.accept(event);
                 return true;

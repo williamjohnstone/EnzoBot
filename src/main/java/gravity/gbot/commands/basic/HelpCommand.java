@@ -7,6 +7,7 @@ import gravity.gbot.music.MusicMaps;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
@@ -62,18 +63,20 @@ public class HelpCommand implements Command {
             builder2.addField(botPrefix + "m " + alias, "**Usage:** *" + botPrefix + "m " + usage + "*\n**Description:** *" + description + "*", false);
         }
 
-        if (event.getChannel().getType() == ChannelType.TEXT) {
-            try {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
-            } catch (InsufficientPermissionException e) {
-            }
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {}));
-            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {}));
+        if (event.getChannel().getType() == ChannelType.TEXT && event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE)) {
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder0.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
+
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder1.build()).queue(null, failure -> {
+            }));
+            event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder2.build()).queue(null, failure -> {
+            }));
             if (adminCheck) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {}));
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder3.build()).queue(null, failure -> {
+                }));
             }
             if (event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder4.build()).queue(null, failure -> {}));
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(builder4.build()).queue(null, failure -> {
+                }));
             }
         }
     }
