@@ -85,6 +85,7 @@ public class Main {
             cmdlist.add(new DeployCommand());
             cmdlist.add(new QuoteCommand());
             cmdlist.add(new RollCommand());
+            cmdlist.add(new CoinFlipCommand());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
