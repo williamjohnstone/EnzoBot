@@ -15,10 +15,10 @@ public class CoinFlipCommand implements Command {
         flipBuilder.setColor(Config.GBOT_BLUE);
         if  (outcome == 1) {
             flipBuilder.setDescription("You got Heads");
-            flipBuilder.setImage("heads.png");
+            flipBuilder.setImage("https://g-bot.tk/img/heads.png");
         } else if (outcome == 2) {
             flipBuilder.setDescription("You got Tails");
-            flipBuilder.setImage("tails.png");
+            flipBuilder.setImage("https://g-bot.tk/img/tails.png");
         } else {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
