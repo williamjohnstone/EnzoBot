@@ -7,7 +7,6 @@ target/
 logs/
 *.log
 *.json
-/src/main/resources/sentry.properties
 build/
 out/
 
