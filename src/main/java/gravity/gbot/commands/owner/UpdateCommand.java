@@ -12,6 +12,17 @@ public class UpdateCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (!Config.dev_mode) {
+            if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
+                event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
+            } else {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setColor(Color.white);
+                builder.setTitle("Info");
+                builder.setDescription("Updating Gbot.");
+                event.getChannel().sendMessage(builder.build()).queue();
+                event.getJDA().shutdown();
+                System.exit(0x59);
+            }
             return;
         }
         if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
