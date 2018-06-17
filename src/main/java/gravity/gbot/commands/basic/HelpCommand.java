@@ -50,13 +50,13 @@ public class HelpCommand implements Command {
             for (Command command : Main.cmdlist) {
                 if (command.getType() != null) {
                     if (command.getType().equals("public")) {
-                        builder1.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** *" + getAliasesString(command) + "*", false);
+                        builder1.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** " + getAliasesString(command), false);
                     }
                     if (command.getType().equals("admin")) {
-                        builder3.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** *" + getAliasesString(command) + "*", false);
+                        builder3.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** " + getAliasesString(command), false);
                     }
                     if (command.getType().equals("owner")) {
-                        builder4.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** *" + getAliasesString(command) + "*", false);
+                        builder4.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*\n**Aliases:** " + getAliasesString(command), false);
                     }
                 }
             }
@@ -117,12 +117,8 @@ public class HelpCommand implements Command {
 
     private String getAliasesString(Command command) {
         StringBuilder sb = new StringBuilder();
-        for (String alias : command.getAliases()) {
-            if (command.getAliases().indexOf(alias) != command.getAliases().size()) {
-                sb.append(alias).append(", ");
-            } else {
-                sb.append(alias);
-            }
+        for (String alias : command.getAliases()) {   
+            sb.append("`").append(alias).append("` ");
         }
         return sb.toString();
     }
