@@ -99,7 +99,6 @@ public class PlayerControl extends ListenerAdapter {
 
         if (channelBot != null) {
             if (!channelBot.equals(event.getChannel().getId())) {
-                if (!adminCheck) {
                     event.getMessage().delete().queue();
                     event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
                     {
@@ -112,7 +111,7 @@ public class PlayerControl extends ListenerAdapter {
                         }, 5000);
                     }));
                     return;
-                }
+                
             }
         }
 
