@@ -86,7 +86,7 @@ public class HelpCommand implements Command {
                 }
             }
         } else if (args.length == 2) {
-            Command cmd = getCommand(args[1].toLowerCase();
+            Command cmd = getCommand(args[1].toLowerCase());
             if (cmd == null) {
                 return;
             }
