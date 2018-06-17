@@ -5,6 +5,10 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class QuoteCommand implements Command {
 
     private Message msg;
@@ -36,8 +40,8 @@ public class QuoteCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "quote";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("quote"));
     }
 
     @Override

@@ -6,6 +6,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RestartCommand implements Command {
     @Override
@@ -34,8 +37,8 @@ public class RestartCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "restart";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("restart"));
     }
 
     @Override

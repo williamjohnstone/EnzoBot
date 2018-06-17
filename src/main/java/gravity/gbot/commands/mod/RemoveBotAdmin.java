@@ -12,6 +12,9 @@ import org.slf4j.MDC;
 
 import java.awt.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RemoveBotAdmin implements Command {
 
@@ -65,8 +68,8 @@ public class RemoveBotAdmin implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "rmadmin";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("rmadmin"));
     }
 
     @Override

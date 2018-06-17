@@ -8,6 +8,9 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GuildInfoCommand implements Command {
 
@@ -49,8 +52,8 @@ public class GuildInfoCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "guildinfo";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("guildinfo"));
     }
 
     @Override

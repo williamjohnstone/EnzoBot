@@ -11,8 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 public class TestKick implements Command {
 
@@ -67,8 +66,8 @@ public class TestKick implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "fakekick";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("fakekick"));
     }
 
     @Override

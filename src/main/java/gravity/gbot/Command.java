@@ -2,6 +2,8 @@ package gravity.gbot;
 
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.List;
+
 public interface Command {
     void execute(String[] args, GuildMessageReceivedEvent event);
 
@@ -9,7 +11,7 @@ public interface Command {
 
     String getDesc();
 
-    String getAlias();
+    List<String> getAliases();
 
     String getType();
 }

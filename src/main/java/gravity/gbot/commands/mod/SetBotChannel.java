@@ -8,6 +8,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SetBotChannel implements Command {
 
@@ -64,8 +67,8 @@ public class SetBotChannel implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "setbotchat";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("setbotchat", "botchannel", "setbotchannel"));
     }
 
     @Override

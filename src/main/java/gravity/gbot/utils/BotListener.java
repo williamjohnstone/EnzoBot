@@ -22,8 +22,10 @@ public class BotListener extends ListenerAdapter {
 
     public static Command getCommand(String alias) {
         for (Command command : Main.cmdlist) {
-            if (command.getAlias().equals(alias)) {
-                return command;
+            for (String commandAlias : command.getAliases()) {
+                if (commandAlias.equals(alias)) {
+                    return command;
+                }
             }
         }
         return null;
@@ -71,7 +73,7 @@ public class BotListener extends ListenerAdapter {
                     if (args.length == 2) {
                         Command Help_cmd = getCommand(args[1].toLowerCase());
                         if (Help_cmd != null)
-                            HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAlias());
+                            HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAliases().get(0));
 
                     }
                 }

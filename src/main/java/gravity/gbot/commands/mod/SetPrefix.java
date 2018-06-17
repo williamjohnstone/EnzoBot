@@ -7,6 +7,9 @@ import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SetPrefix implements Command {
 
@@ -44,8 +47,8 @@ public class SetPrefix implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "setprefix";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("setprefix"));
     }
 
     @Override

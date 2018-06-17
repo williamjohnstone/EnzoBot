@@ -4,6 +4,10 @@ import gravity.gbot.BuildConfig;
 import gravity.gbot.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class GiveRole implements Command {
 
     @Override
@@ -24,8 +28,8 @@ public class GiveRole implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "giveRole";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("giverole"));
     }
 
     @Override

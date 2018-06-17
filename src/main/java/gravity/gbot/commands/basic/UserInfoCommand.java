@@ -8,6 +8,8 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +54,8 @@ public class UserInfoCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "userinfo";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("userinfo"));
     }
 
     @Override

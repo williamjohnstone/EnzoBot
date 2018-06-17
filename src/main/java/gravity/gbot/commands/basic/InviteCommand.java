@@ -6,6 +6,10 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class InviteCommand implements Command{
 
     @Override
@@ -33,8 +37,8 @@ public class InviteCommand implements Command{
     }
 
     @Override
-    public String getAlias() {
-        return "invite";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("invite"));
     }
 
     @Override

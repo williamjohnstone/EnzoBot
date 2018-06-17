@@ -11,6 +11,10 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class HelpCommand implements Command {
 
     @Override
@@ -43,13 +47,13 @@ public class HelpCommand implements Command {
         for (Command command : Main.cmdlist) {
             if (command.getType() != null) {
                 if (command.getType().equals("public")) {
-                    builder1.addField(botPrefix + command.getAlias(), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
+                    builder1.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
                 }
                 if (command.getType().equals("admin")) {
-                    builder3.addField(botPrefix + command.getAlias(), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
+                    builder3.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
                 }
                 if (command.getType().equals("owner")) {
-                    builder4.addField(botPrefix + command.getAlias(), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
+                    builder4.addField(botPrefix + command.getAliases().get(0), "**Usage:** *" + botPrefix + command.getUsage() + "*\n**Description:** *" + command.getDesc() + "*", false);
                 }
             }
         }
@@ -127,8 +131,8 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "help";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("help"));
     }
 
     @Override

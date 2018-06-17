@@ -7,6 +7,10 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SetRole implements Command {
 
     private final String USAGE = "setRole (@member) (@role)";
@@ -63,8 +67,8 @@ public class SetRole implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "setrole";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("setrole"));
     }
 
     @Override

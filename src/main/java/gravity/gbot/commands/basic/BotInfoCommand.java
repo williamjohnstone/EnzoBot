@@ -16,6 +16,9 @@ import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BotInfoCommand implements Command {
 
@@ -70,8 +73,8 @@ public class BotInfoCommand implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "botinfo";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("botinfo"));
     }
 
     @Override

@@ -11,6 +11,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Eval implements Command {
 
@@ -56,8 +59,8 @@ public class Eval implements Command {
     }
 
     @Override
-    public String getAlias() {
-        return "eval";
+    public List<String> getAliases() {
+        return new ArrayList<>(Arrays.asList("eval"));
     }
 
     @Override
