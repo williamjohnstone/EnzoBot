@@ -96,8 +96,7 @@ public class BotListener extends ListenerAdapter {
             }
 
             String botChannel = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
-            boolean admin = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
-            if (cmd != null && botChannel != null && !botChannel.equals(event.getChannel().getId()) && !admin) {
+            if (cmd != null && botChannel != null && !botChannel.equals(event.getChannel().getId())) {
 
                 event.getMessage().delete().queue();
                 event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(botChannel).getAsMention() + " for bot commands!").queue((msg2 ->

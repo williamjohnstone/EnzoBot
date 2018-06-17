@@ -60,7 +60,7 @@ public class SetBotChannel implements Command {
 
     @Override
     public String getDesc() {
-        return "Changes the channel the bot uses this channel is used for all commands. (Note: Admins bypass this)";
+        return "Changes the channel the bot uses this channel is used for all commands.";
     }
 
     @Override
