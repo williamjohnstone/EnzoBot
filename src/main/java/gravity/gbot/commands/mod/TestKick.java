@@ -24,7 +24,7 @@ public class TestKick implements Command {
         String type = "kick";
         String reason = "Being an idiot";
         String length = "5d";
-        java.util.Date dt = new java.util.Date();
+        Date dt = new Date();
 
         java.text.SimpleDateFormat sdf =
                 new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -84,39 +84,33 @@ public class HelpCommand implements Command {
         }
     }
 
-    public static void getSpecififcHelp(String[] args, GuildMessageReceivedEvent event, String desc, String help, String alias) {
+    public static void getSpecififcHelp(String[] args, GuildMessageReceivedEvent event, Command command) {
         String botPrefix = GuildConfig.getPrefix(event.getGuild().getId(), HelpCommand.class.getName());
+        StringBuilder sb = new StringBuilder();
+        for (String alias : command.getAliases()) {
+            if (command.getAliases().indexOf(alias) != command.getAliases().size()) {
+                sb.append(alias).append(", ");
+            } else {
+                sb.append(alias);
+            }
+        }
         if (args.length < 2) {
             return;
         } else if (args.length > 2) {
             return;
         }
-        if (alias.equals(help)) {
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.setTitle(botPrefix + alias)
-                    .setDescription(desc)
-                    .setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl())
-                    .setColor(Config.GBOT_BLUE)
-                    .addField("Usage:", botPrefix + "Help or " + botPrefix + "help (command)", true)
-                    .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
-            if (event.getChannel().getType() == ChannelType.TEXT) {
-                event.getChannel().sendMessage(builder.build()).queue();
-            }
-
-        } else {
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.setTitle(botPrefix + alias)
-                    .setDescription(desc)
-                    .setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl())
-                    .setColor(Config.GBOT_BLUE)
-                    .addField("Usage:", botPrefix + help, true)
-                    .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
-            if (event.getChannel().getType() == ChannelType.TEXT) {
-                event.getChannel().sendMessage(builder.build()).queue();
-            }
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(botPrefix + command.getAliases().get(0))
+                .setDescription(command.getDesc())
+                .setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl())
+                .setColor(Config.GBOT_BLUE)
+                .addField("Usage:", botPrefix + command.getUsage(), true)
+                .addField("Aliases:", sb.toString(), true)
+                .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
+        if (event.getChannel().getType() == ChannelType.TEXT) {
+            event.getChannel().sendMessage(builder.build()).queue();
         }
+
     }
 
 

@@ -73,7 +73,7 @@ public class BotListener extends ListenerAdapter {
                     if (args.length == 2) {
                         Command Help_cmd = getCommand(args[1].toLowerCase());
                         if (Help_cmd != null)
-                            HelpCommand.getSpecififcHelp(args, event, Help_cmd.getDesc(), Help_cmd.getUsage(), Help_cmd.getAliases().get(0));
+                            HelpCommand.getSpecififcHelp(args, event, Help_cmd);
 
                     }
                 }
