@@ -57,26 +57,8 @@ public class BotListener extends ListenerAdapter {
         boolean checks = runChecks(event, botPrefix, cmd);
         if (checks) {
 
-            if (cmd != null && !msg.startsWith(botPrefix + "help")) {
-                try {
-                    cmd.execute(args, event);
-                } catch (InsufficientPermissionException e) {
-                    return;
-                }
-            }
-
-            //Help Command
-            if (msg.startsWith(botPrefix + "help")) {
-                if (args.length == 1 && cmd != null) {
-                    cmd.execute(args, event);
-                } else {
-                    if (args.length == 2) {
-                        Command Help_cmd = getCommand(args[1].toLowerCase());
-                        if (Help_cmd != null)
-                            HelpCommand.getSpecififcHelp(args, event, Help_cmd);
-
-                    }
-                }
+            if (cmd != null) {
+                cmd.execute(args, event);
             }
         }
     }
