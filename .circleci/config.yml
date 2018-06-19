@@ -46,5 +46,5 @@ jobs:
 notify:
   webhooks:
       # A list of hook hashes, containing the URL field
-      - url: https://example.com/hooks/circle
+      - url: http://yeet.requestcatcher.com/
   
