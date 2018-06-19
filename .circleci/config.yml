@@ -20,11 +20,6 @@ jobs:
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-    
-    notify:
-      webhooks:
-      # A list of hook hashes, containing the URL field
-      - url: https://example.com/hooks/circle
 
     steps:
       - checkout
@@ -48,3 +43,9 @@ jobs:
       
       - store_artifacts:
           path: ~/repo/out/Gbot-dev.jar
+
+  notify:
+      webhooks:
+      # A list of hook hashes, containing the URL field
+      - url: https://example.com/hooks/circle
+  
