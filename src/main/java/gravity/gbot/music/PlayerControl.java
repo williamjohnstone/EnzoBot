@@ -129,7 +129,7 @@ public class PlayerControl extends ListenerAdapter {
                     if (command[2].contains("&list=") || command[2].contains("?list=")) {
                         loadAndPlay(mng, event.getChannel(), command[2], true);
                     } else {
-                        loadAndPlay(mng, event.getChannel(), command[2], false)
+                        loadAndPlay(mng, event.getChannel(), command[2], false);
                     }
                 }
             } else {
