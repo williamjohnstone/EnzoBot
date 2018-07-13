@@ -1,7 +1,7 @@
 <h1 align="center">
     <a href="https://discord.gg/f43DKbA"><img src="https://g-sc.tk/u/Gravity-05:17:10PM.png" width="256px" alt="Gbot"></a>
   <br>
-    GravityBot
+    EnzoBot
   <br>
  </h1>
 <h4 align="center">A Discord bot coded in Java using the JDA library.</h4>
