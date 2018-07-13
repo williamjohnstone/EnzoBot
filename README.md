@@ -1,5 +1,5 @@
 <h1 align="center">
-    <a href="https://discord.gg/f43DKbA"><img src="https://g-sc.tk/u/Gravity-05:17:10PM.png" width="256px" alt="Gbot"></a>
+    <a href="https://discord.gg/f43DKbA"><img src="https://cdn.discordapp.com/attachments/332888740584488961/467343376732127239/Enzo_bot_Logo_png_3.png" width="256px" alt="Gbot"></a>
   <br>
     EnzoBot
   <br>
