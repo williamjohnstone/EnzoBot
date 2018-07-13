@@ -21,7 +21,7 @@ public class UpdateCommand implements Command {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setColor(Color.white);
                 builder.setTitle("Info");
-                builder.setDescription("Updating Gbot.");
+                builder.setDescription("Updating EnzoBot.");
                 event.getChannel().sendMessage(builder.build()).queue();
                 event.getJDA().shutdown();
                 System.exit(0x59);
@@ -34,7 +34,7 @@ public class UpdateCommand implements Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Updating Gbot.");
+            builder.setDescription("Updating EnzoBot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
             System.exit(0x89);
@@ -48,7 +48,7 @@ public class UpdateCommand implements Command {
 
     @Override
     public String getDesc() {
-        return "Updates Gbot";
+        return "Updates EnzoBot";
     }
 
     @Override

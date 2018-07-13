@@ -70,8 +70,8 @@ public class PlayerControl extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
-        boolean adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), guild.getId(), event.getJDA());
-        String channelBot = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
+        GuildConfig guildConfig = new GuildConfig();
+        String channelBot = guildConfig.getBotChannel(event.getGuild().getId());
 
         if (Config.dev_mode) {
             if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.BOT_DEV_CHANNEL)) {
@@ -85,32 +85,23 @@ public class PlayerControl extends ListenerAdapter {
             }
         }
 
-        final String musicAlias = "m";
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
-        if (!command[0].toLowerCase().startsWith(GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName()) + musicAlias)) { //message doesn't start with prefix. or is too short
-            return;
-        } else {
-            if (command.length < 2) {
-                return;
-            }
-        }
-
         if (channelBot != null) {
             if (!channelBot.equals(event.getChannel().getId())) {
-                    event.getMessage().delete().queue();
-                    event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
-                    {
-                        Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                msg2.delete().queue();
-                            }
-                        }, 5000);
-                    }));
-                    return;
+                event.getMessage().delete().queue();
+                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
+                {
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            msg2.delete().queue();
+                        }
+                    }, 5000);
+                }));
+                return;
 
             }
         }
@@ -118,18 +109,19 @@ public class PlayerControl extends ListenerAdapter {
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
         TrackScheduler scheduler = mng.scheduler;
+        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
 
-        if (command[1].toLowerCase().equals("play") && command.length >= 3) {
-            if (command[2].startsWith("http://") || command[2].startsWith("https://")) {
+        if (command[0].toLowerCase().equals(botPrefix + "play") && command.length >= 2) {
+            if (command[1].startsWith("http://") || command[1].startsWith("https://")) {
                 String join = join(guild, event, getMusicManager(guild));
                 if (join.equals("fail")) {
                     return;
                 }
                 {
-                    if (command[2].contains("&list=") || command[2].contains("?list=")) {
-                        loadAndPlay(mng, event.getChannel(), command[2], true);
+                    if (command[1].contains("&list=") || command[1].contains("?list=")) {
+                        loadAndPlay(mng, event.getChannel(), command[1], true);
                     } else {
-                        loadAndPlay(mng, event.getChannel(), command[2], false);
+                        loadAndPlay(mng, event.getChannel(), command[1], false);
                     }
                 }
             } else {
@@ -139,7 +131,7 @@ public class PlayerControl extends ListenerAdapter {
                     for (String s : command) {
                         sb.append(s).append("+");
                     }
-                    sb.delete(0, 8);
+                    sb.delete(0, 6);
                     String link;
                     String type;
                     if (sb.toString().toLowerCase().contains("playlist")) {
@@ -189,7 +181,7 @@ public class PlayerControl extends ListenerAdapter {
                     }));
                 }
             }
-        } else if ("leave".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "leave").equals(command[0].toLowerCase())) {
             if (player.getPlayingTrack() != null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
@@ -204,7 +196,7 @@ public class PlayerControl extends ListenerAdapter {
             scheduler.queue.clear();
             player.stopTrack();
             player.setPaused(false);
-        } else if ("resume".equals(command[1].toLowerCase()) | "play".equals(command[1].toLowerCase()) && command.length == 2) //It is only the command to start playback (probably after pause)
+        } else if ((botPrefix + "resume").equals(command[0].toLowerCase()) | (botPrefix + "play").equals(command[0].toLowerCase()) && command.length == 1) //It is only the command to start playback (probably after pause)
         {
             if (player.isPaused()) {
                 player.setPaused(false);
@@ -220,7 +212,7 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setDescription("Player is already playing!");
                 event.getChannel().sendMessage(builder.build()).queue();
             }
-        } else if ("skip".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "skip").equals(command[0].toLowerCase())) {
             if (player.getPlayingTrack() == null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
@@ -229,7 +221,7 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
                 return;
             }
-            if (!adminCheck) {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 List<Member> vcMembers = event.getMember().getVoiceState().getChannel().getMembers();
                 //take one due to the bot being in there as well
                 int requiredVotes = (int) Math.round((vcMembers.size() - 1) * 0.6);
@@ -263,7 +255,7 @@ public class PlayerControl extends ListenerAdapter {
                     }
                 }
             } else {
-                if (command.length == 2) {
+                if (command.length == 1) {
                     scheduler.nextTrack();
                     hasVoted = new ArrayList<>();
                     EmbedBuilder builder = new EmbedBuilder();
@@ -273,7 +265,7 @@ public class PlayerControl extends ListenerAdapter {
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
-        } else if ("pause".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "pause").equals(command[0].toLowerCase())) {
             if (player.getPlayingTrack() == null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
@@ -296,8 +288,8 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setDescription(":play_pause: The player has resumed playing.");
                 event.getChannel().sendMessage(builder.build()).queue();
             }
-        } else if ("stop".equals(command[1].toLowerCase())) {
-            if (!adminCheck) {
+        } else if ((botPrefix + "stop").equals(command[0].toLowerCase())) {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
@@ -313,8 +305,8 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription(":stop_button: Playback has been completely stopped and the queue has been cleared.");
             event.getChannel().sendMessage(builder.build()).queue();
-        } else if ("volume".equals(command[1])) {
-            if (command.length == 2) {
+        } else if ((botPrefix + "volume").equals(command[0])) {
+            if (command.length == 1) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
@@ -322,7 +314,7 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             } else {
                 try {
-                    int newVolume = Math.max(5, Math.min(100, parseInt(command[2])));
+                    int newVolume = Math.max(5, Math.min(100, parseInt(command[1])));
                     int oldVolume = player.getVolume();
                     player.setVolume(newVolume);
                     EmbedBuilder builder = new EmbedBuilder();
@@ -334,11 +326,11 @@ public class PlayerControl extends ListenerAdapter {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Info");
                     builder.setColor(Color.WHITE);
-                    builder.setDescription(":speaker: `" + command[2] + "` is not a valid integer. (5 - 100)");
+                    builder.setDescription(":speaker: `" + command[1] + "` is not a valid integer. (5 - 100)");
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
-        } else if ("restart".equals(command[1].toLowerCase()) | "replay".equals(command[1].toLowerCase()) ) {
+        } else if ((botPrefix + "restart").equals(command[0].toLowerCase()) | (botPrefix + "replay").equals(command[0].toLowerCase())) {
             AudioTrack track = player.getPlayingTrack();
             if (track == null)
                 track = scheduler.lastTrack;
@@ -356,15 +348,15 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setDescription("No track has been previously started, so the player cannot replay a track!");
                 event.getChannel().sendMessage(builder.build()).queue();
             }
-        } else if ("repeat".equals(command[1].toLowerCase()) | "loop".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "repeat").equals(command[0].toLowerCase()) | (botPrefix + "loop").equals(command[0].toLowerCase())) {
             scheduler.setRepeating(!scheduler.isRepeating());
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Info");
             builder.setColor(Color.white);
             builder.setDescription("Player is: " + (scheduler.isRepeating() ? "repeating" : "not repeating"));
             event.getChannel().sendMessage(builder.build()).queue();
-        } else if ("reset".equals(command[1].toLowerCase())) {
-            if (!adminCheck) {
+        } else if ((botPrefix + "reset").equals(command[0].toLowerCase())) {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
@@ -385,7 +377,7 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription("The player has been completely reset!");
             event.getChannel().sendMessage(builder.build()).queue();
-        } else if ("nowplaying".equals(command[1].toLowerCase()) || "np".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "nowplaying").equals(command[0].toLowerCase()) || (botPrefix + "np").equals(command[0].toLowerCase())) {
             AudioTrack currentTrack = player.getPlayingTrack();
             if (currentTrack != null) {
 
@@ -417,7 +409,7 @@ public class PlayerControl extends ListenerAdapter {
                 builder.setDescription("The player is not currently playing anything!");
                 event.getChannel().sendMessage(builder.build()).queue();
             }
-        } else if ("queue".equals(command[1].toLowerCase()) || "q".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "queue").equals(command[0].toLowerCase()) || (botPrefix + "q").equals(command[0].toLowerCase())) {
             Queue<AudioTrack> queue = scheduler.queue;
             synchronized (queue) {
                 if (queue.isEmpty()) {
@@ -462,7 +454,7 @@ public class PlayerControl extends ListenerAdapter {
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
-        } else if ("shuffle".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "shuffle").equals(command[0].toLowerCase())) {
             if (scheduler.queue.isEmpty()) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
@@ -477,7 +469,7 @@ public class PlayerControl extends ListenerAdapter {
             builder.setColor(Color.WHITE);
             builder.setDescription("The queue has been shuffled!");
             event.getChannel().sendMessage(builder.build()).queue();
-        } else if ("seek".equals(command[1].toLowerCase())) {
+        } else if ((botPrefix + "seek").equals(command[0].toLowerCase())) {
             Long millis = parseTime(command[2]);
             if (millis == null || millis > Integer.MAX_VALUE) {
                 EmbedBuilder builder = new EmbedBuilder();
@@ -539,7 +531,7 @@ public class PlayerControl extends ListenerAdapter {
     }
 
     private String getProgressBar(Long current, Long total) {
-        int ActiveBlocks = (int)((float)current / total * 15);
+        int ActiveBlocks = (int) ((float) current / total * 15);
         StringBuilder sb = new StringBuilder();
         int i = 0;
         int inactive = 0;

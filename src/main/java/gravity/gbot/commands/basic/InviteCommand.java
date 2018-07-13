@@ -16,7 +16,7 @@ public class InviteCommand implements Command{
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Invite Me");
-        builder.setColor(Config.GBOT_BLUE);
+        builder.setColor(Config.ENZO_BLUE);
         builder.setDescription("Use the provided invite link to add me to your server.");
         builder.addField("To invite me:", "[Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591)", false);
         try {
@@ -33,7 +33,7 @@ public class InviteCommand implements Command{
 
     @Override
     public String getDesc() {
-        return "Replies with a link to add Gbot to your server.";
+        return "Replies with a link to add EnzoBot to your server.";
     }
 
     @Override

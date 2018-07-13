@@ -23,7 +23,7 @@ public class DeployCommand implements Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Deploying Gbot.");
+            builder.setDescription("Deploying Enzobot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
             System.exit(0x29);

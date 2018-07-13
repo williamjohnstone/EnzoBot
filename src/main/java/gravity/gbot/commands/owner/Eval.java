@@ -32,7 +32,7 @@ public class Eval implements Command {
             try {
                 engine.put("Config", Config.class);
                 engine.put("event", event);
-                Object out = engine.eval(event.getMessage().getContentRaw().replace(GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName()) + "eval ", ""));
+                Object out = engine.eval(event.getMessage().getContentRaw().replace(new GuildConfig().getPrefix(event.getGuild().getId()) + "eval ", ""));
                 if (out != null) {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Successfully Evaluated");

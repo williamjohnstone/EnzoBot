@@ -4,6 +4,7 @@ import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -24,7 +25,7 @@ public class IsAdminCommand implements Command {
                 EmbedBuilder error = new EmbedBuilder();
                 error.setTitle("Error");
                 error.setDescription("Invalid command usage!");
-                error.setColor(Config.GBOT_BLUE);
+                error.setColor(Config.ENZO_BLUE);
                 event.getChannel().sendMessage(error.build()).queue();
                 return;
             }
@@ -32,14 +33,14 @@ public class IsAdminCommand implements Command {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
             error.setDescription("Invalid command usage!");
-            error.setColor(Config.GBOT_BLUE);
+            error.setColor(Config.ENZO_BLUE);
             event.getChannel().sendMessage(error.build()).queue();
             return;
         }
-        boolean adminCheck = GuildConfig.isAdmin(user.getId(), event.getGuild().getId(), event.getJDA());
+        boolean adminCheck = event.getMember().hasPermission(Permission.ADMINISTRATOR);
         EmbedBuilder adminBuilder = new EmbedBuilder();
         adminBuilder.setTitle("Admin Check");
-        adminBuilder.setColor(Config.GBOT_BLUE);
+        adminBuilder.setColor(Config.ENZO_BLUE);
         adminBuilder.setDescription(user.getAsMention() + " is " + (adminCheck ? "an admin." : "not an admin."));
         event.getChannel().sendMessage(adminBuilder.build()).queue();
     }

@@ -19,7 +19,7 @@ public class RestartCommand implements Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Restarting Gbot.");
+            builder.setDescription("Restarting EnzoBot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
             System.exit(0x44);
@@ -33,7 +33,7 @@ public class RestartCommand implements Command {
 
     @Override
     public String getDesc() {
-        return "Restarts Gbot";
+        return "Restarts EnzoBot";
     }
 
     @Override

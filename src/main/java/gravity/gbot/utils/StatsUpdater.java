@@ -5,13 +5,20 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class StatsUpdater {
 
     public void StartupdateTimer(ReadyEvent event) {
+        Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
         int MINUTES = 5;
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -23,11 +30,17 @@ public class StatsUpdater {
 
                 int serverCount = (int) event.getJDA().getGuildCache().size();
 
-                Database db = new Database(Config.dbConnection);
-                db.init();
-                db.executeUpdate("UPDATE `API` SET `server_count` = '" + serverCount + "' WHERE `API`.`ID` = 1;");
-                db.close();
-
+                Config.DB.run(() -> {
+                   try {
+                       Connection conn = Config.DB.getConnManager().getConnection();
+                       PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = '?' WHERE `API`.`ID` = 1;");
+                       stmt.setInt(1, serverCount);
+                       stmt.executeUpdate();
+                       conn.close();
+                   } catch (SQLException ex) {
+                       logger.error("Database Error", ex);
+                   }
+                });
                 JSONObject obj = new JSONObject()
                         .put("server_count", serverCount);
 

@@ -22,7 +22,7 @@ public class RollCommand implements Command {
                 EmbedBuilder error = new EmbedBuilder();
                 error.setTitle("Error");
                 error.setDescription("Invalid command usage!");
-                error.setColor(Config.GBOT_BLUE);
+                error.setColor(Config.ENZO_BLUE);
                 event.getChannel().sendMessage(error.build()).queue();
                 return;
             }
@@ -30,7 +30,7 @@ public class RollCommand implements Command {
             int outcome;
 
             EmbedBuilder rolling = new EmbedBuilder();
-            rolling.setColor(Config.GBOT_BLUE);
+            rolling.setColor(Config.ENZO_BLUE);
             rolling.setTitle("Roll");
             rolling.setDescription("Rolling random number between 0 and " + max);
             event.getChannel().sendMessage(rolling.build()).queue();
@@ -39,7 +39,7 @@ public class RollCommand implements Command {
             outcome = (int) (Math.random() * max + 1);
 
             EmbedBuilder result = new EmbedBuilder();
-            result.setColor(Config.GBOT_BLUE);
+            result.setColor(Config.ENZO_BLUE);
             result.setTitle("Success");
             result.setDescription("Your number is " + outcome + "!");
             event.getChannel().sendMessage(result.build()).queueAfter(2, TimeUnit.SECONDS);
@@ -48,7 +48,7 @@ public class RollCommand implements Command {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
             error.setDescription("Invalid command usage!");
-            error.setColor(Config.GBOT_BLUE);
+            error.setColor(Config.ENZO_BLUE);
             event.getChannel().sendMessage(error.build()).queue();
         }
     }

@@ -1,123 +1,67 @@
 package gravity.gbot.utils;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.sql.*;
 
 public class GuildConfig {
     private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
 
-    public static String getBotChannel(String guild, String name) {
-        try {
-            Database db = new Database(Config.dbConnection);
-            db.init();
-            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
-
-            String result = null;
-            if (rs.next()) {
-                result = rs.getString("bot_Channel_ID");
-            }
-            db.close();
-            if ("0".equals(result)) {
+    private ResultSet getGuildRecord(String guild) {
+        Config.DB.run(() -> {
+            try {
+                Connection conn = Config.DB.getConnManager().getConnection();
+                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Config` where guild_ID = ?;");
+                stmt.setString(1, guild);
+                conn.close();
+                return stmt.executeQuery();
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
                 return null;
             }
-            return result;
-
-        } catch (SQLException ex) {
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-            MDC.put("GuildID", guild);
-            MDC.put("Class", name);
-            logger.error("Database Error!");
-            MDC.clear();
-            return null;
-        }
+        });
+        return null;
     }
 
-    public static String getPrefix(String guild, String name) {
-        String fallback_bot_Prefix = Config.fallback_prefix;
-        try {
-            Database db = new Database(Config.dbConnection);
-            db.init();
-            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
-            String result = null;
-            if (rs.next()) {
-                result = rs.getString("Prefix");
-            }
-            db.close();
-            if (result != null) {
-                if (result.contains(" ")) {
-                    return fallback_bot_Prefix;
+    public String getBotChannel(String guild) {
+        Config.DB.run(() -> {
+            try {
+                ResultSet rs = getGuildRecord(guild);
+                String result;
+                if (rs != null && rs.next() && !"0".equals(rs.getString("bot_Channel_ID"))) {
+                    result = rs.getString("bot_Channel_ID");
+                } else {
+                    return null;
                 }
-                if ("".equals(result)) {
-                    return fallback_bot_Prefix;
-                }
+                return result;
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
+                return null;
             }
-            return result;
-
-
-        } catch (SQLException ex) {
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-            MDC.put("GuildID", guild);
-            MDC.put("Class", name);
-            logger.error("Database Error!");
-            MDC.clear();
-            return fallback_bot_Prefix;
-        }
+        });
+        return null;
     }
 
-    public static boolean isAdmin(String ID, String guild, JDA jda) {
-        if (jda == null) {
-            return false;
-        }
-        Guild Guild = jda.getGuildById(guild);
-        if (Guild == null)
-            return false;
-        Member member = Guild.getMemberById(ID);
-        if (member == null)
-            return false;
-        if (member.hasPermission(Permission.ADMINISTRATOR)) {
-            return true;
-        }
-
-        try {
-            Database db = new Database(Config.dbConnection);
-            db.init();
-            ResultSet rs = db.executeQuery("SELECT * FROM `Config` where guild_ID = " + guild + ";");
-
-            String result = null;
-            if (rs.next()) {
-                result = rs.getString("bot_Admins");
-            }
-            db.close();
-            if (result == null) {
-                return false;
-            }
-            String[] dbData = result.split(",");
-
-            for (String admin : dbData) {
-                if (ID.equals(admin)) {
-                    return true;
+    public String getPrefix(String guild) {
+        Config.DB.run(() -> {
+            try {
+                ResultSet rs = getGuildRecord(guild);
+                String result = Config.fallback_prefix;
+                if (rs != null && rs.next()) {
+                    result = rs.getString("Prefix");
                 }
+                if (result != null) {
+                    if (result.contains(" ") || "".equals(result)) {
+                        return Config.fallback_prefix;
+                    }
+                }
+                return result;
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
+                return Config.fallback_prefix;
             }
-        } catch (SQLException ex) {
-            MDC.put("SQLState", ex.getSQLState());
-            MDC.put("VendorError", String.valueOf(ex.getErrorCode()));
-            logger.error(ex.getMessage());
-            MDC.clear();
-            return false;
-        }
-        return false;
+        });
+        return Config.fallback_prefix;
     }
 }

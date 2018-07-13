@@ -19,7 +19,7 @@ public class ShutdownCommand implements Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.white);
             builder.setTitle("Info");
-            builder.setDescription("Shutting down Gbot.");
+            builder.setDescription("Shutting down EnzoBot.");
             event.getChannel().sendMessage(builder.build()).queue();
             event.getJDA().shutdown();
             System.exit(0);
@@ -33,7 +33,7 @@ public class ShutdownCommand implements Command {
 
     @Override
     public String getDesc() {
-        return "Shuts Down the Gbot";
+        return "Shuts Down the EnzoBot";
     }
 
     @Override

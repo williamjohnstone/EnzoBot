@@ -53,7 +53,7 @@ public class GuildInfoCommand implements Command {
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("guildinfo"));
+        return new ArrayList<>(Arrays.asList("guildinfo", "serverinfo"));
     }
 
     @Override

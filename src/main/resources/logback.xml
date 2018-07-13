@@ -1,20 +1,47 @@
 <configuration>
+
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
     </appender>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>[%level] [%logger{0}] [%t] %msg%n</pattern>
         </encoder>
     </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>logs\logFile.html</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <fileNamePattern>logs\log.%d{yyyy-MM-dd}.%i.html</fileNamePattern>
+
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <charset>UTF-8</charset>
+            <layout class="ch.qos.logback.classic.html.HTMLLayout">
+                <pattern>%d{HH:mm:ss.SSS}%thread%level%logger%line%msg</pattern>
+            </layout>
+        </encoder>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="Sentry"/>
+        <appender-ref ref="FILE"/>
     </root>
-    <logger name="org.apache" level="NONE" />
-    <logger name="com.sedmelluq.*" level="INFO" />
-    <logger name="httpclient" level="NONE" />
-    <logger name="gravity.gbot.Main" level="INFO" />
+    <logger name="org.apache" level="NONE"/>
+    <logger name="com.sedmelluq.*" level="INFO"/>
+    <logger name="httpclient" level="NONE"/>
+    <logger name="gravity.gbot.Main" level="INFO"/>
 </configuration>

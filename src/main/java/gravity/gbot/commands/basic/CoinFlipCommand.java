@@ -16,7 +16,7 @@ public class CoinFlipCommand implements Command {
         int outcome = (int) (Math.random() * 2 + 1);
         EmbedBuilder flipBuilder = new EmbedBuilder();
         flipBuilder.setTitle("Coin Flip");
-        flipBuilder.setColor(Config.GBOT_BLUE);
+        flipBuilder.setColor(Config.ENZO_BLUE);
         if  (outcome == 1) {
             flipBuilder.setDescription("You got Heads");
             flipBuilder.setImage("https://g-bot.tk/img/heads.png");
@@ -27,7 +27,7 @@ public class CoinFlipCommand implements Command {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
             error.setDescription("Invalid command usage!");
-            error.setColor(Config.GBOT_BLUE);
+            error.setColor(Config.ENZO_BLUE);
             event.getChannel().sendMessage(error.build()).queue();
             return;
         }

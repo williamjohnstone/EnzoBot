@@ -2,58 +2,72 @@ package gravity.gbot.commands.mod;
 
 import gravity.gbot.Command;
 import gravity.gbot.utils.Config;
-import gravity.gbot.utils.Database;
 import gravity.gbot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class SetBotChannel implements Command {
 
+    private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
+
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        boolean adminCheck = GuildConfig.isAdmin(event.getAuthor().getId(), event.getGuild().getId(), event.getJDA());
+        boolean adminCheck = event.getMember().hasPermission(Permission.ADMINISTRATOR);
         if (!adminCheck) {
             event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
             return;
         }
-        String channel = "0";
-        if (args.length == 2) {
-            if (args[1].equals("off")) {
+        Config.DB.run(() -> {
+            String channel = "0";
+            if (args.length == 2) {
+                if (args[1].equals("off")) {
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Bot Channel Removed");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription("Success");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    channel = "0";
+                } else {
+                    channel = event.getMessage().getMentionedChannels().get(0).getId();
+                }
+            } else if (args.length == 1) {
+                channel = event.getMessage().getChannel().getId();
+            }
+            try {
+                Connection conn = Config.DB.getConnManager().getConnection();
+                PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `bot_Channel_ID` = '?' WHERE `Config`.`guild_ID` = ?;");
+                stmt.setString(1, channel);
+                stmt.setString(2, event.getGuild().getId());
+                stmt.executeUpdate();
+                conn.close();
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
+            }
+            if (!"0".equals(channel)) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Bot Channel Set");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("Success, bot channel set to: " + event.getGuild().getTextChannelById(channel).getAsMention());
+                event.getChannel().sendMessage(builder.build()).queue();
+            } else {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Bot Channel Removed");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success");
                 event.getChannel().sendMessage(builder.build()).queue();
-                channel = "0";
-            } else {
-                channel = event.getMessage().getMentionedChannels().get(0).getId();
             }
-        } else if (args.length == 1) {
-            channel = event.getMessage().getChannel().getId();
-        }
-
-        Database db = new Database(Config.dbConnection);
-        db.init();
-        db.executeUpdate("UPDATE `Config` SET `bot_Channel_ID` = '" + channel + "' WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
-        db.close();
-        if (!"0".equals(channel)) {
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Bot Channel Set");
-            builder.setColor(Color.WHITE);
-            builder.setDescription("Success");
-            event.getChannel().sendMessage(builder.build()).queue();
-        } else {
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Bot Channel Removed");
-            builder.setColor(Color.WHITE);
-            builder.setDescription("Success");
-            event.getChannel().sendMessage(builder.build()).queue();
-        }
+        });
     }
 
     @Override

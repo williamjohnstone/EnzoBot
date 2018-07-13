@@ -1,5 +1,5 @@
-# GravityBot Contribution Guide
-I am very picky about quality of code in GravityBot so it is *very* important that you follow these guidelines when contributing.
+# EnzoBot Contribution Guide
+I am very picky about quality of code in EnzoBot so it is *very* important that you follow these guidelines when contributing.
 
 ### Big Dos and Don'ts
  - Don't PR single line corrections

@@ -43,8 +43,8 @@ public class BotInfoCommand implements Command {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Bot Info");
-        builder.setColor(Config.GBOT_BLUE);
-        builder.setThumbnail(Config.GBOT_EMBED_LOGO);
+        builder.setColor(Config.ENZO_BLUE);
+        builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
         builder.addField("Commands", String.valueOf(Main.cmdlist.size() + MusicMaps.musicCmds.size()), true);
@@ -56,7 +56,7 @@ public class BotInfoCommand implements Command {
         builder.addField("RAM Usage", ram0 + "MB/" + ram1 + "MB" + "\n", false);
         builder.addField("Audio Connections", String.valueOf(player.getActiveConnections(event)), false);
         builder.addField("Language & Library versions", "**Coded in: ** Java (version " + System.getProperty("java.version") + ")" + "\n" + "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version: **" + PlayerLibrary.VERSION + "\n", false);
-        builder.addField("Latest Github Commit", "[" + BuildConfig.GH_COMMIT_SHORT + "](https://github.com/GravityGamer/GravityBot/commit/" + BuildConfig.GH_COMMIT + ")", true);
+        builder.addField("Latest Github Commit", "[" + BuildConfig.GH_COMMIT_SHORT + "](https://github.com/EnzoDevelop/EnzoBot/commit/" + BuildConfig.GH_COMMIT + ")", true);
         builder.addField("Uptime", getUptime(), true);
         event.getChannel().sendMessage(builder.build()).queue();
         userCnt = 0;
@@ -69,7 +69,7 @@ public class BotInfoCommand implements Command {
 
     @Override
     public String getDesc() {
-        return "Displays info about Gbot.";
+        return "Displays info about bot.";
     }
 
     @Override

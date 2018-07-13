@@ -1,5 +1,6 @@
 package gravity.gbot.utils;
 
+import gravity.gbot.connections.database.DBManager;
 import io.github.binaryoverload.JSONConfig;
 
 import java.awt.*;
@@ -7,9 +8,9 @@ import java.io.FileNotFoundException;
 
 public class Config {
 
-    public static final String GBOT_EMBED_LOGO = "https://cdn.discordapp.com/attachments/391558952757886978/431071158549348373/favicon.png";
-    public static final Color GBOT_BLUE = new Color(51, 102, 153);
+    public static final Color ENZO_BLUE = new Color(51, 102, 153);
     public static final String BOT_DEV_CHANNEL = "431463562393944064";
+    public static final DBManager DB = new DBManager();
 
     public static String Discord_Token;
     public static String dbConnection;

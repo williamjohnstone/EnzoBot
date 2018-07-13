@@ -68,17 +68,13 @@ public class Main {
             cmdlist.add(new GiveRole());
             cmdlist.add(new SetRole());
             cmdlist.add(new Eval());
-            cmdlist.add(new SetNick());
             cmdlist.add(new SetPrefix());
             cmdlist.add(new SetBotChannel());
-            cmdlist.add(new AddBotAdmin());
-            cmdlist.add(new RemoveBotAdmin());
             cmdlist.add(new IsAdminCommand());
             cmdlist.add(new InviteCommand());
             cmdlist.add(new BotInfoCommand());
             cmdlist.add(new UserInfoCommand());
             cmdlist.add(new GuildInfoCommand());
-            //cmdlist.add(new TestKick());
             cmdlist.add(new ShutdownCommand());
             cmdlist.add(new UpdateCommand());
             cmdlist.add(new RestartCommand());

@@ -2,23 +2,25 @@ package gravity.gbot.utils;
 
 import gravity.gbot.Command;
 import gravity.gbot.Main;
-import gravity.gbot.commands.basic.HelpCommand;
 import gravity.gbot.utils.logging.MessageLogger;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class BotListener extends ListenerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private GuildConfig guildConfig = new GuildConfig();
 
     public static Command getCommand(String alias) {
         for (Command command : Main.cmdlist) {
@@ -34,14 +36,14 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         StatsUpdater updater = new StatsUpdater();
-        logger.info("GravityBot is running! Bot should be online.");
+        logger.info("EnzoBot is running! Bot should be online.");
         updater.StartupdateTimer(event);
     }
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
-        String botPrefix = GuildConfig.getPrefix(event.getGuild().getId(), this.getClass().getName());
+        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
         MessageLogger.logMessage(event, botPrefix);
 
         String substringMessage = "";
@@ -51,15 +53,11 @@ public class BotListener extends ListenerAdapter {
             substringMessage = msg.substring(botPrefix.length());
         }
         String[] parts = substringMessage.split("\\s+");
-        String commandName = parts[0];
-        Command cmd = getCommand(commandName);
+        Command cmd = getCommand(parts[0]);
 
         boolean checks = runChecks(event, botPrefix, cmd);
-        if (checks) {
-
-            if (cmd != null) {
-                cmd.execute(args, event);
-            }
+        if (checks && cmd != null) {
+            cmd.execute(args, event);
         }
     }
 
@@ -79,7 +77,7 @@ public class BotListener extends ListenerAdapter {
                 return false;
             }
 
-            String botChannel = GuildConfig.getBotChannel(event.getGuild().getId(), this.getClass().getName());
+            String botChannel = guildConfig.getBotChannel(event.getGuild().getId());
             if (cmd != null && botChannel != null && !botChannel.equals(event.getChannel().getId())) {
 
                 event.getMessage().delete().queue();
@@ -102,23 +100,35 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        try {
-            event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> event.getGuild().getTextChannels().get(0).createInvite().queue((invite -> priv.sendMessage("https://discord.gg/invite/" + invite.getCode()).queue()))));
-        } catch (InsufficientPermissionException e) {
-            event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
-        }
-        Database db = new Database(Config.dbConnection);
-        db.init();
-        db.executeUpdate("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '" + event.getGuild().getId() + "', '!', '0', '" + event.getGuild().getOwner().getUser().getId() + "');");
-        db.close();
+        event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
+        Config.DB.run(() -> {
+            try {
+                Connection conn = Config.DB.getConnManager().getConnection();
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '?', '?', '?', '?');");
+                stmt.setInt(1, (int) event.getGuild().getIdLong());
+                stmt.setString(2, "!");
+                stmt.setInt(3, 0);
+                stmt.setString(4, event.getGuild().getOwner().getUser().getId());
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
+            }
+        });
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        Database db = new Database(Config.dbConnection);
-        db.init();
-        db.executeUpdate("DELETE FROM `Config` WHERE `Config`.`guild_ID` = " + event.getGuild().getId() + ";");
-        db.close();
+        Config.DB.run(() -> {
+            try {
+                Connection conn = Config.DB.getConnManager().getConnection();
+                PreparedStatement stmt = conn.prepareStatement("DELETE FROM `Config` WHERE `Config`.`guild_ID` = ?;");
+                stmt.setString(1, event.getGuild().getId());
+                stmt.executeUpdate();
+                conn.close();
+            } catch (SQLException ex) {
+                logger.error("Database Error", ex);
+            }
+        });
     }
 }
 
