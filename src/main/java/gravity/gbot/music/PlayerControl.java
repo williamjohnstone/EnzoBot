@@ -69,10 +69,15 @@ public class PlayerControl extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        Guild guild = event.getGuild();
+        if (event.getAuthor().isBot()) {
+            return;
+        }
         GuildConfig guildConfig = new GuildConfig();
-        String channelBot = guildConfig.getBotChannel(event.getGuild().getId());
-
+        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
+        Guild guild = event.getGuild();
+        if (!event.getMessage().getContentRaw().startsWith(botPrefix)) {
+            return;
+        }
         if (Config.dev_mode) {
             if (event.getChannel() != event.getJDA().getGuildById("367273834128080898").getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return;
@@ -88,28 +93,9 @@ public class PlayerControl extends ListenerAdapter {
 
         String[] command = event.getMessage().getContentRaw().split(" +");
 
-        if (channelBot != null) {
-            if (!channelBot.equals(event.getChannel().getId())) {
-                event.getMessage().delete().queue();
-                event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(channelBot).getAsMention() + " for bot commands!").queue((msg2 ->
-                {
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            msg2.delete().queue();
-                        }
-                    }, 5000);
-                }));
-                return;
-
-            }
-        }
-
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
         TrackScheduler scheduler = mng.scheduler;
-        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
 
         if (command[0].toLowerCase().equals(botPrefix + "play") && command.length >= 2) {
             if (command[1].startsWith("http://") || command[1].startsWith("https://")) {

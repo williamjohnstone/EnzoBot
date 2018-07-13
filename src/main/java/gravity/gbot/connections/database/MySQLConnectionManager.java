@@ -5,6 +5,7 @@ import gravity.gbot.utils.Config;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class MySQLConnectionManager implements DBConnectionManager {
@@ -13,9 +14,8 @@ class MySQLConnectionManager implements DBConnectionManager {
 
     MySQLConnectionManager() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(Config.dbConnection);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -23,9 +23,8 @@ class MySQLConnectionManager implements DBConnectionManager {
     public Connection getConnection() {
         if (!isConnected()) {
             try {
-                Class.forName("com.mysql.jdbc.Driver");
                 this.connection = DriverManager.getConnection(Config.dbConnection);
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -45,7 +44,11 @@ class MySQLConnectionManager implements DBConnectionManager {
     @Override
     public String getName() {
         try {
-            return connection.createStatement().executeQuery("SELECT DATABASE()").getString("DATABASE()");
+            ResultSet rs = connection.createStatement().executeQuery("SELECT DATABASE()");
+            if (rs.next()) {
+                return rs.getString("DATABASE()");
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -50,7 +50,6 @@ public class SetBotChannel implements Command {
                 stmt.setString(1, channel);
                 stmt.setString(2, event.getGuild().getId());
                 stmt.executeUpdate();
-                conn.close();
             } catch (SQLException ex) {
                 logger.error("Database Error", ex);
             }

@@ -44,7 +44,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
         String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
-        MessageLogger.logMessage(event, botPrefix);
+        //new MessageLogger().logMessage(event, botPrefix);
 
         String substringMessage = "";
         String msg = event.getMessage().getContentRaw().toLowerCase();
@@ -124,7 +124,6 @@ public class BotListener extends ListenerAdapter {
                 PreparedStatement stmt = conn.prepareStatement("DELETE FROM `Config` WHERE `Config`.`guild_ID` = ?;");
                 stmt.setString(1, event.getGuild().getId());
                 stmt.executeUpdate();
-                conn.close();
             } catch (SQLException ex) {
                 logger.error("Database Error", ex);
             }

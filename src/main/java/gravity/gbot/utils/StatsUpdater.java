@@ -33,10 +33,9 @@ public class StatsUpdater {
                 Config.DB.run(() -> {
                    try {
                        Connection conn = Config.DB.getConnManager().getConnection();
-                       PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = '?' WHERE `API`.`ID` = 1;");
+                       PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;");
                        stmt.setInt(1, serverCount);
                        stmt.executeUpdate();
-                       conn.close();
                    } catch (SQLException ex) {
                        logger.error("Database Error", ex);
                    }

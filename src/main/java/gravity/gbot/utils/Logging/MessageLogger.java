@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class MessageLogger {
 
-    public static void logMessage(GuildMessageReceivedEvent event, String BotPrefix) {
+    public void logMessage(GuildMessageReceivedEvent event, String BotPrefix) {
 
         String args[] = event.getMessage().getContentRaw().split(" +");
         if (Config.loggingALL && !event.getAuthor().isBot()) {
@@ -27,7 +27,7 @@ public class MessageLogger {
         }
 
     }
-    private static void sendLog(GuildMessageReceivedEvent event) {
+    private void sendLog(GuildMessageReceivedEvent event) {
         if (event.getChannel().getType() == ChannelType.PRIVATE) {
             System.out.println("[EnzoBot] Message Received, Channel: " + event.getMessage().getChannel().getName() + ", Channel Type: " + event.getChannel().getType() + ", Author: " + event.getAuthor().getName() + "#" + event.getAuthor().getDiscriminator() + ", Message: " + event.getMessage().getContentRaw());
         } else if (event.getChannel().getType() == ChannelType.TEXT) {

@@ -42,7 +42,7 @@ public class SetPrefix implements Command {
         Config.DB.run(() -> {
             try {
                 Connection conn = Config.DB.getConnManager().getConnection();
-                PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `Prefix` = '?' WHERE `Config`.`guild_ID` = ?;");
+                PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `Prefix` = ? WHERE `Config`.`guild_ID` = ?;");
                 stmt.setString(1, prefix);
                 stmt.setString(2, event.getGuild().getId());
                 stmt.executeUpdate();

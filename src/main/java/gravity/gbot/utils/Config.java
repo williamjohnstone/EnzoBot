@@ -8,9 +8,10 @@ import java.io.FileNotFoundException;
 
 public class Config {
 
+    public static DBManager DB;
     public static final Color ENZO_BLUE = new Color(51, 102, 153);
     public static final String BOT_DEV_CHANNEL = "431463562393944064";
-    public static final DBManager DB = new DBManager();
+
 
     public static String Discord_Token;
     public static String dbConnection;
@@ -34,6 +35,7 @@ public class Config {
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
+            DB = new DBManager();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
