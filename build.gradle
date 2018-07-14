@@ -7,10 +7,10 @@ plugins {
     id 'idea'
 }
 
-group = 'gravity.bot'
+group = 'ml.enzodevelopment'
 version = "3.40.2_${getGitHashShort()}"
 
-mainClassName = 'gravity.gbot.Main'
+mainClassName = 'ml.enzodevelopment.enzobot.Main'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -35,7 +35,7 @@ buildConfig {
     buildConfigField("String", "OWNER_ID", "205056315351891969")
     buildConfigField("String", "GH_COMMIT", "${getGitHash()}")
     buildConfigField("String", "GH_COMMIT_SHORT", "${getGitHashShort()}")
-    packageName = 'gravity.gbot'
+    packageName = 'ml.enzodevelopment.enzobot'
     charset = 'UTF-8'
     clsName = 'BuildConfig'
 }

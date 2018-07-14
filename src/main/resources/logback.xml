@@ -43,5 +43,5 @@
     <logger name="org.apache" level="NONE"/>
     <logger name="com.sedmelluq.*" level="INFO"/>
     <logger name="httpclient" level="NONE"/>
-    <logger name="gravity.gbot.Main" level="INFO"/>
+    <logger name="gravity.enzobot.Main" level="INFO"/>
 </configuration>
