@@ -164,7 +164,7 @@ public class PlayerControl extends ListenerAdapter {
                         msg.addReaction("\u0033\u20E3").queue();
                         msg.addReaction("\u0034\u20E3").queue();
                         msg.addReaction("\u0035\u20E3").queue();
-                    }));
+                    }), null);
                 }
             }
         } else if ((botPrefix + "leave").equals(command[0].toLowerCase())) {
