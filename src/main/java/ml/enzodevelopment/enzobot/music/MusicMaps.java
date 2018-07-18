@@ -21,6 +21,7 @@ public class MusicMaps {
         musicCmds.add("queue|Displays the player queue.|queue or q");
         musicCmds.add("shuffle|Shuffles the player.|shuffle");
         musicCmds.add("loop|Loops the currently playing track.|loop");
+        musicCmds.add("skip all|Clears all your tracks from the queue.|skip all");
     }
 
 }

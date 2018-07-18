@@ -2,6 +2,7 @@ package ml.enzodevelopment.enzobot.utils;
 
 import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.Main;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -43,7 +44,6 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
         String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
-        //new MessageLogger().logMessage(event, botPrefix);
 
         String substringMessage = "";
         String msg = event.getMessage().getContentRaw().toLowerCase();
@@ -55,7 +55,7 @@ public class BotListener extends ListenerAdapter {
         Command cmd = getCommand(parts[0]);
 
         boolean checks = runChecks(event, botPrefix, cmd);
-        if (checks && cmd != null) {
+        if (checks && cmd != null && event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_WRITE)) {
             cmd.execute(args, event);
         }
     }

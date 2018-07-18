@@ -105,9 +105,9 @@ public class PlayerControl extends ListenerAdapter {
                 }
                 {
                     if (command[1].contains("&list=") || command[1].contains("?list=")) {
-                        loadAndPlay(mng, event.getChannel(), command[1], true);
+                        loadAndPlay(mng, event.getChannel(), command[1], true, event.getAuthor());
                     } else {
-                        loadAndPlay(mng, event.getChannel(), command[1], false);
+                        loadAndPlay(mng, event.getChannel(), command[1], false, event.getAuthor());
                     }
                 }
             } else {
@@ -157,7 +157,7 @@ public class PlayerControl extends ListenerAdapter {
                                         searchId(2, results, type),
                                         searchId(3, results, type),
                                         searchId(4, results, type),
-                                        e.getMessageId(), event.getGuild(), type),
+                                        e.getMessageId(), event.getGuild(), type, event.getAuthor()),
                                 30, TimeUnit.SECONDS, () -> msg.delete().queue());
                         msg.addReaction("\u0031\u20E3").queue();
                         msg.addReaction("\u0032\u20E3").queue();
@@ -199,11 +199,34 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         } else if ((botPrefix + "skip").equals(command[0].toLowerCase())) {
+            User requested = (User) player.getPlayingTrack().getUserData();
+            if (command.length == 2) {
+                if ("all".equals(command[1].toLowerCase())) {
+                    scheduler.queue.removeIf(track -> track.getUserData() == requested);
+                    hasVoted = new ArrayList<>();
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Info");
+                    builder.setColor(Color.WHITE);
+                    builder.setDescription(":fast_forward: All your tracks have been removed from the queue!");
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    return;
+                }
+            }
             if (player.getPlayingTrack() == null) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("No Track is currently playing.");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
+            if (event.getAuthor() == requested) {
+                scheduler.nextTrack();
+                hasVoted = new ArrayList<>();
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription(":fast_forward: Track Skipped!");
                 event.getChannel().sendMessage(builder.build()).queue();
                 return;
             }
@@ -600,7 +623,7 @@ public class PlayerControl extends ListenerAdapter {
         return String.valueOf(pointer.queryFrom(results));
     }
 
-    private void play(String Emoji, GuildMessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type) {
+    private void play(String Emoji, GuildMessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type, User user) {
         String join = join(guild, event, getMusicManager(guild));
         if (join.equals("fail")) {
             return;
@@ -617,23 +640,23 @@ public class PlayerControl extends ListenerAdapter {
         if (Emoji != null && !Emoji.equals(""))
             switch (Emoji) {
                 case "\u0031\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url0, isPlaylist);
+                    loadAndPlay(mng, event.getChannel(), start + url0, isPlaylist, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0032\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url1, isPlaylist);
+                    loadAndPlay(mng, event.getChannel(), start + url1, isPlaylist, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0033\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url2, isPlaylist);
+                    loadAndPlay(mng, event.getChannel(), start + url2, isPlaylist, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0034\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url3, isPlaylist);
+                    loadAndPlay(mng, event.getChannel(), start + url3, isPlaylist, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0035\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url4, isPlaylist);
+                    loadAndPlay(mng, event.getChannel(), start + url4, isPlaylist, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 default:
@@ -643,7 +666,7 @@ public class PlayerControl extends ListenerAdapter {
             }
     }
 
-    private void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, String url, final boolean addPlaylist) {
+    private void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, String url, final boolean addPlaylist, User user) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link main.resources
@@ -665,6 +688,7 @@ public class PlayerControl extends ListenerAdapter {
                 builder.addField("Duration", getTimestamp(track.getDuration()), true);
                 builder.addField("URL", track.getInfo().uri, true);
                 channel.sendMessage(builder.build()).queue();
+                track.setUserData(user);
                 mng.scheduler.queue(track);
             }
 
@@ -672,11 +696,15 @@ public class PlayerControl extends ListenerAdapter {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
-
+                for (AudioTrack track : tracks) {
+                    track.setUserData(user);
+                }
 
                 if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
+
+                firstTrack.setUserData(user);
 
                 if (addPlaylist) {
                     EmbedBuilder builder = new EmbedBuilder();
