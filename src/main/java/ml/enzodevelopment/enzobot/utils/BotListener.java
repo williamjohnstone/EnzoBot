@@ -55,13 +55,13 @@ public class BotListener extends ListenerAdapter {
         Command cmd = getCommand(parts[0]);
 
         boolean checks = runChecks(event, botPrefix, cmd);
-        if (checks && cmd != null && event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_WRITE)) {
+        if (checks && cmd != null) {
             cmd.execute(args, event);
         }
     }
 
     private boolean runChecks(GuildMessageReceivedEvent event, String botPrefix, Command cmd) {
-
+        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_WRITE) && event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE)) {
         boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(botPrefix);
         boolean notBot = !event.getMessage().getAuthor().isBot();
         boolean notMusic = !event.getMessage().getContentRaw().startsWith(botPrefix + "m");
@@ -94,6 +94,7 @@ public class BotListener extends ListenerAdapter {
             }
 
         }
+            }
         return true;
     }
 
