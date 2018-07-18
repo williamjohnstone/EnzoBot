@@ -1,13 +1,14 @@
 package ml.enzodevelopment.enzobot.utils;
 
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import org.json.JSONObject;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -40,16 +41,12 @@ public class StatsUpdater {
                        logger.error("Database Error", ex);
                    }
                 });
-                JSONObject obj = new JSONObject()
-                        .put("server_count", serverCount);
-
+                OkHttpClient client = new OkHttpClient();
+                FormBody body = new FormBody.Builder().add("server_count", String.valueOf(serverCount)).build();
+                Request request = new Request.Builder().url("https://discordbots.org/api/bots/" + botId + "/stats").post(body).addHeader("Authorization", token).addHeader("Content-Type", "application/json").build();
                 try {
-                    Unirest.post("https://discordbots.org/api/bots/" + botId + "/stats")
-                            .header("Authorization", token)
-                            .header("Content-Type", "application/json")
-                            .body(obj.toString())
-                            .asJson();
-                } catch (UnirestException e) {
+                    client.newCall(request).execute();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

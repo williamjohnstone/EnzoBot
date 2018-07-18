@@ -37,11 +37,10 @@ public class GuildConfig {
             if (rs != null && rs.next()) {
                 result = rs.getString("Prefix");
             }
-            if (result != null) {
-                if (result.contains(" ") || "".equals(result)) {
-                    logger.warn("Reverting to Fallback Prefix, ID:" + guild);
-                    return Config.fallback_prefix;
-                }
+            if (result != null && result.contains(" ") || "".equals(result)) {
+                logger.warn("Reverting to Fallback Prefix, ID:" + guild);
+                return Config.fallback_prefix;
+
             }
             return result;
         } catch (SQLException ex) {

@@ -19,8 +19,6 @@ public class Config {
     public static String API_Key;
     public static String sentry_dsn;
     public static String google_api;
-    public static Boolean loggingALL = false;
-    public static Boolean loggingCMD = false;
     public static String config_file;
     public static Boolean dev_mode = false;
 
