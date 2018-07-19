@@ -199,6 +199,14 @@ public class PlayerControl extends ListenerAdapter {
                 event.getChannel().sendMessage(builder.build()).queue();
             }
         } else if ((botPrefix + "skip").equals(command[0].toLowerCase())) {
+            if (player.getPlayingTrack() == null) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("No Track is currently playing.");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
             User requested = (User) player.getPlayingTrack().getUserData();
             if (command.length == 2) {
                 if ("all".equals(command[1].toLowerCase())) {
@@ -211,14 +219,6 @@ public class PlayerControl extends ListenerAdapter {
                     event.getChannel().sendMessage(builder.build()).queue();
                     return;
                 }
-            }
-            if (player.getPlayingTrack() == null) {
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Info");
-                builder.setColor(Color.WHITE);
-                builder.setDescription("No Track is currently playing.");
-                event.getChannel().sendMessage(builder.build()).queue();
-                return;
             }
             if (event.getAuthor() == requested) {
                 scheduler.nextTrack();
