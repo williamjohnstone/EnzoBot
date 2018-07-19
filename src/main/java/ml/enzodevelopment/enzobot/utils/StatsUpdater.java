@@ -23,7 +23,7 @@ public class StatsUpdater {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                event.getJDA().getPresence().setGame(Game.watching(event.getJDA().getGuildCache().size() + " servers! | g-bot.tk"));
+                event.getJDA().getPresence().setGame(Game.watching(event.getJDA().getGuildCache().size() + " servers! | !help"));
                 String token = Config.API_Key;
                 String botId = "391558265265192961";
 
