@@ -2,9 +2,7 @@ package ml.enzodevelopment.enzobot.utils;
 
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,20 +30,23 @@ public class StatsUpdater {
                 int serverCount = (int) event.getJDA().getGuildCache().size();
 
                 Config.DB.run(() -> {
-                   try {
-                       Connection conn = Config.DB.getConnManager().getConnection();
-                       PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;");
-                       stmt.setInt(1, serverCount);
-                       stmt.executeUpdate();
-                   } catch (SQLException ex) {
-                       logger.error("Database Error", ex);
-                   }
+                    try {
+                        Connection conn = Config.DB.getConnManager().getConnection();
+                        PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;");
+                        stmt.setInt(1, serverCount);
+                        stmt.executeUpdate();
+                    } catch (SQLException ex) {
+                        logger.error("Database Error", ex);
+                    }
                 });
                 OkHttpClient client = new OkHttpClient();
                 FormBody body = new FormBody.Builder().add("server_count", String.valueOf(serverCount)).build();
                 Request request = new Request.Builder().url("https://discordbots.org/api/bots/" + botId + "/stats").post(body).addHeader("Authorization", token).addHeader("Content-Type", "application/json").build();
                 try {
-                    client.newCall(request).execute();
+                    Response response = client.newCall(request).execute();
+                    if (response.body() != null) {
+                        response.body().close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
