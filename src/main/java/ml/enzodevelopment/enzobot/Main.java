@@ -1,11 +1,9 @@
 package ml.enzodevelopment.enzobot;
 
 import ml.enzodevelopment.enzobot.commands.basic.*;
-import ml.enzodevelopment.enzobot.commands.mod.SetBotChannel;
-import ml.enzodevelopment.enzobot.commands.mod.SetPrefix;
-import ml.enzodevelopment.enzobot.commands.mod.SetRole;
+import ml.enzodevelopment.enzobot.commands.mod.*;
+import ml.enzodevelopment.enzobot.commands.music.*;
 import ml.enzodevelopment.enzobot.commands.owner.*;
-import ml.enzodevelopment.enzobot.music.MusicMaps;
 import ml.enzodevelopment.enzobot.music.PlayerControl;
 import ml.enzodevelopment.enzobot.utils.BotListener;
 import ml.enzodevelopment.enzobot.utils.Config;
@@ -52,10 +50,8 @@ public class Main {
             Config.config_file = "config.json";
         }
         Config config = new Config();
-        MusicMaps mcmds = new MusicMaps();
         config.loadConfig();
         Sentry.init(Config.sentry_dsn);
-        mcmds.add();
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
                 .addEventListener(new PlayerControl())
@@ -65,7 +61,7 @@ public class Main {
 
         try {
             JDA jda = builder.buildBlocking();
-            jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | g-bot.tk"));
+            jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | !help"));
             cmdlist.add(new PingCommand());
             cmdlist.add(new HelpCommand());
             cmdlist.add(new GiveRole());
@@ -85,6 +81,22 @@ public class Main {
             cmdlist.add(new QuoteCommand());
             cmdlist.add(new RollCommand());
             cmdlist.add(new CoinFlipCommand());
+            //Music Commands
+            cmdlist.add(new PlayCommand());
+            cmdlist.add(new LeaveCommand());
+            cmdlist.add(new NowPlayingCommand());
+            cmdlist.add(new PauseCommand());
+            cmdlist.add(new QueueCommand());
+            cmdlist.add(new RepeatCommand());
+            cmdlist.add(new ResetCommand());
+            cmdlist.add(new ResumeCommand());
+            cmdlist.add(new ReplayCommand());
+            cmdlist.add(new SeekCommand());
+            cmdlist.add(new ShuffleCommand());
+            cmdlist.add(new SkipCommand());
+            cmdlist.add(new StopCommand());
+            cmdlist.add(new VolumeCommand());
+
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
