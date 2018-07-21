@@ -46,7 +46,7 @@ public class BotInfoCommand implements Command {
         builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
-        builder.addField("Commands", String.valueOf(Main.cmdlist.size()), true);
+        builder.addField("Commands", String.valueOf(Main.cmdList.size()), true);
         builder.addField("Server Count", String.valueOf(event.getJDA().getGuildCache().size()), true);
         builder.addField("User Count", String.valueOf(userCnt), true);
         builder.addField("Version", BuildConfig.VERSION, true);

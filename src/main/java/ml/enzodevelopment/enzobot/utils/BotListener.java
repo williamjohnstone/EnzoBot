@@ -23,7 +23,7 @@ public class BotListener extends ListenerAdapter {
     private GuildConfig guildConfig = new GuildConfig();
 
     public static Command getCommand(String alias) {
-        for (Command command : Main.cmdlist) {
+        for (Command command : Main.cmdList) {
             for (String commandAlias : command.getAliases()) {
                 if (commandAlias.equals(alias)) {
                     return command;

@@ -32,7 +32,7 @@ public class HelpCommand implements Command {
             StringBuilder adminCommands = new StringBuilder();
             StringBuilder musicCommands = new StringBuilder();
             StringBuilder ownerComamnds = new StringBuilder();
-            for (Command cmd : Main.cmdlist) {
+            for (Command cmd : Main.cmdList) {
                 if ("public".equals(cmd.getType())) {
                     basicCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 } else if ("admin".equals(cmd.getType())) {

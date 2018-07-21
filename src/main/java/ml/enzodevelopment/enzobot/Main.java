@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 
 public class Main {
 
-    public static List<Command> cmdlist = new ArrayList<>();
+    public static List<Command> cmdList = new ArrayList<>();
 
     public static void main(String[] args) {
         RestAction.DEFAULT_FAILURE = t ->
@@ -58,43 +58,42 @@ public class Main {
                 .setStatus(OnlineStatus.ONLINE);
 
         try {
+            cmdList.add(new PingCommand());
+            cmdList.add(new HelpCommand());
+            cmdList.add(new GiveRole());
+            cmdList.add(new SetRole());
+            cmdList.add(new Eval());
+            cmdList.add(new SetPrefix());
+            cmdList.add(new SetBotChannel());
+            cmdList.add(new IsAdminCommand());
+            cmdList.add(new InviteCommand());
+            cmdList.add(new BotInfoCommand());
+            cmdList.add(new UserInfoCommand());
+            cmdList.add(new GuildInfoCommand());
+            cmdList.add(new ShutdownCommand());
+            cmdList.add(new UpdateCommand());
+            cmdList.add(new RestartCommand());
+            cmdList.add(new DeployCommand());
+            cmdList.add(new QuoteCommand());
+            cmdList.add(new RollCommand());
+            cmdList.add(new CoinFlipCommand());
+            //Music Commands
+            cmdList.add(new PlayCommand());
+            cmdList.add(new LeaveCommand());
+            cmdList.add(new NowPlayingCommand());
+            cmdList.add(new PauseCommand());
+            cmdList.add(new QueueCommand());
+            cmdList.add(new RepeatCommand());
+            cmdList.add(new ResetCommand());
+            cmdList.add(new ResumeCommand());
+            cmdList.add(new ReplayCommand());
+            cmdList.add(new SeekCommand());
+            cmdList.add(new ShuffleCommand());
+            cmdList.add(new SkipCommand());
+            cmdList.add(new StopCommand());
+            cmdList.add(new VolumeCommand());
             JDA jda = builder.buildBlocking();
             jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | !help"));
-            cmdlist.add(new PingCommand());
-            cmdlist.add(new HelpCommand());
-            cmdlist.add(new GiveRole());
-            cmdlist.add(new SetRole());
-            cmdlist.add(new Eval());
-            cmdlist.add(new SetPrefix());
-            cmdlist.add(new SetBotChannel());
-            cmdlist.add(new IsAdminCommand());
-            cmdlist.add(new InviteCommand());
-            cmdlist.add(new BotInfoCommand());
-            cmdlist.add(new UserInfoCommand());
-            cmdlist.add(new GuildInfoCommand());
-            cmdlist.add(new ShutdownCommand());
-            cmdlist.add(new UpdateCommand());
-            cmdlist.add(new RestartCommand());
-            cmdlist.add(new DeployCommand());
-            cmdlist.add(new QuoteCommand());
-            cmdlist.add(new RollCommand());
-            cmdlist.add(new CoinFlipCommand());
-            //Music Commands
-            cmdlist.add(new PlayCommand());
-            cmdlist.add(new LeaveCommand());
-            cmdlist.add(new NowPlayingCommand());
-            cmdlist.add(new PauseCommand());
-            cmdlist.add(new QueueCommand());
-            cmdlist.add(new RepeatCommand());
-            cmdlist.add(new ResetCommand());
-            cmdlist.add(new ResumeCommand());
-            cmdlist.add(new ReplayCommand());
-            cmdlist.add(new SeekCommand());
-            cmdlist.add(new ShuffleCommand());
-            cmdlist.add(new SkipCommand());
-            cmdlist.add(new StopCommand());
-            cmdlist.add(new VolumeCommand());
-
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
