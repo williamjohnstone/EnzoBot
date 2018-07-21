@@ -4,7 +4,6 @@ import ml.enzodevelopment.enzobot.commands.basic.*;
 import ml.enzodevelopment.enzobot.commands.mod.*;
 import ml.enzodevelopment.enzobot.commands.music.*;
 import ml.enzodevelopment.enzobot.commands.owner.*;
-import ml.enzodevelopment.enzobot.music.PlayerControl;
 import ml.enzodevelopment.enzobot.utils.BotListener;
 import ml.enzodevelopment.enzobot.utils.Config;
 import net.dv8tion.jda.core.AccountType;
@@ -54,7 +53,6 @@ public class Main {
         Sentry.init(Config.sentry_dsn);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
-                .addEventListener(new PlayerControl())
                 .setToken(Config.Discord_Token)
                 .setAutoReconnect(true)
                 .setStatus(OnlineStatus.ONLINE);

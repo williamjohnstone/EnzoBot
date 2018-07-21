@@ -1,33 +1,69 @@
 package ml.enzodevelopment.enzobot.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.music.GuildMusicManager;
+import ml.enzodevelopment.enzobot.music.MusicUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
+
 public class VolumeCommand implements Command {
+    private MusicUtils musicUtils = new MusicUtils();
+
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-
+        GuildMusicManager mng = musicUtils.getMusicManager(event.getGuild());
+        AudioPlayer player = mng.player;
+        if (args.length == 1) {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Info");
+            builder.setColor(Color.WHITE);
+            builder.setDescription(":speaker: Current player volume: **" + player.getVolume() + "**");
+            event.getChannel().sendMessage(builder.build()).queue();
+        } else {
+            try {
+                int newVolume = Math.max(15, Math.min(100, parseInt(args[1])));
+                int oldVolume = player.getVolume();
+                player.setVolume(newVolume);
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription(":speaker: Player volume changed from `" + oldVolume + "` to `" + newVolume + "`");
+                event.getChannel().sendMessage(builder.build()).queue();
+            } catch (NumberFormatException e) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Info");
+                builder.setColor(Color.WHITE);
+                builder.setDescription(":speaker: `" + args[1] + "` is not a valid integer. (5 - 100)");
+                event.getChannel().sendMessage(builder.build()).queue();
+            }
+        }
     }
 
     @Override
     public String getUsage() {
-        return null;
+        return "volume (15 - 100)";
     }
 
     @Override
     public String getDesc() {
-        return null;
+        return "Changes the player volume.";
     }
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return new ArrayList<>(Arrays.asList("volume", "playerlevel"));
     }
 
     @Override
     public String getType() {
-        return null;
+        return "music";
     }
 }

@@ -13,7 +13,6 @@ import java.util.*;
 public class TrackScheduler extends AudioEventAdapter {
     private boolean repeating = false;
     private final AudioPlayer player;
-    private final PlayerControl playerC = new PlayerControl();
     public final Queue<AudioTrack> queue;
     public AudioTrack lastTrack;
 
@@ -47,7 +46,7 @@ public class TrackScheduler extends AudioEventAdapter {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
         player.startTrack(queue.poll(), false);
-        playerC.hasVoted = new ArrayList<>();
+        MusicUtils.hasVoted = new ArrayList<>();
 
     }
 
@@ -58,11 +57,11 @@ public class TrackScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
 
             if (repeating) {
-                playerC.hasVoted = new ArrayList<>();
+                MusicUtils.hasVoted = new ArrayList<>();
                 player.startTrack(lastTrack.makeClone(), false);
 
             } else {
-                playerC.hasVoted = new ArrayList<>();
+                MusicUtils.hasVoted = new ArrayList<>();
                 nextTrack();
             }
         }
