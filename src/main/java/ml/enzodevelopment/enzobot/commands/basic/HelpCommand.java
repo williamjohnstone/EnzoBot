@@ -3,7 +3,6 @@ package ml.enzodevelopment.enzobot.commands.basic;
 import ml.enzodevelopment.enzobot.BuildConfig;
 import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.Main;
-import ml.enzodevelopment.enzobot.music.MusicMaps;
 import ml.enzodevelopment.enzobot.utils.Config;
 import ml.enzodevelopment.enzobot.utils.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -33,19 +32,18 @@ public class HelpCommand implements Command {
             StringBuilder adminCommands = new StringBuilder();
             StringBuilder musicCommands = new StringBuilder();
             StringBuilder ownerComamnds = new StringBuilder();
-            for (Command cmd : Main.cmdlist) {
+            for (Command cmd : Main.cmdList) {
                 if ("public".equals(cmd.getType())) {
                     basicCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 } else if ("admin".equals(cmd.getType())) {
                     adminCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 } else if ("owner".equals(cmd.getType())) {
                     ownerComamnds.append("`").append(cmd.getAliases().get(0)).append("` ");
+                } else if ("music".equals(cmd.getType())) {
+                    musicCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 }
             }
-            for (String command : MusicMaps.musicCmds) {
-                String[] commandParts = command.split("\\|");
-                musicCommands.append("`").append(commandParts[0]).append("` ");
-            }
+
             helpBuilder.addField("Basic Commands", basicCommands.toString(), false);
             helpBuilder.addField("Admin Commands", adminCommands.toString(), false);
             helpBuilder.addField("Music Commands", musicCommands.toString(), false);

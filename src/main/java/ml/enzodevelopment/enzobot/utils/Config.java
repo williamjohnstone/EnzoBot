@@ -2,6 +2,7 @@ package ml.enzodevelopment.enzobot.utils;
 
 import ml.enzodevelopment.enzobot.connections.database.DBManager;
 import io.github.binaryoverload.JSONConfig;
+import ml.enzodevelopment.enzobot.music.MusicUtils;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.io.FileNotFoundException;
 public class Config {
 
     public static DBManager DB;
+    public static MusicUtils musicUtils;
     public static final Color ENZO_BLUE = new Color(51, 102, 153);
     public static final String BOT_DEV_CHANNEL = "431463562393944064";
 
@@ -34,6 +36,7 @@ public class Config {
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
             DB = new DBManager();
+            musicUtils = new MusicUtils();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
