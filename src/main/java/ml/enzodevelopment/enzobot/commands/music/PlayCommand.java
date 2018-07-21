@@ -46,12 +46,12 @@ public class PlayCommand implements Command {
                     }
                     sb.delete(0, 6);
                     String link;
-                    String type;
+                    boolean playlist;
                     if (sb.toString().toLowerCase().contains("playlist")) {
-                        type = "playlist";
+                        playlist = true;
                         link = GetJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=playlist&key=%s", sb, Config.google_api));
                     } else {
-                        type = "video";
+                        playlist = false;
                         link = GetJson.getLink(String.format("https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=5&type=video&key=%s", sb, Config.google_api));
                     }
 
@@ -63,12 +63,17 @@ public class PlayCommand implements Command {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Search Results");
                     builder.setColor(Color.WHITE);
-                    builder.addField("Result 1:", musicUtils.searchTitle(0, results), false);
-                    builder.addField("Result 2:", musicUtils.searchTitle(1, results), false);
-                    builder.addField("Result 3:", musicUtils.searchTitle(2, results), false);
-                    builder.addField("Result 4:", musicUtils.searchTitle(3, results), false);
-                    builder.addField("Result 5:", musicUtils.searchTitle(4, results), false);
+                    for (int i = 1; i <= 5;) {
+                        builder.addField("Result " + i + ":", musicUtils.searchTitle(i-1, results), false);
+                        i++;
+                    }
                     builder.setFooter("React with your selection.", event.getJDA().getSelfUser().getAvatarUrl());
+
+                    List<String> videoIds = new ArrayList<>();
+                    for (int i = 0; i <= 4;) {
+                        videoIds.add(musicUtils.searchId(i, results, playlist));
+                        i++;
+                    }
 
                     event.getChannel().sendMessage(builder.build()).queue((msg -> {
                         new EventAwaiter().awaitEvent(event.getJDA(), MessageReactionAddEvent.class,
@@ -79,12 +84,8 @@ public class PlayCommand implements Command {
                                                 || e.getReactionEmote().getName().equals("\u0034\u20E3")
                                                 || e.getReactionEmote().getName().equals("\u0035\u20E3")),
                                 e -> musicUtils.play(e.getReactionEmote().getName(), event, mng,
-                                        musicUtils.searchId(0, results, type),
-                                        musicUtils.searchId(1, results, type),
-                                        musicUtils.searchId(2, results, type),
-                                        musicUtils.searchId(3, results, type),
-                                        musicUtils.searchId(4, results, type),
-                                        e.getMessageId(), event.getGuild(), type, event.getAuthor()),
+                                        videoIds,
+                                        e.getMessageId(), event.getGuild(), playlist, event.getAuthor()),
                                 30, TimeUnit.SECONDS, () -> msg.delete().queue());
                         msg.addReaction("\u0031\u20E3").queue();
                         msg.addReaction("\u0032\u20E3").queue();

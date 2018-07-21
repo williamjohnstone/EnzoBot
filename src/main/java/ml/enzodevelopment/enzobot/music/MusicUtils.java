@@ -100,9 +100,9 @@ public class MusicUtils {
         return mng;
     }
 
-    public String searchId(int number, JSONObject results, String type) {
+    public String searchId(int number, JSONObject results, boolean playlist) {
         JSONPointer pointer;
-        if (type.equals("playlist")) {
+        if (playlist) {
             pointer = new JSONPointer("/items/" + number + "/id/playlistId");
         } else {
             pointer = new JSONPointer("/items/" + number + "/id/videoId");
@@ -115,40 +115,37 @@ public class MusicUtils {
         return String.valueOf(pointer.queryFrom(results));
     }
 
-    public void play(String Emoji, GuildMessageReceivedEvent event, GuildMusicManager mng, String url0, String url1, String url2, String url3, String url4, String msgID, Guild guild, String type, User user) {
+    public void play(String Emoji, GuildMessageReceivedEvent event, GuildMusicManager mng, List<String> videoId, String msgID, Guild guild, boolean type, User user) {
         boolean join = join(guild, event, getMusicManager(guild));
         if (!join) {
             return;
         }
         String start;
-        Boolean isPlaylist;
-        if (type.equals("playlist")) {
+        if (type) {
             start = "https://www.youtube.com/playlist?list=";
-            isPlaylist = true;
         } else {
             start = "https://youtube.com/watch?v=";
-            isPlaylist = false;
         }
         if (Emoji != null && !Emoji.equals(""))
             switch (Emoji) {
                 case "\u0031\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url0, isPlaylist, user);
+                    loadAndPlay(mng, event.getChannel(), start + videoId.get(0), type, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0032\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url1, isPlaylist, user);
+                    loadAndPlay(mng, event.getChannel(), start + videoId.get(1), type, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0033\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url2, isPlaylist, user);
+                    loadAndPlay(mng, event.getChannel(), start + videoId.get(2), type, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0034\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url3, isPlaylist, user);
+                    loadAndPlay(mng, event.getChannel(), start + videoId.get(3), type, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 case "\u0035\u20E3":
-                    loadAndPlay(mng, event.getChannel(), start + url4, isPlaylist, user);
+                    loadAndPlay(mng, event.getChannel(), start + videoId.get(4), type, user);
                     event.getChannel().getMessageById(msgID).queue((msg -> msg.delete().queue()));
                     break;
                 default:

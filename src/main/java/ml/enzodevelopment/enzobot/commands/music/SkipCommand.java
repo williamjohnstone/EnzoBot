@@ -35,17 +35,16 @@ public class SkipCommand implements Command {
             return;
         }
         User requested = (User) player.getPlayingTrack().getUserData();
-        if (args.length == 2) {
-            if ("all".equals(args[1].toLowerCase())) {
-                scheduler.queue.removeIf(track -> track.getUserData() == requested);
-                musicUtils.hasVoted = new ArrayList<>();
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Info");
-                builder.setColor(Color.WHITE);
-                builder.setDescription(":fast_forward: All your tracks have been removed from the queue!");
-                event.getChannel().sendMessage(builder.build()).queue();
-                return;
-            }
+        if (args.length == 2 && "all".equals(args[1].toLowerCase())) {
+            scheduler.queue.removeIf(track -> track.getUserData() == requested);
+            musicUtils.hasVoted = new ArrayList<>();
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Info");
+            builder.setColor(Color.WHITE);
+            builder.setDescription(":fast_forward: All your tracks have been removed from the queue!");
+            event.getChannel().sendMessage(builder.build()).queue();
+            return;
+
         }
         if (event.getAuthor() == requested) {
             scheduler.nextTrack();
