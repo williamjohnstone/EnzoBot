@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import ml.enzodevelopment.enzobot.utils.Config;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     public final Queue<AudioTrack> queue;
     public AudioTrack lastTrack;
+    private MusicUtils musicUtils = Config.musicUtils;
 
     /**
      * @param player The audio player this scheduler uses
@@ -46,7 +48,7 @@ public class TrackScheduler extends AudioEventAdapter {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
         player.startTrack(queue.poll(), false);
-        MusicUtils.hasVoted = new ArrayList<>();
+        musicUtils.hasVoted = new ArrayList<>();
 
     }
 
@@ -57,11 +59,11 @@ public class TrackScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
 
             if (repeating) {
-                MusicUtils.hasVoted = new ArrayList<>();
+                musicUtils.hasVoted = new ArrayList<>();
                 player.startTrack(lastTrack.makeClone(), false);
 
             } else {
-                MusicUtils.hasVoted = new ArrayList<>();
+                musicUtils.hasVoted = new ArrayList<>();
                 nextTrack();
             }
         }

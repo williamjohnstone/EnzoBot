@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayCommand implements Command {
 
-    private MusicUtils musicUtils = new MusicUtils();
+    private MusicUtils musicUtils = Config.musicUtils;
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {

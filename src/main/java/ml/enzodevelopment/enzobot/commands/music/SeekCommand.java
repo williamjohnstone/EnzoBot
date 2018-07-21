@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.music.GuildMusicManager;
 import ml.enzodevelopment.enzobot.music.MusicUtils;
+import ml.enzodevelopment.enzobot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SeekCommand implements Command {
-    private MusicUtils musicUtils = new MusicUtils();
+    private MusicUtils musicUtils = Config.musicUtils;
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {

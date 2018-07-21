@@ -37,7 +37,7 @@ public class MusicUtils {
     private static final int DEFAULT_VOLUME = 35;
     public final Map<String, GuildMusicManager> musicManagers;
     private final AudioPlayerManager playerManager;
-    public static List<Member> hasVoted = new ArrayList<>();
+    public List<Member> hasVoted = new ArrayList<>();
     private static final Pattern timeRegex = Pattern.compile("^([0-9]*):?([0-9]*)?:?([0-9]*)?$");
 
     public MusicUtils() {

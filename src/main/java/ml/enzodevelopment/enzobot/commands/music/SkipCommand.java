@@ -5,6 +5,7 @@ import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.music.GuildMusicManager;
 import ml.enzodevelopment.enzobot.music.MusicUtils;
 import ml.enzodevelopment.enzobot.music.TrackScheduler;
+import ml.enzodevelopment.enzobot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SkipCommand implements Command {
-    private MusicUtils musicUtils = new MusicUtils();
+    private MusicUtils musicUtils = Config.musicUtils;
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -37,7 +38,7 @@ public class SkipCommand implements Command {
         if (args.length == 2) {
             if ("all".equals(args[1].toLowerCase())) {
                 scheduler.queue.removeIf(track -> track.getUserData() == requested);
-                MusicUtils.hasVoted = new ArrayList<>();
+                musicUtils.hasVoted = new ArrayList<>();
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
@@ -48,7 +49,7 @@ public class SkipCommand implements Command {
         }
         if (event.getAuthor() == requested) {
             scheduler.nextTrack();
-            MusicUtils.hasVoted = new ArrayList<>();
+            musicUtils.hasVoted = new ArrayList<>();
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Info");
             builder.setColor(Color.WHITE);
@@ -61,7 +62,7 @@ public class SkipCommand implements Command {
             //take one due to the bot being in there as well
             int requiredVotes = (int) Math.round((vcMembers.size() - 1) * 0.6);
             Member voter = event.getMember();
-            if (MusicUtils.hasVoted.contains(voter)) {
+            if (musicUtils.hasVoted.contains(voter)) {
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Vote Skip");
                 builder.setColor(Color.WHITE);
@@ -69,22 +70,22 @@ public class SkipCommand implements Command {
                 event.getChannel().sendMessage(builder.build()).queue();
             } else {
                 if (vcMembers.contains(voter)) {
-                    MusicUtils.hasVoted.add(voter);
-                    if (MusicUtils.hasVoted.size() >= requiredVotes) {
+                    musicUtils.hasVoted.add(voter);
+                    if (musicUtils.hasVoted.size() >= requiredVotes) {
                         scheduler.nextTrack();
                         EmbedBuilder builder = new EmbedBuilder();
                         builder.setTitle("Info");
                         builder.setColor(Color.WHITE);
                         builder.setDescription(":fast_forward: Track Skipped!");
                         event.getChannel().sendMessage(builder.build()).queue();
-                        MusicUtils.hasVoted = new ArrayList<>();
+                        musicUtils.hasVoted = new ArrayList<>();
                         return;
                     }
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Vote Skip");
                     builder.setColor(Color.WHITE);
                     if (player.getPlayingTrack() != null) {
-                        builder.setDescription("You have voted to skip. " + player.getPlayingTrack().getInfo().title + " " + MusicUtils.hasVoted.size() + "/" + requiredVotes + " votes to skip.");
+                        builder.setDescription("You have voted to skip. " + player.getPlayingTrack().getInfo().title + " " + musicUtils.hasVoted.size() + "/" + requiredVotes + " votes to skip.");
                     }
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
@@ -92,7 +93,7 @@ public class SkipCommand implements Command {
         } else {
             if (args.length == 1) {
                 scheduler.nextTrack();
-                MusicUtils.hasVoted = new ArrayList<>();
+                musicUtils.hasVoted = new ArrayList<>();
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Info");
                 builder.setColor(Color.WHITE);
