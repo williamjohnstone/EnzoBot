@@ -95,23 +95,7 @@ public class PlayCommand implements Command {
                     }), null);
                 }
             }
-        } else if (args.length == 1) {
-            if (mng.player.isPaused()) {
-                mng.player.setPaused(false);
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Info");
-                builder.setColor(Color.WHITE);
-                builder.setDescription(":play_pause: Playback has been resumed.");
-                event.getChannel().sendMessage(builder.build()).queue();
-            } else if (mng.player.getPlayingTrack() != null) {
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Info");
-                builder.setColor(Color.WHITE);
-                builder.setDescription("Player is already playing!");
-                event.getChannel().sendMessage(builder.build()).queue();
-            }
         }
-
     }
 
     @Override
