@@ -18,6 +18,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
+import net.dv8tion.jda.core.managers.AudioManager;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -49,6 +50,16 @@ public class MusicUtils {
         playerManager.registerSourceManager(new HttpAudioSourceManager());
         playerManager.registerSourceManager(new LocalAudioSourceManager());
         musicManagers = new HashMap<>();
+    }
+
+    public int getActiveConnections(GuildMessageReceivedEvent event) {
+        int activeCnt = 0;
+        for (AudioManager mng : event.getJDA().getAudioManagerCache()) {
+            if (mng.isConnected()) {
+                activeCnt++;
+            }
+        }
+        return activeCnt;
     }
 
     public boolean join(Guild guild, GuildMessageReceivedEvent event, GuildMusicManager mng) {

@@ -4,8 +4,7 @@ import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import ml.enzodevelopment.enzobot.BuildConfig;
 import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.Main;
-import ml.enzodevelopment.enzobot.music.MusicMaps;
-import ml.enzodevelopment.enzobot.music.PlayerControl;
+import ml.enzodevelopment.enzobot.music.MusicUtils;
 import ml.enzodevelopment.enzobot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
@@ -26,7 +25,7 @@ public class BotInfoCommand implements Command {
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        PlayerControl player = new PlayerControl();
+        MusicUtils musicUtils = new MusicUtils();
 
         String os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
                 " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
@@ -47,14 +46,14 @@ public class BotInfoCommand implements Command {
         builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
-        builder.addField("Commands", String.valueOf(Main.cmdlist.size() + MusicMaps.musicCmds.size()), true);
+        builder.addField("Commands", String.valueOf(Main.cmdlist.size()), true);
         builder.addField("Server Count", String.valueOf(event.getJDA().getGuildCache().size()), true);
         builder.addField("User Count", String.valueOf(userCnt), true);
         builder.addField("Version", BuildConfig.VERSION, true);
         builder.addField("OS", os, true);
         builder.addField("CPU Usage", cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)" + "\n", false);
         builder.addField("RAM Usage", ram0 + "MB/" + ram1 + "MB" + "\n", false);
-        builder.addField("Audio Connections", String.valueOf(player.getActiveConnections(event)), false);
+        builder.addField("Audio Connections", String.valueOf(musicUtils.getActiveConnections(event)), false);
         builder.addField("Language & Library versions", "**Coded in: ** Java (version " + System.getProperty("java.version") + ")" + "\n" + "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version: **" + PlayerLibrary.VERSION + "\n", false);
         builder.addField("Latest Github Commit", "[" + BuildConfig.GH_COMMIT_SHORT + "](https://github.com/EnzoDevelop/EnzoBot/commit/" + BuildConfig.GH_COMMIT + ")", true);
         builder.addField("Uptime", getUptime(), true);
