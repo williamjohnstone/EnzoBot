@@ -35,3 +35,7 @@ If you need any help with the bot or you think you have found a bug please join 
 #### **Current Maintainers**
 
 * EnzoDevelop (@Enzo#5375) 
+
+## Credits
+
+Big thanks to EJ Technologies for providing me with an open source license for their [Java profiler](https://www.ej-technologies.com/products/jprofiler/overview.html).
