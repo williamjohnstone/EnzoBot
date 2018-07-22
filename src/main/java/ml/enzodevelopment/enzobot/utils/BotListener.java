@@ -19,8 +19,10 @@ import java.util.TimerTask;
 
 public class BotListener extends ListenerAdapter {
 
+    private Connection conn = Config.DB.getConnManager().getConnection();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private GuildConfig guildConfig = new GuildConfig();
+    private Timer delTimer = new Timer();
 
     public static Command getCommand(String alias) {
         for (Command command : Main.cmdList) {
@@ -85,15 +87,12 @@ public class BotListener extends ListenerAdapter {
 
                 event.getMessage().delete().queue();
                 event.getChannel().sendMessage("This is not the bot channel please use " + event.getGuild().getTextChannelById(botChannel).getAsMention() + " for bot commands!").queue((msg2 ->
-                {
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            msg2.delete().queue();
-                        }
-                    }, 5000);
-                }));
+                        delTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                msg2.delete().queue();
+                            }
+                        }, 5000)));
                 return false;
             }
 
@@ -106,9 +105,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(GuildJoinEvent event) {
         event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
         Config.DB.run(() -> {
-            try {
-                Connection conn = Config.DB.getConnManager().getConnection();
-                PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '?', '?', '?', '?');");
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '?', '?', '?', '?');");) {
                 stmt.setInt(1, (int) event.getGuild().getIdLong());
                 stmt.setString(2, "!");
                 stmt.setInt(3, 0);
@@ -123,9 +120,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         Config.DB.run(() -> {
-            try {
-                Connection conn = Config.DB.getConnManager().getConnection();
-                PreparedStatement stmt = conn.prepareStatement("DELETE FROM `Config` WHERE `Config`.`guild_ID` = ?;");
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM `Config` WHERE `Config`.`guild_ID` = ?;")){
                 stmt.setString(1, event.getGuild().getId());
                 stmt.executeUpdate();
             } catch (SQLException ex) {

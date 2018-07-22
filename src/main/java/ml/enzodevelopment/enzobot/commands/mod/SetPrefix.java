@@ -19,6 +19,7 @@ import java.util.List;
 public class SetPrefix implements Command {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private Connection conn = Config.DB.getConnManager().getConnection();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -40,9 +41,7 @@ public class SetPrefix implements Command {
         }
         String prefix = args[1];
         Config.DB.run(() -> {
-            try {
-                Connection conn = Config.DB.getConnManager().getConnection();
-                PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `Prefix` = ? WHERE `Config`.`guild_ID` = ?;");
+            try (PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `Prefix` = ? WHERE `Config`.`guild_ID` = ?;")) {
                 stmt.setString(1, prefix);
                 stmt.setString(2, event.getGuild().getId());
                 stmt.executeUpdate();

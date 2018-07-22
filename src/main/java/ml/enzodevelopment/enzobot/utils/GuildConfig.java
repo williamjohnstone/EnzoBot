@@ -8,10 +8,10 @@ import java.sql.*;
 public class GuildConfig {
     private static Logger logger = LoggerFactory.getLogger(GuildConfig.class.getName());
 
+    private Connection conn = Config.DB.getConnManager().getConnection();
+
     public String getBotChannel(String guild) {
-        try {
-            Connection conn = Config.DB.getConnManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Config` where guild_ID = ?;");
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Config` where guild_ID = ?;")) {
             stmt.setString(1, guild);
             ResultSet rs = stmt.executeQuery();
             String result;
@@ -28,9 +28,7 @@ public class GuildConfig {
     }
 
     public String getPrefix(String guild) {
-        try {
-            Connection conn = Config.DB.getConnManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Config` where guild_ID = ?;");
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Config` where guild_ID = ?;")) {
             stmt.setString(1, guild);
             ResultSet rs = stmt.executeQuery();
             String result = Config.fallback_prefix;
@@ -40,7 +38,6 @@ public class GuildConfig {
             if (result != null && result.contains(" ") || "".equals(result)) {
                 logger.warn("Reverting to Fallback Prefix, ID:" + guild);
                 return Config.fallback_prefix;
-
             }
             return result;
         } catch (SQLException ex) {

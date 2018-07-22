@@ -16,6 +16,7 @@ import java.util.TimerTask;
 public class StatsUpdater {
 
     public void StartupdateTimer(ReadyEvent event) {
+        Connection conn = Config.DB.getConnManager().getConnection();
         Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
         int MINUTES = 5;
@@ -30,9 +31,7 @@ public class StatsUpdater {
                 int serverCount = (int) event.getJDA().getGuildCache().size();
 
                 Config.DB.run(() -> {
-                    try {
-                        Connection conn = Config.DB.getConnManager().getConnection();
-                        PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;");
+                    try (PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;")) {
                         stmt.setInt(1, serverCount);
                         stmt.executeUpdate();
                     } catch (SQLException ex) {
