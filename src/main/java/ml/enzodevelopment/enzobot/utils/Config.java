@@ -22,6 +22,8 @@ public class Config {
     public static String sentry_dsn;
     public static String google_api;
     public static String config_file;
+    public static String spotifyClientID;
+    public static String spotifyClientSecret;
     public static Boolean dev_mode = false;
 
 
@@ -35,6 +37,8 @@ public class Config {
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
+            spotifyClientID = config.getString("Config.spotifyClientID").get();
+            spotifyClientSecret = config.getString("Config.spotifyClientSecret").get();
             DB = new DBManager();
             musicUtils = new MusicUtils();
         } catch (FileNotFoundException e) {
