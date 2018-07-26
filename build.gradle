@@ -10,7 +10,7 @@ plugins {
 group = 'ml.enzodevelopment'
 version = "2.2.0_${getGitHashShort()}"
 
-mainClassName = 'ml.enzodevelopment.enzobot.Main'
+mainClassName = 'ml.enzodevelopment.enzobot.EnzoBot'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
