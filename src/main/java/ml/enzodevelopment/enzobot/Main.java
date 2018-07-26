@@ -77,6 +77,7 @@ public class Main {
             cmdList.add(new QuoteCommand());
             cmdList.add(new RollCommand());
             cmdList.add(new CoinFlipCommand());
+            cmdList.add(new RevokeAccessCommand());
             //Music Commands
             cmdList.add(new PlayCommand());
             cmdList.add(new LeaveCommand());

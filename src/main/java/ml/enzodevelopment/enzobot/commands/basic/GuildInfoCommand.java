@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Guild;
@@ -57,7 +58,7 @@ public class GuildInfoCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 }

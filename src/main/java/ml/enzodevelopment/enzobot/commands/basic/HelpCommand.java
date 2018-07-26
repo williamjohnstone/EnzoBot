@@ -2,6 +2,7 @@ package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.BuildConfig;
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.Main;
 import ml.enzodevelopment.enzobot.utils.Config;
 import ml.enzodevelopment.enzobot.utils.GuildConfig;
@@ -28,23 +29,23 @@ public class HelpCommand implements Command {
             helpBuilder.setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl());
             helpBuilder.setDescription("Here are all the commands currently available.");
             helpBuilder.setColor(Config.ENZO_BLUE);
-            StringBuilder basicCommands = new StringBuilder();
+            StringBuilder mainCommands = new StringBuilder();
             StringBuilder adminCommands = new StringBuilder();
             StringBuilder musicCommands = new StringBuilder();
             StringBuilder ownerComamnds = new StringBuilder();
             for (Command cmd : Main.cmdList) {
-                if ("public".equals(cmd.getType())) {
-                    basicCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
-                } else if ("admin".equals(cmd.getType())) {
+                if (cmd.getCategory() == CommandCategory.MAIN) {
+                    mainCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
+                } else if (cmd.getCategory() == CommandCategory.MOD) {
                     adminCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
-                } else if ("owner".equals(cmd.getType())) {
+                } else if (cmd.getCategory() == CommandCategory.OWNER) {
                     ownerComamnds.append("`").append(cmd.getAliases().get(0)).append("` ");
-                } else if ("music".equals(cmd.getType())) {
+                } else if (cmd.getCategory() == CommandCategory.MUSIC) {
                     musicCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 }
             }
 
-            helpBuilder.addField("Basic Commands", basicCommands.toString(), false);
+            helpBuilder.addField("Basic Commands", mainCommands.toString(), false);
             helpBuilder.addField("Admin Commands", adminCommands.toString(), false);
             helpBuilder.addField("Music Commands", musicCommands.toString(), false);
             if (event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
@@ -107,7 +108,7 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 }

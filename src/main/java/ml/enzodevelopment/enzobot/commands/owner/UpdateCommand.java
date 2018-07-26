@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.owner;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.utils.Config;
 import ml.enzodevelopment.enzobot.BuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -57,7 +58,7 @@ public class UpdateCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "owner";
+    public CommandCategory getCategory() {
+        return CommandCategory.OWNER;
     }
 }

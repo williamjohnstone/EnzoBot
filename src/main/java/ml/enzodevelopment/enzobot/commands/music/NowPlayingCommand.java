@@ -3,6 +3,7 @@ package ml.enzodevelopment.enzobot.commands.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.music.GuildMusicManager;
 import ml.enzodevelopment.enzobot.music.MusicUtils;
 import ml.enzodevelopment.enzobot.utils.Config;
@@ -70,7 +71,7 @@ public class NowPlayingCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "music";
+    public CommandCategory getCategory() {
+        return CommandCategory.MUSIC;
     }
 }

@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ public class PingCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 }
 

@@ -2,6 +2,7 @@ package ml.enzodevelopment.enzobot.commands.owner;
 
 import ml.enzodevelopment.enzobot.Command;
 import ml.enzodevelopment.enzobot.BuildConfig;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -42,7 +43,7 @@ public class RestartCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "owner";
+    public CommandCategory getCategory() {
+        return CommandCategory.OWNER;
     }
 }

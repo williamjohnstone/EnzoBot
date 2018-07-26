@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
@@ -59,7 +60,7 @@ public class SetRole implements Command {
     }
 
     @Override
-    public String getType() {
-        return "admin";
+    public CommandCategory getCategory() {
+        return CommandCategory.MOD;
     }
 }

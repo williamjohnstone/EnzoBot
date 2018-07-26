@@ -13,7 +13,7 @@ public interface Command {
 
     List<String> getAliases();
 
-    String getType();
+    CommandCategory getCategory();
 }
 
 

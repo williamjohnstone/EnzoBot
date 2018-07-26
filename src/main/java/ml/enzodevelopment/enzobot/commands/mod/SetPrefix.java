@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -72,7 +73,7 @@ public class SetPrefix implements Command {
     }
 
     @Override
-    public String getType() {
-        return "admin";
+    public CommandCategory getCategory() {
+        return CommandCategory.MOD;
     }
 }

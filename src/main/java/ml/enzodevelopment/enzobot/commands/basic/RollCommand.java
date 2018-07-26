@@ -1,5 +1,6 @@
 package ml.enzodevelopment.enzobot.commands.basic;
 
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.utils.Config;
 import ml.enzodevelopment.enzobot.Command;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -69,7 +70,7 @@ public class RollCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 }

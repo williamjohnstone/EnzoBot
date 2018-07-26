@@ -1,6 +1,7 @@
 package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Member;
@@ -59,8 +60,8 @@ public class UserInfoCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 
     private static String getGameStatus(Game game) {

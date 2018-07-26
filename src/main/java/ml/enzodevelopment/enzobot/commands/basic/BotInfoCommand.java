@@ -3,6 +3,7 @@ package ml.enzodevelopment.enzobot.commands.basic;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import ml.enzodevelopment.enzobot.BuildConfig;
 import ml.enzodevelopment.enzobot.Command;
+import ml.enzodevelopment.enzobot.CommandCategory;
 import ml.enzodevelopment.enzobot.Main;
 import ml.enzodevelopment.enzobot.music.MusicUtils;
 import ml.enzodevelopment.enzobot.utils.Config;
@@ -77,8 +78,8 @@ public class BotInfoCommand implements Command {
     }
 
     @Override
-    public String getType() {
-        return "public";
+    public CommandCategory getCategory() {
+        return CommandCategory.MAIN;
     }
 
     private String getUptime () {
