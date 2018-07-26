@@ -16,17 +16,17 @@ public class RevokeAccessCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "";
+        return "remove (@User or @Role) (#Channel)";
     }
 
     @Override
     public String getDesc() {
-        return "";
+        return "Removes a user's or role's permission to access the specified channel.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("removeaccess", "revokeaccess"));
+        return new ArrayList<>(Arrays.asList("removeaccess", "revokeaccess", "remove"));
     }
 
     @Override

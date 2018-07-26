@@ -3,7 +3,7 @@ package ml.enzodevelopment.enzobot.commands.music;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.audio.GuildMusicManager;
-import ml.enzodevelopment.enzobot.audio.MusicUtils;
+import ml.enzodevelopment.enzobot.utils.MusicUtils;
 import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.EventAwaiter;
 import ml.enzodevelopment.enzobot.utils.GetJson;
