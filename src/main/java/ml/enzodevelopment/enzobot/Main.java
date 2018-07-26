@@ -60,12 +60,10 @@ public class Main {
         try {
             cmdList.add(new PingCommand());
             cmdList.add(new HelpCommand());
-            cmdList.add(new GiveRole());
             cmdList.add(new SetRole());
             cmdList.add(new Eval());
             cmdList.add(new SetPrefix());
             cmdList.add(new SetBotChannel());
-            cmdList.add(new IsAdminCommand());
             cmdList.add(new InviteCommand());
             cmdList.add(new BotInfoCommand());
             cmdList.add(new UserInfoCommand());
