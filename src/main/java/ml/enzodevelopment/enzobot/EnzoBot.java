@@ -76,6 +76,7 @@ public class EnzoBot {
             cmdList.add(new RollCommand());
             cmdList.add(new CoinFlipCommand());
             cmdList.add(new RevokeAccessCommand());
+            cmdList.add(new GrantAccessCommand());
             //Music Commands
             cmdList.add(new PlayCommand());
             cmdList.add(new LeaveCommand());

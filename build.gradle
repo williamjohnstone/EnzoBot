@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'ml.enzodevelopment'
-version = "2.2.0_${getGitHashShort()}"
+version = "2.4.0_${getGitHashShort()}"
 
 mainClassName = 'ml.enzodevelopment.enzobot.EnzoBot'
 
