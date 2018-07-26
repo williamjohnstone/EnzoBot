@@ -45,7 +45,7 @@ public class SetBotChannel implements Command {
             } else if (args.length == 1) {
                 channel = event.getMessage().getChannel().getId();
             }
-            try (PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `bot_Channel_ID` = '?' WHERE `Config`.`guild_ID` = ?;")) {
+            try (PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `bot_Channel_ID` = ? WHERE `Config`.`guild_ID` = ?;")) {
                 stmt.setString(1, channel);
                 stmt.setString(2, event.getGuild().getId());
                 stmt.executeUpdate();

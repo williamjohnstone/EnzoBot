@@ -105,7 +105,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(GuildJoinEvent event) {
         event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
         Config.DB.run(() -> {
-            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, '?', '?', '?', '?');");) {
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, ?, ?, ?, ?);")) {
                 stmt.setInt(1, (int) event.getGuild().getIdLong());
                 stmt.setString(2, "!");
                 stmt.setInt(3, 0);
