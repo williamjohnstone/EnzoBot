@@ -1,10 +1,10 @@
-package ml.enzodevelopment.enzobot.music;
+package ml.enzodevelopment.enzobot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import ml.enzodevelopment.enzobot.utils.Config;
+import ml.enzodevelopment.enzobot.config.Config;
 
 import java.util.*;
 

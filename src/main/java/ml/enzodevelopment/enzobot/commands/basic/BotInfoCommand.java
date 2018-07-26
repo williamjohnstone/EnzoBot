@@ -2,11 +2,11 @@ package ml.enzodevelopment.enzobot.commands.basic;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import ml.enzodevelopment.enzobot.BuildConfig;
-import ml.enzodevelopment.enzobot.Command;
-import ml.enzodevelopment.enzobot.CommandCategory;
-import ml.enzodevelopment.enzobot.Main;
-import ml.enzodevelopment.enzobot.music.MusicUtils;
-import ml.enzodevelopment.enzobot.utils.Config;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.EnzoBot;
+import ml.enzodevelopment.enzobot.audio.MusicUtils;
+import ml.enzodevelopment.enzobot.config.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Guild;
@@ -47,7 +47,7 @@ public class BotInfoCommand implements Command {
         builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.addField("Username", event.getGuild().getSelfMember().getUser().getName(), true);
         builder.addField("Discriminator", event.getGuild().getSelfMember().getUser().getDiscriminator(), true);
-        builder.addField("Commands", String.valueOf(Main.cmdList.size()), true);
+        builder.addField("Commands", String.valueOf(EnzoBot.cmdList.size()), true);
         builder.addField("Server Count", String.valueOf(event.getJDA().getGuildCache().size()), true);
         builder.addField("User Count", String.valueOf(userCnt), true);
         builder.addField("Version", BuildConfig.VERSION, true);

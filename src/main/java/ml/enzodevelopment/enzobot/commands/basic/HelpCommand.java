@@ -1,11 +1,11 @@
 package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.BuildConfig;
-import ml.enzodevelopment.enzobot.Command;
-import ml.enzodevelopment.enzobot.CommandCategory;
-import ml.enzodevelopment.enzobot.Main;
-import ml.enzodevelopment.enzobot.utils.Config;
-import ml.enzodevelopment.enzobot.utils.GuildConfig;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.EnzoBot;
+import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.config.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ml.enzodevelopment.enzobot.utils.BotListener.getCommand;
+import static ml.enzodevelopment.enzobot.BotListener.getCommand;
 
 public class HelpCommand implements Command {
     private GuildConfig guildConfig = new GuildConfig();
@@ -33,7 +33,7 @@ public class HelpCommand implements Command {
             StringBuilder adminCommands = new StringBuilder();
             StringBuilder musicCommands = new StringBuilder();
             StringBuilder ownerComamnds = new StringBuilder();
-            for (Command cmd : Main.cmdList) {
+            for (Command cmd : EnzoBot.cmdList) {
                 if (cmd.getCategory() == CommandCategory.MAIN) {
                     mainCommands.append("`").append(cmd.getAliases().get(0)).append("` ");
                 } else if (cmd.getCategory() == CommandCategory.MOD) {

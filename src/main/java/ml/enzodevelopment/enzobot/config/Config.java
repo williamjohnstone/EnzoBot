@@ -1,8 +1,8 @@
-package ml.enzodevelopment.enzobot.utils;
+package ml.enzodevelopment.enzobot.config;
 
 import ml.enzodevelopment.enzobot.connections.database.DBManager;
 import io.github.binaryoverload.JSONConfig;
-import ml.enzodevelopment.enzobot.music.MusicUtils;
+import ml.enzodevelopment.enzobot.audio.MusicUtils;
 
 import java.awt.*;
 import java.io.FileNotFoundException;

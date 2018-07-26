@@ -4,8 +4,8 @@ import ml.enzodevelopment.enzobot.commands.basic.*;
 import ml.enzodevelopment.enzobot.commands.mod.*;
 import ml.enzodevelopment.enzobot.commands.music.*;
 import ml.enzodevelopment.enzobot.commands.owner.*;
-import ml.enzodevelopment.enzobot.utils.BotListener;
-import ml.enzodevelopment.enzobot.utils.Config;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.config.Config;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -22,7 +22,7 @@ import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.JDALogger;
 import org.slf4j.Logger;
 
-public class Main {
+public class EnzoBot {
 
     public static List<Command> cmdList = new ArrayList<>();
 

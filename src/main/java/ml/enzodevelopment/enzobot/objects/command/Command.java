@@ -1,4 +1,4 @@
-package ml.enzodevelopment.enzobot;
+package ml.enzodevelopment.enzobot.objects.command;
 
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 

@@ -1,4 +1,4 @@
-package ml.enzodevelopment.enzobot.music;
+package ml.enzodevelopment.enzobot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;

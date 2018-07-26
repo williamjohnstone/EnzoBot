@@ -2,11 +2,11 @@ package ml.enzodevelopment.enzobot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import ml.enzodevelopment.enzobot.Command;
-import ml.enzodevelopment.enzobot.CommandCategory;
-import ml.enzodevelopment.enzobot.music.MusicUtils;
-import ml.enzodevelopment.enzobot.music.TrackScheduler;
-import ml.enzodevelopment.enzobot.utils.Config;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.audio.MusicUtils;
+import ml.enzodevelopment.enzobot.audio.TrackScheduler;
+import ml.enzodevelopment.enzobot.config.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 

@@ -1,9 +1,9 @@
 package ml.enzodevelopment.enzobot.commands.mod;
 
-import ml.enzodevelopment.enzobot.Command;
-import ml.enzodevelopment.enzobot.CommandCategory;
-import ml.enzodevelopment.enzobot.utils.Config;
-import ml.enzodevelopment.enzobot.utils.GuildConfig;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.config.GuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;

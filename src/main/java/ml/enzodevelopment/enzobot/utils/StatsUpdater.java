@@ -1,5 +1,6 @@
 package ml.enzodevelopment.enzobot.utils;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import okhttp3.*;

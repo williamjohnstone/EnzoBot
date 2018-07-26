@@ -1,6 +1,6 @@
 package ml.enzodevelopment.enzobot.connections.database;
 
-import ml.enzodevelopment.enzobot.utils.Config;
+import ml.enzodevelopment.enzobot.config.Config;
 
 import java.io.IOException;
 import java.sql.Connection;

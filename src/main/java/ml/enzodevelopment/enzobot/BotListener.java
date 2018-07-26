@@ -1,7 +1,10 @@
-package ml.enzodevelopment.enzobot.utils;
+package ml.enzodevelopment.enzobot;
 
-import ml.enzodevelopment.enzobot.Command;
-import ml.enzodevelopment.enzobot.Main;
+import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.config.GuildConfig;
+import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.EnzoBot;
+import ml.enzodevelopment.enzobot.utils.StatsUpdater;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
@@ -25,7 +28,7 @@ public class BotListener extends ListenerAdapter {
     private Timer delTimer = new Timer();
 
     public static Command getCommand(String alias) {
-        for (Command command : Main.cmdList) {
+        for (Command command : EnzoBot.cmdList) {
             for (String commandAlias : command.getAliases()) {
                 if (commandAlias.equals(alias)) {
                     return command;
