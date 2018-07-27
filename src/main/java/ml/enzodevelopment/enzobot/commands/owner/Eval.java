@@ -25,7 +25,7 @@ import ml.enzodevelopment.enzobot.BuildConfig;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.config.Config;
-import ml.enzodevelopment.enzobot.config.GuildConfig;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -54,7 +54,7 @@ public class Eval implements Command {
             try {
                 engine.put("Config", Config.class);
                 engine.put("event", event);
-                Object out = engine.eval(event.getMessage().getContentRaw().replace(new GuildConfig().getPrefix(event.getGuild().getId()) + "eval ", ""));
+                Object out = engine.eval(event.getMessage().getContentRaw().replace(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() + "eval ", ""));
                 if (out != null) {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Successfully Evaluated");

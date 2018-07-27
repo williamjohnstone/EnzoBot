@@ -22,9 +22,8 @@
 package ml.enzodevelopment.enzobot;
 
 import ml.enzodevelopment.enzobot.config.Config;
-import ml.enzodevelopment.enzobot.config.GuildConfig;
 import ml.enzodevelopment.enzobot.objects.command.Command;
-import ml.enzodevelopment.enzobot.EnzoBot;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.StatsUpdater;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.ReadyEvent;
@@ -35,17 +34,12 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class BotListener extends ListenerAdapter {
 
-    private Connection conn = Config.DB.getConnManager().getConnection();
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private GuildConfig guildConfig = new GuildConfig();
     private Timer delTimer = new Timer();
 
     public static Command getCommand(String alias) {
@@ -69,7 +63,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
-        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
+        String botPrefix = GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix();
 
         String substringMessage = "";
         String msg = event.getMessage().getContentRaw().toLowerCase();
@@ -105,8 +99,12 @@ public class BotListener extends ListenerAdapter {
             } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild() && event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
                 return false;
             }
-
-            String botChannel = guildConfig.getBotChannel(event.getGuild().getId());
+            String botChannel;
+            if (GuildSettingsUtils.getGuild(event.getGuild()).usingBotChannel()) {
+                botChannel = GuildSettingsUtils.getGuild(event.getGuild()).getBotChannel();
+            } else {
+                botChannel = null;
+            }
             if (cmd != null && botChannel != null && !botChannel.equals(event.getChannel().getId())) {
 
                 event.getMessage().delete().queue();
@@ -128,29 +126,12 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         event.getJDA().getUserById("205056315351891969").openPrivateChannel().queue((priv -> priv.sendMessage("New guild! Name: " + event.getGuild().getName() + ", Member count: " + event.getGuild().getMembers().size()).queue()));
-        Config.DB.run(() -> {
-            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO `Config` (`ID`, `guild_ID`, `Prefix`, `bot_Channel_ID`, `bot_Admins`) VALUES (NULL, ?, ?, ?, ?);")) {
-                stmt.setInt(1, (int) event.getGuild().getIdLong());
-                stmt.setString(2, "!");
-                stmt.setInt(3, 0);
-                stmt.setString(4, event.getGuild().getOwner().getUser().getId());
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("Database Error", ex);
-            }
-        });
+        GuildSettingsUtils.registerNewGuild(event.getGuild());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        Config.DB.run(() -> {
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM `Config` WHERE `Config`.`guild_ID` = ?;")){
-                stmt.setString(1, event.getGuild().getId());
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("Database Error", ex);
-            }
-        });
+        GuildSettingsUtils.deleteGuild(event.getGuild());
     }
 }
 

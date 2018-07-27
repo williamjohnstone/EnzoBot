@@ -23,10 +23,13 @@ package ml.enzodevelopment.enzobot.config;
 
 import ml.enzodevelopment.enzobot.connections.database.DBManager;
 import io.github.binaryoverload.JSONConfig;
+import ml.enzodevelopment.enzobot.objects.guild.GuildSettings;
 import ml.enzodevelopment.enzobot.utils.MusicUtils;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Config {
 
@@ -34,6 +37,7 @@ public class Config {
     public static MusicUtils musicUtils;
     public static final Color ENZO_BLUE = new Color(51, 102, 153);
     public static final String BOT_DEV_CHANNEL = "431463562393944064";
+    public static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
 
 
     public static String Discord_Token;

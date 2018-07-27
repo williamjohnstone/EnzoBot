@@ -27,6 +27,7 @@ import ml.enzodevelopment.enzobot.commands.music.*;
 import ml.enzodevelopment.enzobot.commands.owner.*;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -71,6 +72,7 @@ public class EnzoBot {
         }
         Config config = new Config();
         config.loadConfig();
+        GuildSettingsUtils.loadGuildSettings();
         Sentry.init(Config.sentry_dsn);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
@@ -79,25 +81,16 @@ public class EnzoBot {
                 .setStatus(OnlineStatus.ONLINE);
 
         try {
+            //Basic Commands
             cmdList.add(new PingCommand());
             cmdList.add(new HelpCommand());
-            cmdList.add(new SetRole());
-            cmdList.add(new Eval());
-            cmdList.add(new SetPrefix());
-            cmdList.add(new SetBotChannel());
             cmdList.add(new InviteCommand());
             cmdList.add(new BotInfoCommand());
             cmdList.add(new UserInfoCommand());
             cmdList.add(new GuildInfoCommand());
-            cmdList.add(new ShutdownCommand());
-            cmdList.add(new UpdateCommand());
-            cmdList.add(new RestartCommand());
-            cmdList.add(new DeployCommand());
             cmdList.add(new QuoteCommand());
             cmdList.add(new RollCommand());
             cmdList.add(new CoinFlipCommand());
-            cmdList.add(new RevokeAccessCommand());
-            cmdList.add(new GrantAccessCommand());
             //Music Commands
             cmdList.add(new PlayCommand());
             cmdList.add(new LeaveCommand());
@@ -113,6 +106,20 @@ public class EnzoBot {
             cmdList.add(new SkipCommand());
             cmdList.add(new StopCommand());
             cmdList.add(new VolumeCommand());
+            //Mod Commands
+            cmdList.add(new SetRole());
+            cmdList.add(new BanCommand());
+            cmdList.add(new SetPrefix());
+            cmdList.add(new SetBotChannel());
+            cmdList.add(new RevokeAccessCommand());
+            cmdList.add(new GrantAccessCommand());
+            cmdList.add(new UnbanCommand());
+            //Owner Commands
+            cmdList.add(new ShutdownCommand());
+            cmdList.add(new UpdateCommand());
+            cmdList.add(new RestartCommand());
+            cmdList.add(new DeployCommand());
+            cmdList.add(new Eval());
             JDA jda = builder.buildBlocking();
             jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | !help"));
         } catch (LoginException | InterruptedException e) {

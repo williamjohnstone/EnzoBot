@@ -26,7 +26,7 @@ import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.EnzoBot;
 import ml.enzodevelopment.enzobot.config.Config;
-import ml.enzodevelopment.enzobot.config.GuildConfig;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -39,7 +39,6 @@ import java.util.List;
 import static ml.enzodevelopment.enzobot.BotListener.getCommand;
 
 public class HelpCommand implements Command {
-    private GuildConfig guildConfig = new GuildConfig();
 
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
@@ -85,7 +84,7 @@ public class HelpCommand implements Command {
     }
 
     private void getSpecififcHelp(String[] args, GuildMessageReceivedEvent event, Command command) {
-        String botPrefix = guildConfig.getPrefix(event.getGuild().getId());
+        String botPrefix = GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix();
         if (args.length < 2) {
             return;
         } else if (args.length > 2) {
@@ -97,8 +96,7 @@ public class HelpCommand implements Command {
                 .setAuthor(event.getAuthor().getName(), "https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591", event.getAuthor().getAvatarUrl())
                 .setColor(Config.ENZO_BLUE)
                 .addField("Usage:", botPrefix + command.getUsage(), true)
-                .addField("Aliases:", getAliasesString(command), true)
-                .addField("Want me in your server?", "Hey!, want to add me to your server? [Click Here](https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591) to invite me to your server.", false);
+                .addField("Aliases:", getAliasesString(command), true);
         if (event.getChannel().getType() == ChannelType.TEXT) {
             event.getChannel().sendMessage(builder.build()).queue();
         }
