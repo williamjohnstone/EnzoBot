@@ -24,6 +24,8 @@ package ml.enzodevelopment.enzobot.utils;
 import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.ConsoleUser;
 import ml.enzodevelopment.enzobot.objects.FakeUser;
+import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -31,6 +33,7 @@ import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,10 +43,10 @@ public class ModUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ModUtils.class);
 
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
+    public static void modLog(User mod, User punishedUser, PunishmentType type, String reason, String time, Guild g) {
         String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
         if (chan != null && !chan.isEmpty()) {
-            TextChannel logChannel = g.getTextChannelById(GuildSettingsUtils.getGuild(g).getLogChannel());
+            TextChannel logChannel = g.getTextChannelById(chan);
             if (logChannel == null) {
                 return;
             }
@@ -51,28 +54,52 @@ public class ModUtils {
             if (time != null && !time.isEmpty()) {
                 length = " lasting " + time + "";
             }
-
-            logChannel.sendMessage(String.format("User **%#s** got **%s** by **%#s**%s%s",
-                    punishedUser,
-                    punishment,
-                    mod,
-                    length,
-                    reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
-            )).queue();
+            String punishment = "unknown";
+            switch (type) {
+                case BAN:
+                    punishment = "banned";
+                    break;
+                case SOFTBAN:
+                    punishment = "soft banned";
+                    break;
+                case KICK:
+                    punishment = "kicked";
+                    break;
+                case MUTE:
+                    punishment = "muted";
+                    break;
+                case WARN:
+                    punishment = "warned";
+                    break;
+                case UNBAN:
+                    punishment = "unbanned";
+                    break;
+                case UNMUTE:
+                    punishment = "unmuted";
+                    break;
+                case TEMP_MUTE:
+                    punishment = "temp-muted";
+                    break;
+            }
+            String finalReason = reason.isEmpty() ? "" : " with reason \"" + reason + "\"";
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(Color.WHITE);
+            builder.setTitle("User " + punishment.substring(0, 1).toUpperCase() + punishment.substring(1));
+            builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + " " + punishment + " " + punishedUser.getName() + "#" + punishedUser.getDiscriminator() + length + finalReason);
+            logChannel.sendMessage(builder.build()).queue();
         }
     }
 
 
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
+    public static void modLog(User mod, User punishedUser, PunishmentType punishment, String reason, Guild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
     }
 
-    public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
+    public static void modLog(User mod, User unbannedUser, PunishmentType punishment, Guild g) {
         modLog(mod, unbannedUser, punishment, "", g);
     }
 
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-
         Config.DB.run(() -> {
             Connection conn = Config.DB.getConnManager().getConnection();
             try {
@@ -117,7 +144,7 @@ public class ModUtils {
                             if (guild != null) {
                                 guild.getController()
                                         .unban(userID).reason("Ban expired").queue();
-                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), "unbanned", guild);
+                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), PunishmentType.UNBAN, guild);
                             }
                         } catch (NullPointerException ignored) {
                         }

@@ -23,13 +23,16 @@ package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,23 +45,21 @@ public class UnbanCommand implements Command {
             return;
         }
 
-        if (args.length < 1) {
-            event.getChannel().sendMessage("Usage is " + GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() + getAliases().get(0) + " <username>").queue();
-            return;
-        }
-
         try {
             event.getGuild().getBanList().queue(list -> {
                 for (Guild.Ban ban : list) {
                     if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
                         event.getGuild().getController().unban(ban.getUser())
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
-                        event.getChannel().sendMessage("User " + ban.getUser().getName() + " unbanned.").queue();
-                        ModUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", event.getGuild());
+                        ModUtils.modLog(event.getAuthor(), ban.getUser(), PunishmentType.UNBAN, event.getGuild());
                         return;
                     }
                 }
-                event.getChannel().sendMessage("This user is not banned").queue();
+                EmbedBuilder error = new EmbedBuilder();
+                error.setColor(Color.WHITE);
+                error.setTitle("Error");
+                error.setDescription("This user is not banned.");
+                event.getChannel().sendMessage(error.build()).queue();
             });
 
         } catch (Exception e) {
@@ -69,7 +70,7 @@ public class UnbanCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "unban";
+        return "unban (username)";
     }
 
     @Override

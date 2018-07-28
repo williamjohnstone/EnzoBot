@@ -105,6 +105,8 @@ public class EnzoBot {
             cmdList.add(new RevokeAccessCommand());
             cmdList.add(new GrantAccessCommand());
             cmdList.add(new UnbanCommand());
+            cmdList.add(new SetLogChannelCommand());
+            //cmdList.add(new SetMuteRoleCommand());
             //Owner Commands
             cmdList.add(new ShutdownCommand());
             cmdList.add(new UpdateCommand());

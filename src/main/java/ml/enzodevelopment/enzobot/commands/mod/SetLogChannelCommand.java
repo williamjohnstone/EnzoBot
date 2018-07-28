@@ -21,9 +21,9 @@
 
 package ml.enzodevelopment.enzobot.commands.mod;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -34,24 +34,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SetBotChannel implements Command {
-
+public class SetLogChannelCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if (!adminCheck) {
-            event.getMessage().getChannel().sendMessage("You are not currently in the admin list").queue();
+            event.getMessage().getChannel().sendMessage("You don't have permission to do that.").queue();
             return;
         }
         Config.DB.run(() -> {
-            String channel = "0";
+            String channel = "";
             if (args.length == 2) {
                 if (args[1].equals("off")) {
-                    EmbedBuilder builder = new EmbedBuilder();
-                    builder.setTitle("Bot Channel Disabled");
-                    builder.setColor(Color.WHITE);
-                    builder.setDescription("Success");
-                    event.getChannel().sendMessage(builder.build()).queue();
                     channel = "0";
                 } else {
                     channel = event.getMessage().getMentionedChannels().get(0).getId();
@@ -60,16 +54,16 @@ public class SetBotChannel implements Command {
                 channel = event.getMessage().getChannel().getId();
             }
             if (!"0".equals(channel)) {
-                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setBotChannel(channel));
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setLogChannel(channel));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Channel Set");
+                builder.setTitle("Log Channel Set");
                 builder.setColor(Color.WHITE);
-                builder.setDescription("Success, bot channel set to: " + event.getGuild().getTextChannelById(channel).getAsMention());
+                builder.setDescription("Success, log channel set to: " + event.getGuild().getTextChannelById(channel).getAsMention());
                 event.getChannel().sendMessage(builder.build()).queue();
             } else {
-                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setBotChannel("0").useBotChannel(false));
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setLogChannel("0"));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Channel Removed");
+                builder.setTitle("Log Channel Disabled");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success");
                 event.getChannel().sendMessage(builder.build()).queue();
@@ -79,17 +73,17 @@ public class SetBotChannel implements Command {
 
     @Override
     public String getUsage() {
-        return "setBotChat (#Channel) or 'setBotChat off' to disable bot channel.";
+        return "setlogchannel (#channel)";
     }
 
     @Override
     public String getDesc() {
-        return "Changes the channel the bot uses this channel is used for all commands.";
+        return "Sets the Moderation Log channel.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("setbotchat", "botchannel", "setbotchannel"));
+        return new ArrayList<>(Arrays.asList("setlogchat", "logchat", "logchannel", "setmodlog"));
     }
 
     @Override

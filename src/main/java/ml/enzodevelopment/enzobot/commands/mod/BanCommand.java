@@ -23,8 +23,10 @@ package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
@@ -35,9 +37,11 @@ import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class BanCommand implements Command {
     @Override
@@ -47,28 +51,27 @@ public class BanCommand implements Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
-            event.getChannel().sendMessage("Usage is " + GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() + getUsage()).queue();
-            return;
-        }
-
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
                     !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-                event.getChannel().sendMessage("You are not permitted to perform this action.").queue();
+                EmbedBuilder error = new EmbedBuilder();
+                error.setColor(Color.WHITE);
+                error.setTitle("Error");
+                error.setDescription("You are not permitted to perform this action.");
+                event.getChannel().sendMessage(error.build()).queue();
                 return;
             }
             //noinspection ConstantConditions
-            if (args.length >= 3) {
+            if (args.length >= 4) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String[] timeParts = args[2].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
                 if (!isInt(timeParts[0])) {
-                    String newReason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
+                    String newReason = StringUtils.join(Arrays.asList(args).subList(2, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (m) -> {
-                                ModUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, newReason, event.getGuild());
                                 sendSuccess(event.getMessage());
                             }
                     );
@@ -79,22 +82,24 @@ public class BanCommand implements Command {
                 if (calculateBanTime.is()) return;
                 String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
                 int finalBanTime = calculateBanTime.getFinalBanTime();
+
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
                                 ModUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
-
-                                ModUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[2], event.getGuild());
+                                ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, reason, args[2], event.getGuild());
                             } else {
-                                final String newReason = StringUtils.join(Arrays.asList(args).subList(2, args.length), " ");
-                                ModUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                final String newReason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
+                                ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, newReason, event.getGuild());
                             }
                         }
                 );
                 sendSuccess(event.getMessage());
+
+
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (v) -> ModUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                        (v) -> ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, "*No reason was provided.*", event.getGuild())
                 );
             }
         } catch (HierarchyException e) {

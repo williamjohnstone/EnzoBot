@@ -23,57 +23,33 @@ package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.config.Config;
-import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class SetPrefix implements Command {
-
+public class SetMuteRoleCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (args.length < 2) {
-            EmbedBuilder error = new EmbedBuilder();
-            error.setTitle("Error");
-            error.setColor(Config.ENZO_BLUE);
-            error.setDescription("Invalid Usage");
-            event.getChannel().sendMessage(error.build()).queue();
-            return;
-        }
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            EmbedBuilder error = new EmbedBuilder();
-            error.setTitle("Error");
-            error.setColor(Config.ENZO_BLUE);
-            error.setDescription("You do not have permission to do that.");
-            event.getChannel().sendMessage(error.build()).queue();
-            return;
-        }
-        String prefix = args[1];
-        GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setCustomPrefix(prefix));
+
     }
 
     @Override
     public String getUsage() {
-        return "setPrefix (Prefix)";
+        return null;
     }
 
     @Override
     public String getDesc() {
-        return "Changes the Bots Prefix";
+        return null;
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("setprefix", "prefix"));
+        return null;
     }
 
     @Override
     public CommandCategory getCategory() {
-        return CommandCategory.MOD;
+        return null;
     }
 }
