@@ -24,6 +24,6 @@ package ml.enzodevelopment.enzobot.objects;
 public class ConsoleUser extends FakeUser {
 
     public ConsoleUser() {
-        super("Console", "0", "1337");
+        super("EnzoBot", "391558265265192961", "8646");
     }
 }

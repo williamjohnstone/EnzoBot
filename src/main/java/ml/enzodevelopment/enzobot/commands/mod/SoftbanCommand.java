@@ -25,22 +25,21 @@ import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class BanCommand implements Command {
+public class SoftbanCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            event.getChannel().sendMessage("You need the kick members and the ban members permission for this command, please contact your server administrator about this").queue();
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
+            event.getChannel().sendMessage("You need the kick members permission for this command, please contact your server administrator about this").queue();
             return;
         }
 
@@ -51,52 +50,41 @@ public class BanCommand implements Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                    !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-                EmbedBuilder error = new EmbedBuilder();
-                error.setColor(Color.WHITE);
-                error.setTitle("Error");
-                error.setDescription("You are not permitted to perform this action.");
-                event.getChannel().sendMessage(error.build()).queue();
+                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
+                event.getChannel().sendMessage("You are not permitted to perform this action.").queue();
                 return;
             }
-            //noinspection ConstantConditions
-            if (args.length >= 3) {
-                String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-
-                event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (m) -> {
-                            ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, reason, event.getGuild());
-                            ModUtils.sendSuccess(event.getMessage());
-                        }
-                );
-            }
+            String reason = StringUtils.join(Arrays.asList(args).subList(2, args.length), " ");
+            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
+                    nothing -> {
+                        ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.SOFTBAN, reason, event.getGuild());
+                        ModUtils.sendSuccess(event.getMessage());
+                        event.getGuild().getController().unban(toBan.getId()).reason("(Softban) Kicked by: " + event.getAuthor().getName()).queue();
+                    }
+            );
         } catch (HierarchyException e) {
             //e.printStackTrace();
-            event.getChannel().sendMessage("I can't ban that member because their roles are above or equals to mine.").queue();
+            event.getChannel().sendMessage("I can't ban that member because his roles are above or equals to mine.").queue();
         }
     }
 
     @Override
     public String getUsage() {
-        return "ban (@user) (Reason)";
+        return "softban (@member) (reason)";
     }
 
     @Override
     public String getDesc() {
-        return "Bans a user and removes their messages from the last day";
+        return "Kicks a member and removes their messages";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("ban", "begone"));
+        return new ArrayList<>(Arrays.asList("softban"));
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD;
-    }
-
-    private static boolean isInt(String integer) {
-        return integer.matches("^\\d{1,11}$");
     }
 }

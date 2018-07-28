@@ -21,35 +21,74 @@
 
 package ml.enzodevelopment.enzobot.commands.mod;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SetMuteRoleCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-
+        boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
+        if (!adminCheck) {
+            event.getMessage().getChannel().sendMessage("You don't have permission to do that.").queue();
+            return;
+        }
+        if (event.getMessage().getMentionedRoles().size() != 1) {
+            return;
+        }
+        Config.DB.run(() -> {
+            String role = "";
+            if (args.length == 2) {
+                if (args[1].equals("off")) {
+                    role = "0";
+                } else {
+                    role = event.getMessage().getMentionedRoles().get(0).getId();
+                }
+            }
+            if (!"0".equals(role)) {
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId(role));
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Log Channel Set");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("Success, mute role set to: " + event.getGuild().getRoleById(role).getAsMention());
+                event.getChannel().sendMessage(builder.build()).queue();
+            } else {
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId("0"));
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Log Channel Disabled");
+                builder.setColor(Color.WHITE);
+                builder.setDescription("Success");
+                event.getChannel().sendMessage(builder.build()).queue();
+            }
+        });
     }
 
     @Override
     public String getUsage() {
-        return null;
+        return "setmuterole (@role)";
     }
 
     @Override
     public String getDesc() {
-        return null;
+        return "Sets the role that mute command uses";
     }
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return new ArrayList<>(Arrays.asList("setmuterole", "muterole"));
     }
 
     @Override
     public CommandCategory getCategory() {
-        return null;
+        return CommandCategory.MOD;
     }
 }

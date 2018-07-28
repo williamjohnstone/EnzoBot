@@ -24,6 +24,7 @@ package ml.enzodevelopment.enzobot.commands.mod;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
+import ml.enzodevelopment.enzobot.utils.CalculatePunishmentTime;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -36,7 +37,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class BanCommand implements Command {
+public class TempBanCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
@@ -47,7 +48,6 @@ public class BanCommand implements Command {
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
             return;
         }
-
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
@@ -59,16 +59,26 @@ public class BanCommand implements Command {
                 event.getChannel().sendMessage(error.build()).queue();
                 return;
             }
-            //noinspection ConstantConditions
-            if (args.length >= 3) {
-                String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+
+            if (args.length >= 4) {
+                String reason;
+                reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
+
+                String[] timeParts = args[2].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+");
+                CalculatePunishmentTime calculateBanTime = new CalculatePunishmentTime(event, getAliases().get(0), timeParts).invoke();
+                if (calculateBanTime.is()) return;
+                String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
+                int finalBanTime = calculateBanTime.getFinalBanTime();
 
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (m) -> {
-                            ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, reason, event.getGuild());
-                            ModUtils.sendSuccess(event.getMessage());
+                        (voidMethod) -> {
+                            if (finalBanTime > 0) {
+                                ModUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                                ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.TEMP_BAN, reason, args[2], event.getGuild());
+                            }
                         }
                 );
+                ModUtils.sendSuccess(event.getMessage());
             }
         } catch (HierarchyException e) {
             //e.printStackTrace();
@@ -78,25 +88,21 @@ public class BanCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "ban (@user) (Reason)";
+        return "tempban (@user) [(time)(m/h/d/w/M/Y)] (Reason)";
     }
 
     @Override
     public String getDesc() {
-        return "Bans a user and removes their messages from the last day";
+        return "Temporarily bans a user.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("ban", "begone"));
+        return new ArrayList<>(Collections.singletonList("tempban"));
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD;
-    }
-
-    private static boolean isInt(String integer) {
-        return integer.matches("^\\d{1,11}$");
     }
 }

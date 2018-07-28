@@ -47,6 +47,7 @@ public class BotListener extends ListenerAdapter {
     private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
             r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
+    private boolean unmuteTimerRunning = false;
 
     public static Command getCommand(String alias) {
         for (Command command : EnzoBot.cmdList) {
@@ -62,16 +63,25 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         StatsUpdater updater = new StatsUpdater();
-        ModUtils.checkUnbans(event.getJDA());
+
         if (!unbanTimerRunning) {
+            ModUtils.checkUnbans(event.getJDA());
             logger.info("Starting the unban timer.");
-            //Register the timer for the auto unbans
             systemPool.scheduleAtFixedRate(() ->
                     ModUtils.checkUnbans(event.getJDA()), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
-        logger.info("EnzoBot is running! Bot should be online.");
+
+        if (!unmuteTimerRunning) {
+            ModUtils.checkUnmutes(event.getJDA());
+            logger.info("Satring the unmute timer");
+            systemPool.scheduleAtFixedRate(() ->
+                    ModUtils.checkUnmutes(event.getJDA()), 5, 5, TimeUnit.MINUTES);
+            unmuteTimerRunning = true;
+        }
+
         updater.StartupdateTimer(event);
+        logger.info("EnzoBot is running! Bot should be online.");
     }
 
     @Override

@@ -69,7 +69,7 @@ public class SetPrefix implements Command {
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("setprefix", "prefix"));
+        return new ArrayList<>(Arrays.asList("prefix", "setprefix"));
     }
 
     @Override

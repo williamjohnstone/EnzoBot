@@ -99,14 +99,18 @@ public class EnzoBot {
             cmdList.add(new VolumeCommand());
             //Mod Commands
             cmdList.add(new SetRole());
-            cmdList.add(new BanCommand());
+            cmdList.add(new SetLogChannelCommand());
+            cmdList.add(new SetMuteRoleCommand());
             cmdList.add(new SetPrefix());
             cmdList.add(new SetBotChannel());
-            cmdList.add(new RevokeAccessCommand());
-            cmdList.add(new GrantAccessCommand());
+            cmdList.add(new BanCommand());
+            cmdList.add(new TempBanCommand());
             cmdList.add(new UnbanCommand());
-            cmdList.add(new SetLogChannelCommand());
-            //cmdList.add(new SetMuteRoleCommand());
+            cmdList.add(new SoftbanCommand());
+            cmdList.add(new MuteCommand());
+            cmdList.add(new TempMuteCommand());
+            cmdList.add(new UnmuteCommand());
+            cmdList.add(new KickCommand());
             //Owner Commands
             cmdList.add(new ShutdownCommand());
             cmdList.add(new UpdateCommand());

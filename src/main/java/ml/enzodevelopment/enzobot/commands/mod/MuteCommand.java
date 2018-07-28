@@ -23,21 +23,21 @@ package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.objects.guild.GuildSettings;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UnbanCommand implements Command {
+public class MuteCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
@@ -45,42 +45,42 @@ public class UnbanCommand implements Command {
             return;
         }
 
-        try {
-            event.getGuild().getBanList().queue(list -> {
-                for (Guild.Ban ban : list) {
-                    if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " "))) {
-                        event.getGuild().getController().unban(ban.getUser())
-                                .reason("Unbanned by " + event.getAuthor().getName()).queue();
-                        ModUtils.modLog(event.getAuthor(), ban.getUser(), PunishmentType.UNBAN, event.getGuild());
-                        return;
-                    }
-                }
-                EmbedBuilder error = new EmbedBuilder();
-                error.setColor(Color.WHITE);
-                error.setTitle("Error");
-                error.setDescription("This user is not banned.");
-                event.getChannel().sendMessage(error.build()).queue();
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();
+        if (event.getMessage().getMentionedMembers().size() < 1 || args.length < 3) {
+            return;
         }
+
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+
+        if (settings.getMuteRoleId() == null || settings.getMuteRoleId().isEmpty()) {
+            event.getChannel().sendMessage("You need to set the mute role to use this command").queue();
+            return;
+        }
+
+        String reason = StringUtils.join(Arrays.asList(args).subList(2, args.length), " ");
+        Member toMute = event.getMessage().getMentionedMembers().get(0);
+        Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+
+        event.getGuild().getController().addSingleRoleToMember(toMute, role)
+                .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
+                    ModUtils.modLog(event.getAuthor(), toMute.getUser(), PunishmentType.MUTE, reason, event.getGuild());
+                    ModUtils.sendSuccess(event.getMessage());
+                }
+        );
     }
 
     @Override
     public String getUsage() {
-        return "unban (username)";
+        return "mute (@user) (reason)";
     }
 
     @Override
     public String getDesc() {
-        return "Unbans a Member";
+        return "Gives the mute role to the mentioned member";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("unban"));
+        return new ArrayList<>(Arrays.asList("mute", "shutup"));
     }
 
     @Override

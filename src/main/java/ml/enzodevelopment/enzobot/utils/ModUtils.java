@@ -27,9 +27,8 @@ import ml.enzodevelopment.enzobot.objects.FakeUser;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,40 +51,17 @@ public class ModUtils {
             }
             String length = "";
             if (time != null && !time.isEmpty()) {
-                length = " lasting " + time + "";
+                String[] timeParts = time.split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+");
+                String units = getTimeUnit(timeParts[1]);
+                length = " for " + timeParts[0] + " " + units;
             }
-            String punishment = "unknown";
-            switch (type) {
-                case BAN:
-                    punishment = "banned";
-                    break;
-                case SOFTBAN:
-                    punishment = "soft banned";
-                    break;
-                case KICK:
-                    punishment = "kicked";
-                    break;
-                case MUTE:
-                    punishment = "muted";
-                    break;
-                case WARN:
-                    punishment = "warned";
-                    break;
-                case UNBAN:
-                    punishment = "unbanned";
-                    break;
-                case UNMUTE:
-                    punishment = "unmuted";
-                    break;
-                case TEMP_MUTE:
-                    punishment = "temp-muted";
-                    break;
-            }
-            String finalReason = reason.isEmpty() ? "" : " with reason \"" + reason + "\"";
+            String punishment = getPunishmentString(type);
+
+            String finalReason = reason.isEmpty() ? "" : " with reason `" + reason + "`";
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.WHITE);
             builder.setTitle("User " + punishment.substring(0, 1).toUpperCase() + punishment.substring(1));
-            builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + " " + punishment + " " + punishedUser.getName() + "#" + punishedUser.getDiscriminator() + length + finalReason);
+            builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + "** " + punishment + " **" + punishedUser.getName() + "#" + punishedUser.getDiscriminator() + "**" + length + finalReason);
             logChannel.sendMessage(builder.build()).queue();
         }
     }
@@ -102,15 +78,32 @@ public class ModUtils {
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
         Config.DB.run(() -> {
             Connection conn = Config.DB.getConnManager().getConnection();
-            try {
-                PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
-
+            try (PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
+                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")){
                 smt.setString(1, modID);
                 smt.setString(2, userName);
                 smt.setString(3, userDiscriminator);
                 smt.setString(4, userId);
                 smt.setString(5, unbanDate);
+                smt.setString(6, guildId);
+                smt.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+    public static void addMutedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unmuteDate, String guildId) {
+        Config.DB.run(() -> {
+            Connection conn = Config.DB.getConnManager().getConnection();
+            try (PreparedStatement smt = conn.prepareStatement("INSERT INTO mutes(modUserId, Username, discriminator, userId, mute_date, unmute_date, guildId) " +
+                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")){
+                smt.setString(1, modID);
+                smt.setString(2, userName);
+                smt.setString(3, userDiscriminator);
+                smt.setString(4, userId);
+                smt.setString(5, unmuteDate);
                 smt.setString(6, guildId);
                 smt.execute();
             } catch (Exception e) {
@@ -144,7 +137,7 @@ public class ModUtils {
                             if (guild != null) {
                                 guild.getController()
                                         .unban(userID).reason("Ban expired").queue();
-                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), PunishmentType.UNBAN, guild);
+                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), PunishmentType.UNBAN, "Ban Expired", guild);
                             }
                         } catch (NullPointerException ignored) {
                         }
@@ -156,6 +149,114 @@ public class ModUtils {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static void checkUnmutes(JDA jda) {
+        Config.DB.run(() -> {
+            logger.debug("Checking for users to unmute");
+            int usersUnmuted = 0;
+            Connection database = Config.DB.getConnManager().getConnection();
+
+            try (Statement smt = database.createStatement()) {
+                ResultSet res = smt.executeQuery("SELECT * FROM mutes");
+
+                while (res.next()) {
+                    java.util.Date unmuteDate = res.getTimestamp("unmute_date");
+                    java.util.Date currDate = new java.util.Date();
+
+                    if (currDate.after(unmuteDate)) {
+                        usersUnmuted++;
+                        String username = res.getString("Username");
+                        logger.debug("Unmuting " + username);
+                        try {
+                            String guildId = res.getString("guildId");
+                            String userID = res.getString("userId");
+                            Guild guild = jda.getGuildById(guildId);
+                            if (guild != null) {
+                                Role muteRole = guild.getRoleById(GuildSettingsUtils.getGuild(guild).getMuteRoleId());
+                                guild.getController()
+                                        .removeSingleRoleFromMember(guild.getMember(jda.getUserById(userID)), muteRole).queue();
+                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), PunishmentType.UNMUTE, "Mute Expired", guild);
+                            }
+                        } catch (NullPointerException ignored) {
+                        }
+                        database.createStatement().executeUpdate("DELETE FROM mutes WHERE id=" + res.getInt("id") + "");
+                    }
+                }
+                logger.debug("Checking done, unmuted " + usersUnmuted + " users.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static String getPunishmentString (PunishmentType type) {
+        String punishment = "";
+        switch (type) {
+            case BAN:
+                punishment = "banned";
+                break;
+            case SOFTBAN:
+                punishment = "soft banned";
+                break;
+            case KICK:
+                punishment = "kicked";
+                break;
+            case MUTE:
+                punishment = "muted";
+                break;
+            case WARN:
+                punishment = "warned";
+                break;
+            case UNBAN:
+                punishment = "unbanned";
+                break;
+            case UNMUTE:
+                punishment = "unmuted";
+                break;
+            case TEMP_MUTE:
+                punishment = "temp-muted";
+                break;
+            case TEMP_BAN:
+                punishment = "temp-banned";
+                break;
+        }
+        return punishment;
+    }
+
+    private static String getTimeUnit(String time) {
+        String units = "";
+        switch (time) {
+            case "m":
+                units = "minutes";
+                break;
+            case "h":
+                units = "hour(s)";
+                break;
+            case "d":
+                units = "day(s)";
+                break;
+            case "w":
+                units = "week(s)";
+                break;
+            case "M":
+                units = "month(s)";
+                break;
+            case "Y":
+                units = "year(s)";
+                break;
+        }
+        return units;
+    }
+
+    public static void sendSuccess(Message message) {
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                message.addReaction("✅").queue(null, ignored -> {
+                });
+            }
+        }
     }
 
 }

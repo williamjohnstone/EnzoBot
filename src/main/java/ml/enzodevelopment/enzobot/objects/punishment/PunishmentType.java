@@ -24,6 +24,7 @@ package ml.enzodevelopment.enzobot.objects.punishment;
 public enum PunishmentType {
     KICK,
     BAN,
+    TEMP_BAN,
     UNBAN,
     SOFTBAN,
     WARN,

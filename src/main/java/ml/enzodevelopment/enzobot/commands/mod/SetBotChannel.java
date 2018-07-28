@@ -44,14 +44,9 @@ public class SetBotChannel implements Command {
             return;
         }
         Config.DB.run(() -> {
-            String channel = "0";
+            String channel = "";
             if (args.length == 2) {
                 if (args[1].equals("off")) {
-                    EmbedBuilder builder = new EmbedBuilder();
-                    builder.setTitle("Bot Channel Disabled");
-                    builder.setColor(Color.WHITE);
-                    builder.setDescription("Success");
-                    event.getChannel().sendMessage(builder.build()).queue();
                     channel = "0";
                 } else {
                     channel = event.getMessage().getMentionedChannels().get(0).getId();
@@ -69,7 +64,7 @@ public class SetBotChannel implements Command {
             } else {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setBotChannel("0").useBotChannel(false));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Channel Removed");
+                builder.setTitle("Bot Channel Disabled");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success");
                 event.getChannel().sendMessage(builder.build()).queue();
@@ -89,7 +84,7 @@ public class SetBotChannel implements Command {
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("setbotchat", "botchannel", "setbotchannel"));
+        return new ArrayList<>(Arrays.asList("botchat", "setbotchat", "botchannel", "setbotchannel"));
     }
 
     @Override

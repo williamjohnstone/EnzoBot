@@ -23,7 +23,10 @@ package ml.enzodevelopment.enzobot.commands.mod;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.objects.guild.GuildSettings;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
+import ml.enzodevelopment.enzobot.utils.CalculatePunishmentTime;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -36,7 +39,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class BanCommand implements Command {
+public class TempMuteCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
@@ -48,10 +51,17 @@ public class BanCommand implements Command {
             return;
         }
 
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+
+        if (settings.getMuteRoleId() == null || settings.getMuteRoleId().isEmpty()) {
+            event.getChannel().sendMessage("You need to set the mute role to use this command").queue();
+            return;
+        }
+
         try {
-            final User toBan = event.getMessage().getMentionedUsers().get(0);
-            if (toBan.equals(event.getAuthor()) &&
-                    !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+            final User toMute = event.getMessage().getMentionedUsers().get(0);
+            if (toMute.equals(event.getAuthor()) &&
+                    !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toMute)))) {
                 EmbedBuilder error = new EmbedBuilder();
                 error.setColor(Color.WHITE);
                 error.setTitle("Error");
@@ -59,44 +69,50 @@ public class BanCommand implements Command {
                 event.getChannel().sendMessage(error.build()).queue();
                 return;
             }
-            //noinspection ConstantConditions
-            if (args.length >= 3) {
-                String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
 
-                event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (m) -> {
-                            ModUtils.modLog(event.getAuthor(), toBan, PunishmentType.BAN, reason, event.getGuild());
-                            ModUtils.sendSuccess(event.getMessage());
+            if (args.length >= 4) {
+                String reason;
+                reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
+
+                String[] timeParts = args[2].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+");
+                CalculatePunishmentTime calculateBanTime = new CalculatePunishmentTime(event, getAliases().get(0), timeParts).invoke();
+                if (calculateBanTime.is()) return;
+                String finalUnmuteDate = calculateBanTime.getFinalUnbanDate();
+                int finalBanTime = calculateBanTime.getFinalBanTime();
+
+                event.getGuild().getController().addSingleRoleToMember(event.getMessage().getMentionedMembers().get(0),
+                        event.getGuild().getRoleById(GuildSettingsUtils.getGuild(event.getGuild()).getMuteRoleId())).queue((voidMethod) -> {
+                            if (finalBanTime > 0) {
+                                ModUtils.addMutedUserToDb(event.getAuthor().getId(), toMute.getName(), toMute.getDiscriminator(), toMute.getId(), finalUnmuteDate, event.getGuild().getId());
+                                ModUtils.modLog(event.getAuthor(), toMute, PunishmentType.TEMP_MUTE, reason, args[2], event.getGuild());
+                            }
                         }
                 );
+                ModUtils.sendSuccess(event.getMessage());
             }
         } catch (HierarchyException e) {
             //e.printStackTrace();
-            event.getChannel().sendMessage("I can't ban that member because their roles are above or equals to mine.").queue();
+            event.getChannel().sendMessage("I can't mute that member because their roles are above or equals to mine.").queue();
         }
     }
 
     @Override
     public String getUsage() {
-        return "ban (@user) (Reason)";
+        return "tempmute (@user) [(time)(m/h/d/w/M/Y)] (Reason)";
     }
 
     @Override
     public String getDesc() {
-        return "Bans a user and removes their messages from the last day";
+        return "Temporarily mutes a user.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("ban", "begone"));
+        return new ArrayList<>(Collections.singletonList("tempmute"));
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD;
-    }
-
-    private static boolean isInt(String integer) {
-        return integer.matches("^\\d{1,11}$");
     }
 }

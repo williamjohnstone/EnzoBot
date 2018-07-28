@@ -123,7 +123,9 @@ public class GuildSettingsUtils {
         Config.DB.run(() -> {
             Connection database = Config.DB.getConnManager().getConnection();
 
-            try {
+            try (PreparedStatement smt = database.prepareStatement("INSERT INTO guildSettings(guildId, guildName," +
+                    "prefix, logChannelId, muteRoleId, botChannelId, useBotChannel) " +
+                    "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?, ?)")){
                 ResultSet resultSet = database.createStatement()
                         .executeQuery("SELECT id FROM guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
@@ -131,9 +133,6 @@ public class GuildSettingsUtils {
                     rows++;
 
                 if (rows == 0) {
-                    PreparedStatement smt = database.prepareStatement("INSERT INTO guildSettings(guildId, guildName," +
-                            "prefix, logChannelId, muteRoleId, botChannelId, useBotChannel) " +
-                            "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?, ?)");
                     smt.setString(1, replaceUnicode(g.getName()));
                     smt.setString(2, Config.fallback_prefix);
                     smt.setString(3, "0");
