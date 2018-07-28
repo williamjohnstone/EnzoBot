@@ -61,15 +61,6 @@ public class EnzoBot {
             }
         };
 
-
-        if (args.length > 0) {
-            if (args[0].equals("--dev")) {
-                Config.dev_mode = true;
-                System.out.println("[INFO] Running in Development Mode");
-            }
-        } else {
-            Config.config_file = "config.json";
-        }
         Config config = new Config();
         config.loadConfig();
         GuildSettingsUtils.loadGuildSettings();

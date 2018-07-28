@@ -46,14 +46,11 @@ public class Config {
     public static String API_Key;
     public static String sentry_dsn;
     public static String google_api;
-    public static String config_file;
-    public static Boolean dev_mode = false;
 
 
     public void loadConfig() {
         try {
-            if (dev_mode) config_file = "dev_config.json";
-            JSONConfig config = new JSONConfig(config_file);
+            JSONConfig config = new JSONConfig("config.json");
             Discord_Token = config.getString("Config.token").get();
             dbConnection = config.getString("Config.dbString").get();
             fallback_prefix = config.getString("Config.fallback").get();

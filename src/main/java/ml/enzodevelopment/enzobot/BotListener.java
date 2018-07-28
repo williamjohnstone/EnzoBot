@@ -21,9 +21,9 @@
 
 package ml.enzodevelopment.enzobot;
 
-import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
+import ml.enzodevelopment.enzobot.utils.ModUtils;
 import ml.enzodevelopment.enzobot.utils.StatsUpdater;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.ReadyEvent;
@@ -36,11 +36,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private Timer delTimer = new Timer();
+    private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
+            r -> new Thread(r, "Bot-Service-Thread"));
+    private boolean unbanTimerRunning = false;
 
     public static Command getCommand(String alias) {
         for (Command command : EnzoBot.cmdList) {
@@ -56,6 +62,14 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         StatsUpdater updater = new StatsUpdater();
+        ModUtils.checkUnbans(event.getJDA());
+        if (!unbanTimerRunning) {
+            logger.info("Starting the unban timer.");
+            //Register the timer for the auto unbans
+            systemPool.scheduleAtFixedRate(() ->
+                    ModUtils.checkUnbans(event.getJDA()), 5, 5, TimeUnit.MINUTES);
+            unbanTimerRunning = true;
+        }
         logger.info("EnzoBot is running! Bot should be online.");
         updater.StartupdateTimer(event);
     }
@@ -91,14 +105,6 @@ public class BotListener extends ListenerAdapter {
         boolean notMusic = !event.getMessage().getContentRaw().startsWith(botPrefix + "m");
 
         if (startsWithPrefix && notBot && notMusic) {
-
-            if (Config.dev_mode) {
-                if (event.getChannel() != event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
-                    return false;
-                }
-            } else if (event.getJDA().getGuildById("367273834128080898") == event.getGuild() && event.getChannel() == event.getGuild().getTextChannelById(Config.BOT_DEV_CHANNEL)) {
-                return false;
-            }
             String botChannel;
             if (GuildSettingsUtils.getGuild(event.getGuild()).usingBotChannel()) {
                 botChannel = GuildSettingsUtils.getGuild(event.getGuild()).getBotChannel();

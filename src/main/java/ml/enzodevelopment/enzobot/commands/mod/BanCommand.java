@@ -47,7 +47,7 @@ public class BanCommand implements Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
+        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
             event.getChannel().sendMessage("Usage is " + GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() + getUsage()).queue();
             return;
         }
@@ -60,9 +60,9 @@ public class BanCommand implements Command {
                 return;
             }
             //noinspection ConstantConditions
-            if (args.length >= 2) {
+            if (args.length >= 3) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+                String[] timeParts = args[2].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
                 if (!isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
@@ -84,9 +84,9 @@ public class BanCommand implements Command {
                             if (finalBanTime > 0) {
                                 ModUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                ModUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
+                                ModUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[2], event.getGuild());
                             } else {
-                                final String newReason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
+                                final String newReason = StringUtils.join(Arrays.asList(args).subList(2, args.length), " ");
                                 ModUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                             }
                         }

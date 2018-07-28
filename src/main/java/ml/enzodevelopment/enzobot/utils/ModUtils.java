@@ -22,20 +22,31 @@
 package ml.enzodevelopment.enzobot.utils;
 
 import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.objects.ConsoleUser;
+import ml.enzodevelopment.enzobot.objects.FakeUser;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class ModUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(ModUtils.class);
 
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
         String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
         if (chan != null && !chan.isEmpty()) {
             TextChannel logChannel = g.getTextChannelById(GuildSettingsUtils.getGuild(g).getLogChannel());
+            if (logChannel == null) {
+                return;
+            }
             String length = "";
             if (time != null && !time.isEmpty()) {
                 length = " lasting " + time + "";
@@ -77,12 +88,45 @@ public class ModUtils {
                 smt.execute();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            }
+
+        });
+    }
+
+    public static void checkUnbans(JDA jda) {
+        Config.DB.run(() -> {
+            logger.debug("Checking for users to unban");
+            int usersUnbanned = 0;
+            Connection database = Config.DB.getConnManager().getConnection();
+
+            try (Statement smt = database.createStatement()) {
+                ResultSet res = smt.executeQuery("SELECT * FROM bans");
+
+                while (res.next()) {
+                    java.util.Date unbanDate = res.getTimestamp("unban_date");
+                    java.util.Date currDate = new java.util.Date();
+
+                    if (currDate.after(unbanDate)) {
+                        usersUnbanned++;
+                        String username = res.getString("Username");
+                        logger.debug("Unbanning " + username);
+                        try {
+                            String guildId = res.getString("guildId");
+                            String userID = res.getString("userId");
+                            Guild guild = jda.getGuildById(guildId);
+                            if (guild != null) {
+                                guild.getController()
+                                        .unban(userID).reason("Ban expired").queue();
+                                modLog(new ConsoleUser(), new FakeUser(username, userID, res.getString("discriminator")), "unbanned", guild);
+                            }
+                        } catch (NullPointerException ignored) {
+                        }
+                        database.createStatement().executeUpdate("DELETE FROM bans WHERE id=" + res.getInt("id") + "");
+                    }
                 }
+                logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

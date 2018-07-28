@@ -36,9 +36,6 @@ import java.util.List;
 public class DeployCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (Config.dev_mode) {
-            return;
-        }
         if (!event.getAuthor().getId().equals(BuildConfig.OWNER_ID)) {
             event.getChannel().sendMessage("This Command is reserved for the bot owner.").queue();
         } else {

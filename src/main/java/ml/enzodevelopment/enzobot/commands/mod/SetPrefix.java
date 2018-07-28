@@ -24,6 +24,7 @@ package ml.enzodevelopment.enzobot.commands.mod;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
 import ml.enzodevelopment.enzobot.config.Config;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -62,20 +63,7 @@ public class SetPrefix implements Command {
             return;
         }
         String prefix = args[1];
-        Config.DB.run(() -> {
-            try (PreparedStatement stmt = conn.prepareStatement("UPDATE `Config` SET `Prefix` = ? WHERE `Config`.`guild_ID` = ?;")) {
-                stmt.setString(1, prefix);
-                stmt.setString(2, event.getGuild().getId());
-                stmt.executeUpdate();
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Prefix Set");
-                builder.setColor(Color.WHITE);
-                builder.setDescription("Success");
-                event.getChannel().sendMessage(builder.build()).queue();
-            } catch (SQLException ex) {
-                logger.error("Database Error", ex);
-            }
-        });
+        GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setCustomPrefix(prefix));
     }
 
     @Override

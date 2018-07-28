@@ -39,10 +39,8 @@ public class GuildSettingsUtils {
 
         Config.DB.run(() -> {
             Connection database = Config.DB.getConnManager().getConnection();
-            try {
-                Statement smt = database.createStatement();
-
-                ResultSet res = smt.executeQuery("SELECT * FROM guildSettings");
+            try (PreparedStatement stmt = database.prepareStatement("SELECT * FROM guildSettings")){
+                ResultSet res = stmt.executeQuery();
 
                 while (res.next()) {
                     String guildId = res.getString("guildId");
@@ -55,16 +53,10 @@ public class GuildSettingsUtils {
                             .useBotChannel(false)
                     );
                 }
-
+                res.close();
                 logger.info("Loaded settings for " + Config.GUILD_SETTINGS.keySet().size() + " guilds.");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    database.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }
@@ -99,14 +91,7 @@ public class GuildSettingsUtils {
         Config.DB.run(() -> {
             Connection database = Config.DB.getConnManager().getConnection();
 
-            try {
-                PreparedStatement smt = database.prepareStatement("UPDATE guildSettings SET " +
-                        "prefix= ? ," +
-                        "logChannelId= ? ," +
-                        "muteRoleId = ? ," +
-                        "botChannelId = ? ," +
-                        "useBotChannel = ? ," +
-                        "WHERE guildId='" + settings.getGuildId() + "'");
+            try (PreparedStatement smt = database.prepareStatement("UPDATE guildSettings SET prefix= ? , logChannelId= ? , muteRoleId = ? , botChannelId = ? , useBotChannel = ? WHERE guildId = '" + guild.getId() + "'")){
                 smt.setString(1, replaceUnicode(settings.getCustomPrefix()));
                 smt.setString(2, settings.getLogChannel());
                 smt.setString(3, settings.getMuteRoleId());
@@ -115,18 +100,11 @@ public class GuildSettingsUtils {
                 smt.executeUpdate();
                 Config.GUILD_SETTINGS.remove(guild.getId());
                 Config.GUILD_SETTINGS.put(guild.getId(), settings);
-
             } catch (SQLException e1) {
                 if (!e1.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
                     e1.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    database.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }
@@ -156,7 +134,7 @@ public class GuildSettingsUtils {
                     PreparedStatement smt = database.prepareStatement("INSERT INTO guildSettings(guildId, guildName," +
                             "prefix, logChannelId, muteRoleId, botChannelId, useBotChannel) " +
                             "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?, ?)");
-                    smt.setString(1, g.getName());
+                    smt.setString(1, replaceUnicode(g.getName()));
                     smt.setString(2, Config.fallback_prefix);
                     smt.setString(3, "0");
                     smt.setString(4, "0");
@@ -166,16 +144,9 @@ public class GuildSettingsUtils {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (database != null) {
-                    try {
-                        database.close();
-                    } catch (SQLException e2) {
-                        e2.printStackTrace();
-                    }
-                }
             }
             Config.GUILD_SETTINGS.put(g.getId(), newGuildSettings);
+            logger.info("Registered new Guild: " + g.getName());
         });
         return newGuildSettings;
     }
@@ -195,12 +166,6 @@ public class GuildSettingsUtils {
                 smt.execute("DELETE FROM guildSettings WHERE guildId='" + g.getId() + "'");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    database.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }
