@@ -29,6 +29,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,16 +46,21 @@ public class SetPrefix implements Command {
             event.getChannel().sendMessage(error.build()).queue();
             return;
         }
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+        if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
             error.setColor(Config.ENZO_BLUE);
-            error.setDescription("You do not have permission to do that.");
+            error.setDescription("You require permission to manage the server to use this command.");
             event.getChannel().sendMessage(error.build()).queue();
             return;
         }
         String prefix = args[1];
         GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setCustomPrefix(prefix));
+        EmbedBuilder error = new EmbedBuilder();
+        error.setTitle("Success");
+        error.setColor(Color.WHITE);
+        error.setDescription("Prefix set to: `" + prefix + "`");
+        event.getChannel().sendMessage(error.build()).queue();
     }
 
     @Override

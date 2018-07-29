@@ -45,6 +45,7 @@ public class WarnCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
+            event.getChannel().sendMessage("You require permission to kick members to use this command.").queue();
             return;
         }
 
@@ -82,7 +83,7 @@ public class WarnCommand implements Command {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.WHITE);
         builder.setTitle("You have been warned");
-        builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + " warned you for `" + (reason.isEmpty() ? "No reason was provided`" : reason + "`") +
+        builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + "** warned you for `" + (reason.isEmpty() ? "No reason was provided`" : reason + "`") +
                 " This warning will expire in 3 days. " + ModUtils.getWarningCountForUser(target.getUser(), event.getGuild()) + "/" + settings.getWarningThreshold() + " Warnings.");
 
         ModUtils.addWarningToDb(event.getAuthor(), target.getUser(), reason, event.getGuild());

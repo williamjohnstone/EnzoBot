@@ -40,6 +40,7 @@ public class SetBotChannel implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if (!adminCheck) {
+            event.getChannel().sendMessage("You require permission to manage the server to use this command.").queue();
             return;
         }
         Config.DB.run(() -> {

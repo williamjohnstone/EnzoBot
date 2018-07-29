@@ -39,6 +39,7 @@ public class SetMuteRoleCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if (!adminCheck) {
+            event.getChannel().sendMessage("You require permission to manage the server to use this command.").queue();
             return;
         }
         if (event.getMessage().getMentionedRoles().size() != 1) {
