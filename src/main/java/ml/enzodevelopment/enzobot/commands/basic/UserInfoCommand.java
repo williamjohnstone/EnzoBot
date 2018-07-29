@@ -23,6 +23,8 @@ package ml.enzodevelopment.enzobot.commands.basic;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
+import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
+import ml.enzodevelopment.enzobot.utils.ModUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Member;
@@ -61,6 +63,7 @@ public class UserInfoCommand implements Command {
         builder.addField("Joined Server", joinDate, true);
         builder.addField("User ID", member.getUser().getId(), true);
         builder.addField("Bot?", (isBot ? "Yes" : "No"), true);
+        builder.addField("Warnings", ModUtils.getWarningCountForUser(member.getUser(), event.getGuild()) + "/" + GuildSettingsUtils.getGuild(event.getGuild()).getWarningThreshold(), true);
         builder.addField("Join Order", getOrder(event, member.getUser()), true);
         event.getChannel().sendMessage(builder.build()).queue();
     }

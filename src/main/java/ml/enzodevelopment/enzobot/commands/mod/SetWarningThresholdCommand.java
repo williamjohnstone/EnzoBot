@@ -21,9 +21,9 @@
 
 package ml.enzodevelopment.enzobot.commands.mod;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SetPrefix implements Command {
-
+public class SetWarningThresholdCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         if (args.length < 2) {
@@ -54,32 +53,40 @@ public class SetPrefix implements Command {
             event.getChannel().sendMessage(error.build()).queue();
             return;
         }
-        String prefix = args[1];
-        GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setCustomPrefix(prefix));
+        if (!isInt(args[1])) {
+            return;
+        }
+        int threshold = Integer.parseInt(args[1]);
+        GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setWarningThreshold(threshold));
         EmbedBuilder error = new EmbedBuilder();
         error.setTitle("Success");
         error.setColor(Color.WHITE);
-        error.setDescription("Prefix set to: `" + prefix + "`");
+        error.setDescription("Max warnings set to: `" + threshold + "`");
         event.getChannel().sendMessage(error.build()).queue();
     }
 
     @Override
     public String getUsage() {
-        return "setPrefix (Prefix)";
+        return "warningthreshold (amount)";
     }
 
     @Override
     public String getDesc() {
-        return "Changes the Bots Prefix";
+        return "Sets the max amount of warnings a user can receive before being kicked.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("prefix", "setprefix"));
+        return new ArrayList<>(Arrays.asList("warningthreshold", "maxwarns"));
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD;
     }
+
+    private static boolean isInt(String integer) {
+        return integer.matches("^\\d{1,11}$");
+    }
+
 }

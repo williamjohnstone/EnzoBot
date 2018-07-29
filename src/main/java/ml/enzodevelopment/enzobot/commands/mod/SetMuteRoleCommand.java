@@ -21,9 +21,9 @@
 
 package ml.enzodevelopment.enzobot.commands.mod;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SetBotChannel implements Command {
-
+public class SetMuteRoleCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
@@ -43,28 +42,29 @@ public class SetBotChannel implements Command {
             event.getChannel().sendMessage("You require permission to manage the server to use this command.").queue();
             return;
         }
+        if (event.getMessage().getMentionedRoles().size() != 1) {
+            return;
+        }
         Config.DB.run(() -> {
-            String channel = "";
+            String role = "";
             if (args.length == 2) {
                 if (args[1].equals("off")) {
-                    channel = "0";
+                    role = "0";
                 } else {
-                    channel = event.getMessage().getMentionedChannels().get(0).getId();
+                    role = event.getMessage().getMentionedRoles().get(0).getId();
                 }
-            } else if (args.length == 1) {
-                channel = event.getMessage().getChannel().getId();
             }
-            if (!"0".equals(channel)) {
-                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setBotChannel(channel));
+            if (!"0".equals(role)) {
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId(role));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Channel Set");
+                builder.setTitle("Mute Role Set");
                 builder.setColor(Color.WHITE);
-                builder.setDescription("Success, bot channel set to: " + event.getGuild().getTextChannelById(channel).getAsMention());
+                builder.setDescription("Success, mute role set to: " + event.getGuild().getRoleById(role).getAsMention());
                 event.getChannel().sendMessage(builder.build()).queue();
             } else {
-                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setBotChannel("0").useBotChannel(false));
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId("0"));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Bot Channel Disabled");
+                builder.setTitle("Mute Role Disabled");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success");
                 event.getChannel().sendMessage(builder.build()).queue();
@@ -74,17 +74,17 @@ public class SetBotChannel implements Command {
 
     @Override
     public String getUsage() {
-        return "setBotChat (#Channel) or 'setBotChat off' to disable bot channel.";
+        return "setmuterole (@role)";
     }
 
     @Override
     public String getDesc() {
-        return "Changes the channel the bot uses this channel is used for all commands.";
+        return "Sets the role that mute command uses";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("botchat", "setbotchat", "botchannel", "setbotchannel"));
+        return new ArrayList<>(Arrays.asList("setmuterole", "muterole"));
     }
 
     @Override
