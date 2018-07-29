@@ -23,7 +23,6 @@ package ml.enzodevelopment.enzobot.commands.owner;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.BuildConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
