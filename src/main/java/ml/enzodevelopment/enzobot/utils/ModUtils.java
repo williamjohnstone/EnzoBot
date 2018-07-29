@@ -246,6 +246,9 @@ public class ModUtils {
             case TEMP_BAN:
                 punishment = "temp-banned";
                 break;
+            default:
+                punishment = "Unknown";
+                break;
         }
         return punishment;
     }
@@ -270,6 +273,9 @@ public class ModUtils {
                 break;
             case "Y":
                 units = "year(s)";
+                break;
+            default:
+                units = "Unknown";
                 break;
         }
         return units;

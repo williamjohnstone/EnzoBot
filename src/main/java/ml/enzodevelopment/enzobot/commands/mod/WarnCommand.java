@@ -84,7 +84,7 @@ public class WarnCommand implements Command {
 
         ModUtils.addWarningToDb(event.getAuthor(), target.getUser(), reason, event.getGuild());
         ModUtils.modLog(event.getAuthor(), target.getUser(), PunishmentType.WARN, reason, event.getGuild());
-        
+
         builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + "** warned you for `" + (reason.isEmpty() ? "No reason was provided`" : reason + "`") +
                 " This warning will expire in 3 days. " + ModUtils.getWarningCountForUser(target.getUser(), event.getGuild()) + "/" + settings.getWarningThreshold() + " Warnings.");
 

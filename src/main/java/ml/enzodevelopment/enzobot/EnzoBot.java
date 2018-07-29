@@ -112,7 +112,7 @@ public class EnzoBot {
             cmdList.add(new UnmuteCommand());
             cmdList.add(new KickCommand());
             cmdList.add(new WarnCommand());
-            cmdList.add(new setWarningThresholdCommand());
+            cmdList.add(new SetWarningThresholdCommand());
             //Owner Commands
             cmdList.add(new ShutdownCommand());
             cmdList.add(new UpdateCommand());
