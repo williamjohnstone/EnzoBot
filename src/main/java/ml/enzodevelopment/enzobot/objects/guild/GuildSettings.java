@@ -32,6 +32,7 @@ public class GuildSettings {
     private boolean useBotChannel = false;
     private String commandChannel = null;
     private String muteRoleId = null;
+    private int warningThreshold = 3;
     public GuildSettings(String guildId) {
         this.guildId = guildId;
     }
@@ -83,6 +84,15 @@ public class GuildSettings {
 
     public GuildSettings setMuteRoleId(String muteRoleId) {
         this.muteRoleId = muteRoleId;
+        return this;
+    }
+
+    public int getWarningThreshold() {
+        return warningThreshold;
+    }
+
+    public GuildSettings setWarningThreshold(int warningThreshold) {
+        this.warningThreshold = warningThreshold;
         return this;
     }
 }

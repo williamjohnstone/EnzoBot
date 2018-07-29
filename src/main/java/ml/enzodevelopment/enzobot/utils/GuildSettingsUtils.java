@@ -50,7 +50,8 @@ public class GuildSettingsUtils {
                             .setLogChannel(res.getString("logChannelId"))
                             .setMuteRoleId(res.getString("muteRoleId"))
                             .setBotChannel(res.getString("botChannelId"))
-                            .useBotChannel(false)
+                            .useBotChannel(res.getBoolean("useBotChannel"))
+                            .setWarningThreshold(res.getInt("warningThreshold"))
                     );
                 }
                 res.close();
@@ -91,12 +92,13 @@ public class GuildSettingsUtils {
         Config.DB.run(() -> {
             Connection database = Config.DB.getConnManager().getConnection();
 
-            try (PreparedStatement smt = database.prepareStatement("UPDATE guildSettings SET prefix= ? , logChannelId= ? , muteRoleId = ? , botChannelId = ? , useBotChannel = ? WHERE guildId = '" + guild.getId() + "'")){
+            try (PreparedStatement smt = database.prepareStatement("UPDATE guildSettings SET prefix= ? , logChannelId= ? , muteRoleId = ? , botChannelId = ? , useBotChannel = ? , warningThreshold = ? WHERE guildId = '" + guild.getId() + "'")){
                 smt.setString(1, replaceUnicode(settings.getCustomPrefix()));
                 smt.setString(2, settings.getLogChannel());
                 smt.setString(3, settings.getMuteRoleId());
                 smt.setString(4, settings.getBotChannel());
                 smt.setBoolean(5, settings.usingBotChannel());
+                smt.setInt(6, settings.getWarningThreshold());
                 smt.executeUpdate();
                 Config.GUILD_SETTINGS.remove(guild.getId());
                 Config.GUILD_SETTINGS.put(guild.getId(), settings);
@@ -124,8 +126,8 @@ public class GuildSettingsUtils {
             Connection database = Config.DB.getConnManager().getConnection();
 
             try (PreparedStatement smt = database.prepareStatement("INSERT INTO guildSettings(guildId, guildName," +
-                    "prefix, logChannelId, muteRoleId, botChannelId, useBotChannel) " +
-                    "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?, ?)")){
+                    "prefix, logChannelId, muteRoleId, botChannelId, useBotChannel, warningThreshold) " +
+                    "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?, ?, ?)")){
                 ResultSet resultSet = database.createStatement()
                         .executeQuery("SELECT id FROM guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
@@ -139,6 +141,7 @@ public class GuildSettingsUtils {
                     smt.setString(4, "0");
                     smt.setString(5, "0");
                     smt.setBoolean(6, false);
+                    smt.setInt(7, 3);
                     smt.execute();
                 }
             } catch (Exception e) {

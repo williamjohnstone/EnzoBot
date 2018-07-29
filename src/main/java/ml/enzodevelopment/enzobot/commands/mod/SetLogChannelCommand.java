@@ -39,7 +39,6 @@ public class SetLogChannelCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if (!adminCheck) {
-            event.getMessage().getChannel().sendMessage("You don't have permission to do that.").queue();
             return;
         }
         Config.DB.run(() -> {

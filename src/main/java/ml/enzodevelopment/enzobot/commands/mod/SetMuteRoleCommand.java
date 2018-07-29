@@ -39,7 +39,6 @@ public class SetMuteRoleCommand implements Command {
     public void execute(String[] args, GuildMessageReceivedEvent event) {
         boolean adminCheck = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if (!adminCheck) {
-            event.getMessage().getChannel().sendMessage("You don't have permission to do that.").queue();
             return;
         }
         if (event.getMessage().getMentionedRoles().size() != 1) {
@@ -57,14 +56,14 @@ public class SetMuteRoleCommand implements Command {
             if (!"0".equals(role)) {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId(role));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Log Channel Set");
+                builder.setTitle("Mute Role Set");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success, mute role set to: " + event.getGuild().getRoleById(role).getAsMention());
                 event.getChannel().sendMessage(builder.build()).queue();
             } else {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setMuteRoleId("0"));
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Log Channel Disabled");
+                builder.setTitle("Mute Role Disabled");
                 builder.setColor(Color.WHITE);
                 builder.setDescription("Success");
                 event.getChannel().sendMessage(builder.build()).queue();

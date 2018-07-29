@@ -52,6 +52,7 @@ public class UnbanCommand implements Command {
                         event.getGuild().getController().unban(ban.getUser())
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
                         ModUtils.modLog(event.getAuthor(), ban.getUser(), PunishmentType.UNBAN, event.getGuild());
+                        ModUtils.sendSuccess(event.getMessage());
                         return;
                     }
                 }

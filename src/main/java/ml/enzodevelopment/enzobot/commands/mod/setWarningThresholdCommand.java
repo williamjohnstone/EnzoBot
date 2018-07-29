@@ -21,68 +21,66 @@
 
 package ml.enzodevelopment.enzobot.commands.mod;
 
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.objects.command.CommandCategory;
-import ml.enzodevelopment.enzobot.objects.guild.GuildSettings;
-import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
-import ml.enzodevelopment.enzobot.utils.ModUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UnmuteCommand implements Command {
+public class setWarningThresholdCommand implements Command {
     @Override
     public void execute(String[] args, GuildMessageReceivedEvent event) {
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            event.getChannel().sendMessage("You need the kick members and the ban members permission for this command, please contact your server administrator about this").queue();
+        if (args.length < 2) {
+            EmbedBuilder error = new EmbedBuilder();
+            error.setTitle("Error");
+            error.setColor(Config.ENZO_BLUE);
+            error.setDescription("Invalid Usage");
+            event.getChannel().sendMessage(error.build()).queue();
             return;
         }
-
-        if (event.getMessage().getMentionedMembers().size() < 1 || args.length < 2) {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            EmbedBuilder error = new EmbedBuilder();
+            error.setTitle("Error");
+            error.setColor(Config.ENZO_BLUE);
+            error.setDescription("You do not have permission to do that.");
+            event.getChannel().sendMessage(error.build()).queue();
             return;
         }
-
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
-
-        if (settings.getMuteRoleId() == null || settings.getMuteRoleId().isEmpty()) {
-            event.getChannel().sendMessage("You need to set the mute role to use this command").queue();
+        if (!isInt(args[1])) {
             return;
         }
-
-        Member toMute = event.getMessage().getMentionedMembers().get(0);
-        Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
-
-        event.getGuild().getController().removeSingleRoleFromMember(toMute, role)
-                .reason("Unmuted by " + String.format("%#s", event.getAuthor())).queue(success -> {
-                    ModUtils.modLog(event.getAuthor(), toMute.getUser(), PunishmentType.UNMUTE, event.getGuild());
-                    ModUtils.sendSuccess(event.getMessage());
-                }
-        );
+        int threshold = Integer.parseInt(args[1]);
+        GuildSettingsUtils.updateGuildSettings(event.getGuild(), GuildSettingsUtils.getGuild(event.getGuild()).setWarningThreshold(threshold));
     }
 
     @Override
     public String getUsage() {
-        return "unmute (@user)";
+        return "warningthreshold (amount)";
     }
 
     @Override
     public String getDesc() {
-        return "Removes the mute role to the mentioned member";
+        return "Sets the max amount of warnings a user can receive before being kicked.";
     }
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("unmute"));
+        return new ArrayList<>(Arrays.asList("warningthreshold", "maxwarns"));
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD;
     }
+
+    private static boolean isInt(String integer) {
+        return integer.matches("^\\d{1,11}$");
+    }
+
 }

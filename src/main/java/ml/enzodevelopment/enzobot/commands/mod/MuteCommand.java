@@ -61,7 +61,7 @@ public class MuteCommand implements Command {
         Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-                .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
+                .reason("Muted by " + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
                     ModUtils.modLog(event.getAuthor(), toMute.getUser(), PunishmentType.MUTE, reason, event.getGuild());
                     ModUtils.sendSuccess(event.getMessage());
                 }

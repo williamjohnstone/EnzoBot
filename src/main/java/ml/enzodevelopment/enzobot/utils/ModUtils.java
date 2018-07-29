@@ -25,6 +25,8 @@ import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.objects.ConsoleUser;
 import ml.enzodevelopment.enzobot.objects.FakeUser;
 import ml.enzodevelopment.enzobot.objects.punishment.PunishmentType;
+import ml.enzodevelopment.enzobot.objects.warning.WarnObject;
+import ml.enzodevelopment.enzobot.objects.warning.Warning;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
@@ -33,10 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModUtils {
 
@@ -79,14 +80,14 @@ public class ModUtils {
         Config.DB.run(() -> {
             Connection conn = Config.DB.getConnManager().getConnection();
             try (PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")){
+                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")) {
                 smt.setString(1, modID);
                 smt.setString(2, userName);
                 smt.setString(3, userDiscriminator);
                 smt.setString(4, userId);
                 smt.setString(5, unbanDate);
                 smt.setString(6, guildId);
-                smt.execute();
+                smt.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -98,14 +99,14 @@ public class ModUtils {
         Config.DB.run(() -> {
             Connection conn = Config.DB.getConnManager().getConnection();
             try (PreparedStatement smt = conn.prepareStatement("INSERT INTO mutes(modUserId, Username, discriminator, userId, mute_date, unmute_date, guildId) " +
-                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")){
+                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)")) {
                 smt.setString(1, modID);
                 smt.setString(2, userName);
                 smt.setString(3, userDiscriminator);
                 smt.setString(4, userId);
                 smt.setString(5, unmuteDate);
                 smt.setString(6, guildId);
-                smt.execute();
+                smt.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -190,7 +191,32 @@ public class ModUtils {
         });
     }
 
-    private static String getPunishmentString (PunishmentType type) {
+    public static int getWarningCountForUser(User u, Guild g) {
+        if (u == null)
+            throw new IllegalArgumentException("User to check can not be null");
+
+        return getWarnsForUser(u.getId(), g.getId()).getWarnings().size();
+    }
+
+    public static void addWarningToDb(User moderator, User target, String reason, Guild guild) {
+
+        Config.DB.run(() -> {
+            Connection conn = Config.DB.getConnManager().getConnection();
+            try (PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(modUserId, userId, reason, guildId, warnDate, expireDate) " +
+                    "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")) {
+                smt.setString(1, moderator.getId());
+                smt.setString(2, target.getId());
+                smt.setString(3, reason);
+                smt.setString(4, guild.getId());
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+    private static String getPunishmentString(PunishmentType type) {
         String punishment = "";
         switch (type) {
             case BAN:
@@ -248,6 +274,34 @@ public class ModUtils {
         }
         return units;
     }
+
+    private static WarnObject getWarnsForUser(String userId, String guildId) {
+        Connection conn = Config.DB.getConnManager().getConnection();
+
+        String sql = "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))";
+
+        List<Warning> warnings = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userId);
+            stmt.setString(2, guildId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                warnings.add(new Warning(
+                        rs.getInt("id"),
+                        rs.getDate("warnDate"),
+                        rs.getDate("expireDate"),
+                        rs.getString("modUserId"),
+                        rs.getString("reason"),
+                        rs.getString("guildId")
+                        ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new WarnObject(userId, warnings);
+    }
+
 
     public static void sendSuccess(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {

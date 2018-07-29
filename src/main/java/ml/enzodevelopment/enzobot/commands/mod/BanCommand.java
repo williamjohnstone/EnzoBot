@@ -96,7 +96,4 @@ public class BanCommand implements Command {
         return CommandCategory.MOD;
     }
 
-    private static boolean isInt(String integer) {
-        return integer.matches("^\\d{1,11}$");
-    }
 }
