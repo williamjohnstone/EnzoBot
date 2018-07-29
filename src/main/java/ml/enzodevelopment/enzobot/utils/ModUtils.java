@@ -278,7 +278,7 @@ public class ModUtils {
     private static WarnObject getWarnsForUser(String userId, String guildId) {
         Connection conn = Config.DB.getConnManager().getConnection();
 
-        String sql = "SELECT * FROM `warnings` WHERE userId=? AND guildId=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))";
+        String sql = "SELECT * FROM `warnings` WHERE userId=? AND guildId=? AND (CURDATE() <= DATE_ADD(expireDate, INTERVAL 3 DAY))";
 
         List<Warning> warnings = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

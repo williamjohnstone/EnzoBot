@@ -61,8 +61,6 @@ public class WarnCommand implements Command {
 
         int warningThershold = settings.getWarningThreshold();
 
-        int warnings = ModUtils.getWarningCountForUser(target.getUser(), event.getGuild());
-
         if (target.getUser() == event.getJDA().getSelfUser()) {
             return;
         }
@@ -71,7 +69,7 @@ public class WarnCommand implements Command {
             return;
         }
 
-        if (warnings >= warningThershold) {
+        if (ModUtils.getWarningCountForUser(target.getUser(), event.getGuild()) >= warningThershold) {
             event.getGuild().getController().kick(target).reason("Warning threshold reached.").queue();
             ModUtils.modLog(event.getAuthor(), target.getUser(), PunishmentType.KICK, "Warning threshold reached.", event.getGuild());
             ModUtils.sendSuccess(event.getMessage());
@@ -83,11 +81,13 @@ public class WarnCommand implements Command {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.WHITE);
         builder.setTitle("You have been warned");
-        builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + "** warned you for `" + (reason.isEmpty() ? "No reason was provided`" : reason + "`") +
-                " This warning will expire in 3 days. " + ModUtils.getWarningCountForUser(target.getUser(), event.getGuild()) + "/" + settings.getWarningThreshold() + " Warnings.");
 
         ModUtils.addWarningToDb(event.getAuthor(), target.getUser(), reason, event.getGuild());
         ModUtils.modLog(event.getAuthor(), target.getUser(), PunishmentType.WARN, reason, event.getGuild());
+        
+        builder.setDescription("**" + mod.getName() + "#" + mod.getDiscriminator() + "** warned you for `" + (reason.isEmpty() ? "No reason was provided`" : reason + "`") +
+                " This warning will expire in 3 days. " + ModUtils.getWarningCountForUser(target.getUser(), event.getGuild()) + "/" + settings.getWarningThreshold() + " Warnings.");
+
         target.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(builder.build()).queue(null, fail -> {}));
         ModUtils.sendSuccess(event.getMessage());
     }
