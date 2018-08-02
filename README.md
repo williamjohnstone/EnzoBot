@@ -22,7 +22,7 @@
 
 ## Documentation
 * Coming soon!
-* For a command list visit *https://g-bot.tk/#commands*
+* For a command list visit *https://bot.enzodevelopment.ml/commands*
 
 ## Support
 
