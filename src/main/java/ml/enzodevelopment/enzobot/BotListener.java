@@ -22,6 +22,7 @@
 package ml.enzodevelopment.enzobot;
 
 import ml.enzodevelopment.enzobot.objects.command.Command;
+import ml.enzodevelopment.enzobot.utils.CommandListGenerationUtils;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
 import ml.enzodevelopment.enzobot.utils.ModUtils;
 import ml.enzodevelopment.enzobot.utils.StatsUpdater;
@@ -62,6 +63,9 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
+        CommandListGenerationUtils generationUtils = new CommandListGenerationUtils();
+        String code = generationUtils.postAndGenerate();
+        logger.info(String.valueOf(code));
         StatsUpdater updater = new StatsUpdater();
 
         if (!unbanTimerRunning) {

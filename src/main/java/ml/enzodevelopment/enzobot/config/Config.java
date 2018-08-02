@@ -36,7 +36,6 @@ public class Config {
     public static DBManager DB;
     public static MusicUtils musicUtils;
     public static final Color ENZO_BLUE = new Color(51, 102, 153);
-    public static final String BOT_DEV_CHANNEL = "431463562393944064";
     public static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
 
 
@@ -46,6 +45,7 @@ public class Config {
     public static String API_Key;
     public static String sentry_dsn;
     public static String google_api;
+    public static String command_api_token;
 
 
     public void loadConfig() {
@@ -57,6 +57,7 @@ public class Config {
             API_Key = config.getString("Config.api_key").get();
             sentry_dsn = config.getString("Config.sentry_dsn").get();
             google_api = config.getString("Config.google_key").get();
+            command_api_token = config.getString("Config.command_token").get();
             DB = new DBManager();
             musicUtils = new MusicUtils();
         } catch (FileNotFoundException e) {

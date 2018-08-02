@@ -82,6 +82,7 @@ public class EnzoBot {
             cmdList.add(new QuoteCommand());
             cmdList.add(new RollCommand());
             cmdList.add(new CoinFlipCommand());
+            cmdList.add(new TokenCommand());
             //Music Commands
             cmdList.add(new PlayCommand());
             cmdList.add(new LeaveCommand());
