@@ -41,10 +41,10 @@ public class CoinFlipCommand implements Command {
         flipBuilder.setColor(Config.ENZO_BLUE);
         if  (outcome == 1) {
             flipBuilder.setDescription("You got Heads");
-            flipBuilder.setImage("https://bot.enzodevelopment.ml/img/heads.png");
+            flipBuilder.setImage("https://duncte123.me/img/coin/heads.png");
         } else if (outcome == 2) {
             flipBuilder.setDescription("You got Tails");
-            flipBuilder.setImage("https://bot.enzodevelopment.ml/img/tails.png");
+            flipBuilder.setImage("https://duncte123.me/img/coin/tails.png");
         } else {
             EmbedBuilder error = new EmbedBuilder();
             error.setTitle("Error");
