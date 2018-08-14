@@ -37,5 +37,6 @@ If you need any help with the bot or you think you have found a bug please join 
 * EnzoDevelop (@Enzo#5375) 
 
 ## Credits
+Large parts of this bot's code derive from https://github.com/DuncteBot/SkyBot/
 
 Big thanks to EJ Technologies for providing me with an open source license for their [Java profiler](https://www.ej-technologies.com/products/jprofiler/overview.html) & [multi-platform installer builder](https://www.ej-technologies.com/products/install4j/overview.html).
