@@ -69,6 +69,11 @@ public class KickCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "kick (@user) (reason)";
     }

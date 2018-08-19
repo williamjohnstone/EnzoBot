@@ -1,0 +1,35 @@
+{% extends "base.twig" %}
+
+{% block head %}
+    <link href="/css/commands.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block nav_li %} 
+    <li><a href="/">Home</a></li>
+    <li><a href="/features">Features</a></li>
+    <li><a href="/commands" class="selected">Commands</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+{% endblock %}    
+
+{% block main %}
+<main>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Commad</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for command in commands %}
+                <tr class="command">
+                    <td>!{{ command.getName() }}</td>
+                    <td>{{ command.getDesc() }}<br>{% if command.getAliasString() != "" %}<span>Aliases: <code>{{ command.getAliasString() }}</code><br></span>{% endif %}{% if command.getUsage() != "" %}<span>Usage: <code>{{ command.getUsage() }}</code></span>{% endif %}</td>
+                </tr>
+            {% endfor %}   
+        </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}

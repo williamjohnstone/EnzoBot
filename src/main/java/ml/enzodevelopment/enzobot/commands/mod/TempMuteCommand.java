@@ -97,6 +97,11 @@ public class TempMuteCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "tempmute (@user) [(time)(m/h/d/w/M/Y)] (Reason)";
     }

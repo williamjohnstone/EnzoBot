@@ -25,21 +25,14 @@ import ml.enzodevelopment.enzobot.config.Config;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class StatsUpdater {
 
-    public void StartupdateTimer(ReadyEvent event) {
-        Connection conn = Config.DB.getConnManager().getConnection();
-        Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    public void startUpdateTimer(ReadyEvent event) {
 
         int MINUTES = 5;
         Timer timer = new Timer();
@@ -52,14 +45,6 @@ public class StatsUpdater {
 
                 int serverCount = (int) event.getJDA().getGuildCache().size();
 
-                Config.DB.run(() -> {
-                    try (PreparedStatement stmt = conn.prepareStatement("UPDATE `API` SET `server_count` = ? WHERE `API`.`ID` = 1;")) {
-                        stmt.setInt(1, serverCount);
-                        stmt.executeUpdate();
-                    } catch (SQLException ex) {
-                        logger.error("Database Error", ex);
-                    }
-                });
                 OkHttpClient client = new OkHttpClient();
                 FormBody body = new FormBody.Builder().add("server_count", String.valueOf(serverCount)).build();
                 Request request = new Request.Builder().url("https://discordbots.org/api/bots/" + botId + "/stats").post(body).addHeader("Authorization", token).addHeader("Content-Type", "application/json").build();

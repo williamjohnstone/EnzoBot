@@ -72,7 +72,7 @@ public class HelpCommand implements Command {
                 helpBuilder.addField("Owner Commands", ownerComamnds.toString(), false);
             }
             if (event.getChannel().getType() == ChannelType.TEXT && event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE)) {
-                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(helpBuilder.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(event.getMember().getAsMention() + " Oh no i couldn't DM you please check your privacy settings and ensure you haven't blocked me.").queue()));
+                event.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage(helpBuilder.build()).queue(success -> event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I sent you a DM containing help. :mailbox_with_mail:").queue(), failure -> event.getChannel().sendMessage(helpBuilder.build()).queue()));
             }
         } else if (args.length == 2) {
             Command cmd = getCommand(args[1].toLowerCase());
@@ -109,6 +109,11 @@ public class HelpCommand implements Command {
             sb.append("`").append(alias).append("` ");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String getName() {
+        return getAliases().get(0);
     }
 
     @Override

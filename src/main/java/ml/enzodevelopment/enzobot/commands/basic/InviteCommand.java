@@ -49,6 +49,11 @@ public class InviteCommand implements Command{
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "invite";
     }

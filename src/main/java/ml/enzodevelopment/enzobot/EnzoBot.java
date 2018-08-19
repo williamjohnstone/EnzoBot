@@ -28,6 +28,7 @@ import ml.enzodevelopment.enzobot.commands.owner.*;
 import ml.enzodevelopment.enzobot.objects.command.Command;
 import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.GuildSettingsUtils;
+import ml.enzodevelopment.enzobot.web.Website;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 public class EnzoBot {
 
     public static List<Command> cmdList = new ArrayList<>();
+    private static Website site = new Website();
 
     public static void main(String[] args) {
         RestAction.DEFAULT_FAILURE = t ->
@@ -65,6 +67,7 @@ public class EnzoBot {
         config.loadConfig();
         GuildSettingsUtils.loadGuildSettings();
         Sentry.init(Config.sentry_dsn);
+        site.init(2020);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
                 .setToken(Config.Discord_Token)

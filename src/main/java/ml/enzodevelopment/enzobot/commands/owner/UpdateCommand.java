@@ -63,6 +63,11 @@ public class UpdateCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "update";
     }
@@ -79,6 +84,6 @@ public class UpdateCommand implements Command {
 
     @Override
     public CommandCategory getCategory() {
-        return CommandCategory.OWNER;
+        return CommandCategory.UNLISTED;
     }
 }

@@ -49,6 +49,11 @@ public class RestartCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "restart";
     }
@@ -65,6 +70,6 @@ public class RestartCommand implements Command {
 
     @Override
     public CommandCategory getCategory() {
-        return CommandCategory.OWNER;
+        return CommandCategory.UNLISTED;
     }
 }

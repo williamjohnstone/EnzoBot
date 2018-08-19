@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ title }}</title>
+    <base href="/">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link href="/css/main.css" rel="stylesheet"/>
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+    <aside>
+        <figure>
+        <div id="avatar"></div>
+        <figcaption>Enzo Bot</figcaption>
+    </figure>
+    <img src="/img/menu.svg">
+    <nav>
+        <ul>
+            {% block nav_li %}
+            <li><a href="/" class="selected">Home</a></li>
+            <li><a href="/features">Features</a></li>
+            <li><a href="/commands">Commands</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            {% endblock %}
+        </ul>
+    </nav>
+    </aside>
+        {% block main %}
+        {% endblock %}
+</body>
+
+<script> 
+  (function() {
+      var menu = document.querySelector('ul'),
+          menulink = document.querySelector('img');
+      
+      menulink.addEventListener('click', function(e) {
+          menu.classList.toggle('active');
+          e.preventDefault();
+      });
+  })();
+</script>
+
+</html>

@@ -1,0 +1,21 @@
+{% extends "base.twig" %}
+
+{% block head %}
+    <link href="/css/home.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block nav_li %} 
+    <li><a href="/" class="selected">Home</a></li>
+    <li><a href="/features">Features</a></li>
+    <li><a href="/commands">Commands</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+{% endblock %}    
+
+{% block main %}
+    <main id="home">
+        <h1>Enzo Bot</h1>
+        <p>A multipurpose moderation and music bot for discord</p>
+        <a href="https://discordapp.com/oauth2/authorize?client_id=391558265265192961&scope=bot&permissions=2146958591" class="cta" id="left">Invite Enzo Bot</a>
+        <a href="https://discord.gg/f43DKbA" class="cta">Join Support Server</a>
+    </main>
+{% endblock %}

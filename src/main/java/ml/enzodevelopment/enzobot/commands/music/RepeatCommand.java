@@ -49,6 +49,11 @@ public class RepeatCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "loop";
     }
@@ -60,7 +65,7 @@ public class RepeatCommand implements Command {
 
     @Override
     public List<String> getAliases() {
-        return new ArrayList<>(Arrays.asList("repeat", "loop"));
+        return new ArrayList<>(Arrays.asList("loop", "repeat"));
     }
 
     @Override

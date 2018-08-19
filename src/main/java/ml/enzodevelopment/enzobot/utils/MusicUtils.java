@@ -41,13 +41,11 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.managers.AudioManager;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.json.JSONObject;
 import org.json.JSONPointer;
 
 import java.awt.*;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -285,31 +283,21 @@ public class MusicUtils {
 
     public Long parseTime(String time) {
         Matcher digitMatcher = timeRegex.matcher(time);
-        if (digitMatcher.matches()) {
-            try {
-                return new PeriodFormatterBuilder()
-                        .appendHours().appendSuffix(":")
-                        .appendMinutes().appendSuffix(":")
-                        .appendSeconds()
-                        .toFormatter()
-                        .parsePeriod(time)
-                        .toStandardDuration().getMillis();
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-        PeriodFormatter formatter = new PeriodFormatterBuilder()
-                .appendHours().appendSuffix("h")
-                .appendMinutes().appendSuffix("m")
-                .appendSeconds().appendSuffix("s")
-                .toFormatter();
-        Period period;
-        try {
-            period = formatter.parsePeriod(time);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-        return period.toStandardDuration().getMillis();
+         Long parsedTime = 0L;
+         if (digitMatcher.find(0)) {
+             if (digitMatcher.find(3)) {
+                 parsedTime += Integer.parseInt(digitMatcher.group(3)) * 1000;
+             }
+             if (digitMatcher.find(2)) {
+                 parsedTime += Integer.parseInt(digitMatcher.group(1)) * 60 * 1000;
+             }
+             if (digitMatcher.find(1)) {
+                 parsedTime += Integer.parseInt(digitMatcher.group(1)) * 60 * 60 * 1000;
+             }
+         } else {
+             parsedTime = null;
+         }
+        return parsedTime;
     }
 
 }

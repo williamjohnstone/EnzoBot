@@ -73,6 +73,11 @@ public class SetBotChannel implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "setBotChat (#Channel) or 'setBotChat off' to disable bot channel.";
     }

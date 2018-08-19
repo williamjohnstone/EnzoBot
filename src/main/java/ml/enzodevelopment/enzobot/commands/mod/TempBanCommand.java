@@ -87,6 +87,11 @@ public class TempBanCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "tempban (@user) [(time)(m/h/d/w/M/Y)] (Reason)";
     }

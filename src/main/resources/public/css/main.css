@@ -1,0 +1,176 @@
+/*
+ * Enzo Bot, a multipurpose discord bot
+ *
+ * Copyright (c) 2018 William "Enzo" Johnstone
+ *
+ * This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+html {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4a00fb+0,e600ff+100 */
+    background: #4a00fb; /* Old browsers */
+    background: -moz-linear-gradient(45deg, #4a00fb 0%, #0097d9 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(45deg, #4a00fb 0%,#0097d9 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(45deg, #4a00fb 0%,#0097d9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4a00fb', endColorstr='#0097d9',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat';
+}
+
+aside {
+    color: #fff;
+    display: grid;
+    grid-template-columns: auto 40px;
+    padding: 2em;
+}
+
+img {
+    width: 40px;
+    cursor: pointer;
+}
+
+figure {
+    margin: 0;
+}
+
+figcaption {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+nav {
+    background: #fff;
+}
+
+.active {
+    position: absolute;
+    display: block;
+    background: #fff;
+    width: 50%;
+    left: 0;
+    top: 0;
+    height: 100%;
+}
+
+.selected {
+    background-color: #fff
+}
+
+ul {
+    display: none;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul li a {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: .8em;
+    display: block;
+    padding: 1.5em 3em;
+    background-color: rgba(255,255,255,.35);
+    color: #000;
+}
+
+main {
+    background: #fff;
+    padding: 1em 1.4em;
+}
+
+h1 {
+    margin: 0;
+}
+
+p {
+    font-size: 1.1em;
+    line-height: 1.5em;
+}
+
+@media only screen and (min-width: 768px) {
+    html, body {
+        height: calc(100% - 1.5em);
+    }
+
+    body {
+        display: grid;
+        grid-template-columns: 20% auto;
+        padding: 1.5em;
+    }
+
+    img {
+        display: none;
+    }
+
+
+    aside {
+        background: #DCE1F6;
+        grid-template-columns: auto;
+        grid-template-rows: 20% auto;
+        padding: 0;
+    }
+
+    main {
+        padding: 4em;
+    }
+
+    #home {
+        background: white url('/img/bg.svg') no-repeat bottom right;
+        background-size: 70%;
+    }
+
+    #avatar {
+        border-radius: 50%;
+        background: url('/img/avatar.png') no-repeat;
+        background-size: 50px 50px;
+        width: 50px;
+        height: 50px;
+        margin: 2em auto 1em auto;
+    }
+
+    figcaption {
+        text-align: center;
+        color: #000;
+    }
+
+    ul {
+        display: block;
+        margin-top: 2em;
+        position: relative !important;
+        background: none !important;
+        width: 100% !important;
+    }
+
+    ul li a:hover {
+        background-color: #fff;
+    }
+
+    nav {
+        background: none;
+    }
+}

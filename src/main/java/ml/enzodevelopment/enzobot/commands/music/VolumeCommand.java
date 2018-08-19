@@ -71,6 +71,11 @@ public class VolumeCommand implements Command {
     }
 
     @Override
+    public String getName() {
+        return getAliases().get(0);
+    }
+
+    @Override
     public String getUsage() {
         return "volume (15 - 100)";
     }

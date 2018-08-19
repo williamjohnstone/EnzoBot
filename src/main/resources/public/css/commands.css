@@ -19,24 +19,24 @@
  *
  */
 
-package ml.enzodevelopment.enzobot.objects.command;
-
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-
-import java.util.List;
-
-public interface Command {
-    void execute(String[] args, GuildMessageReceivedEvent event);
-
-    String getName();
-
-    String getUsage();
-
-    String getDesc();
-
-    List<String> getAliases();
-
-    CommandCategory getCategory();
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
 }
 
+th, td {
+    padding: 15px 5px;
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+}
 
+tbody tr:nth-child(odd) {
+    background-color: rgba(242,242,242,0.5)
+}
+
+div {
+    height: 80vh;
+    overflow-y:auto;
+}
