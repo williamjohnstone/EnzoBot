@@ -45,9 +45,14 @@ public class Website {
         });
 
         get("/commands", (req, res) ->  {
-            settings.put("title", "Commands");
+            settings.put("title", "List of Commands");
             settings.put("commands", CommandUtils.getWebCommands());
             return engine.render(new ModelAndView(settings, "commands.twig"));
+        });
+
+        get("/dashboard", (req,res) -> {
+            settings.put("title", "EnzoBot Dashboard");
+            return engine.render(new ModelAndView(settings, "dashboard.twig"));
         });
 
     }
