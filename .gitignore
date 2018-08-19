@@ -24,7 +24,6 @@ $RECYCLE.BIN/
 
 # Gradle
 .gradle/
-gradle/
 settings.gradle
 
 # Windows Installer files
