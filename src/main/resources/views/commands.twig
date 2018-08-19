@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             {% for command in commands %}
-                <tr class="command">
+                <tr>
                     <td>!{{ command.getName() }}</td>
                     <td>{{ command.getDesc() }}<br>{% if command.getAliasString() != "" %}<span>Aliases: <code>{{ command.getAliasString() }}</code><br></span>{% endif %}{% if command.getUsage() != "" %}<span>Usage: <code>{{ command.getUsage() }}</code></span>{% endif %}</td>
                 </tr>

@@ -23,6 +23,8 @@ package ml.enzodevelopment.enzobot.web;
 
 import static spark.Spark.*;
 
+import com.jagrosh.jdautilities.oauth2.OAuth2Client;
+import ml.enzodevelopment.enzobot.config.Config;
 import ml.enzodevelopment.enzobot.utils.CommandUtils;
 import spark.ModelAndView;
 import spark.template.jtwig.JtwigTemplateEngine;
@@ -35,6 +37,8 @@ public class Website {
 
     public void init(int port) {
         final JtwigTemplateEngine engine = new JtwigTemplateEngine("views");
+        final OAuth2Client oAuth2Client = new OAuth2Client.Builder().setClientId(Config.discordId).setClientSecret(Config.discordSecret).build();
+
         staticFileLocation("public");
 
         port(port);

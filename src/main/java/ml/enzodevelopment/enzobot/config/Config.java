@@ -39,25 +39,29 @@ public class Config {
     public static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
 
 
-    public static String Discord_Token;
+    public static String discordToken;
+    public static Long discordId;
+    public static String discordSecret;
+    public static String discordCallback;
     public static String dbConnection;
-    public static String fallback_prefix;
-    public static String API_Key;
-    public static String sentry_dsn;
-    public static String google_api;
-    public static String command_api_token;
+    public static String fallbackPrefix;
+    public static String discordBotsToken;
+    public static String sentryDSN;
+    public static String googleToken;
 
 
     public void loadConfig() {
         try {
             JSONConfig config = new JSONConfig("config.json");
-            Discord_Token = config.getString("Config.token").get();
-            dbConnection = config.getString("Config.dbString").get();
-            fallback_prefix = config.getString("Config.fallback").get();
-            API_Key = config.getString("Config.api_key").get();
-            sentry_dsn = config.getString("Config.sentry_dsn").get();
-            google_api = config.getString("Config.google_key").get();
-            command_api_token = config.getString("Config.command_token").get();
+            discordToken = config.getString("discord.token").get();
+            discordId = config.getLong("discord.id").getAsLong();
+            discordSecret = config.getString("discord.secret").get();
+            discordCallback = config.getString("discord.callback").get();
+            dbConnection = config.getString("settings.database").get();
+            fallbackPrefix = config.getString("settings.fallbackPrefix").get();
+            discordBotsToken = config.getString("authorization.discordbots.org").get();
+            sentryDSN = config.getString("authorization.sentry").get();
+            googleToken = config.getString("authorization.google").get();
             DB = new DBManager();
             musicUtils = new MusicUtils();
         } catch (FileNotFoundException e) {

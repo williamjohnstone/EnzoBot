@@ -49,6 +49,7 @@ public class EnzoBot {
 
     public static List<Command> cmdList = new ArrayList<>();
     private static Website site = new Website();
+    private static JDA jda;
 
     public static void main(String[] args) {
         RestAction.DEFAULT_FAILURE = t ->
@@ -66,11 +67,11 @@ public class EnzoBot {
         Config config = new Config();
         config.loadConfig();
         GuildSettingsUtils.loadGuildSettings();
-        Sentry.init(Config.sentry_dsn);
+        Sentry.init(Config.sentryDSN);
         site.init(2020);
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .addEventListener(new BotListener())
-                .setToken(Config.Discord_Token)
+                .setToken(Config.discordToken)
                 .setAutoReconnect(true)
                 .setStatus(OnlineStatus.ONLINE);
 
@@ -123,10 +124,15 @@ public class EnzoBot {
             cmdList.add(new RestartCommand());
             cmdList.add(new DeployCommand());
             cmdList.add(new Eval());
-            JDA jda = builder.buildBlocking();
+            jda = builder.build();
             jda.getPresence().setGame(Game.watching(jda.getGuildCache().size() + " servers! | !help"));
-        } catch (LoginException | InterruptedException e) {
+        } catch (LoginException e) {
             e.printStackTrace();
         }
     }
+
+    public JDA getJDA() {
+        return jda;
+    }
+
 }

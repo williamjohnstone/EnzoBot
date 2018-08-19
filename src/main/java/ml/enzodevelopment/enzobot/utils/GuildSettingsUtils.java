@@ -136,7 +136,7 @@ public class GuildSettingsUtils {
 
                 if (rows == 0) {
                     smt.setString(1, replaceUnicode(g.getName()));
-                    smt.setString(2, Config.fallback_prefix);
+                    smt.setString(2, Config.fallbackPrefix);
                     smt.setString(3, "0");
                     smt.setString(4, "0");
                     smt.setString(5, "0");

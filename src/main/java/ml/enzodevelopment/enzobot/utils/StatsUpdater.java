@@ -40,7 +40,7 @@ public class StatsUpdater {
             @Override
             public void run() {
                 event.getJDA().getPresence().setGame(Game.watching(event.getJDA().getGuildCache().size() + " servers! | !help"));
-                String token = Config.API_Key;
+                String token = Config.discordBotsToken;
                 String botId = "391558265265192961";
 
                 int serverCount = (int) event.getJDA().getGuildCache().size();

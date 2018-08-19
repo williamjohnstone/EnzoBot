@@ -27,7 +27,7 @@ import ml.enzodevelopment.enzobot.config.Config;
 public class GuildSettings {
 
     private final String guildId;
-    private String customPrefix = Config.fallback_prefix;
+    private String customPrefix = Config.fallbackPrefix;
     private String logChannel = null;
     private boolean useBotChannel = false;
     private String commandChannel = null;
