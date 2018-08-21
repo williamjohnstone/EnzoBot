@@ -83,7 +83,7 @@ compileJava.options.encoding = 'UTF-8'
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {
-	commandLine 'git', 'rev-parse', 'master'
+	commandLine 'git', 'rev-parse', 'HEAD'
         standardOutput = stdout
     }
     return stdout.toString().trim()
@@ -92,7 +92,7 @@ def getGitHash() {
 def getGitHashShort() {
     def stdout = new ByteArrayOutputStream()
     exec {
-	commandLine 'git', 'rev-parse', '--short', 'master'
+	commandLine 'git', 'rev-parse', '--short', 'HEAD'
         standardOutput = stdout
     }
     return stdout.toString().trim()
