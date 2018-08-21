@@ -1,0 +1,5 @@
+language: java
+
+install:
+  - ./gradlew dependencies
+  - ./gradlew build
