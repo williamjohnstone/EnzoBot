@@ -1,5 +1,8 @@
 language: java
 
+before_install:
+- sudo apt-get install git
+
 install:
   - ./gradlew dependencies
   - ./gradlew build
