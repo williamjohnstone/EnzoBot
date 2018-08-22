@@ -9,4 +9,4 @@ install:
   - ./gradlew build
 
 after_install:
-  - curl -X POST -H "Content-Type: application/json" -d '{"token":"$BuildLogToken", "buildNumber": "$TRAVIS_BUILD_NUMBER","status": $TRAVIS_TEST_RESULT,"buildId": "$TRAVIS_BUILD_ID","slug": "$TRAVIS_REPO_SLUG","branch": "$TRAVIS_BRANCH","commit": "$TRAVIS_COMMIT","message": "$TRAVIS_COMMIT_MESSAGE"}' https://bot.enzodevelopment.ml/webhook
+  - "curl -X POST -H \"Content-Type: application/json\" -d '{\"token\":\"$BuildLogToken\", \"buildNumber\": \"$TRAVIS_BUILD_NUMBER\",\"status\": $TRAVIS_TEST_RESULT,\"buildId\": \"$TRAVIS_BUILD_ID\",\"slug\": \"$TRAVIS_REPO_SLUG\",\"branch\": \"$TRAVIS_BRANCH\",\"commit\": \"$TRAVIS_COMMIT\",\"message\": \"$TRAVIS_COMMIT_MESSAGE\"}' https://bot.enzodevelopment.ml/webhook"
