@@ -111,10 +111,9 @@ public class BotListener extends ListenerAdapter {
             return false;
         }
         boolean startsWithPrefix = event.getMessage().getContentRaw().startsWith(botPrefix);
-        boolean notBot = !event.getMessage().getAuthor().isBot();
-        boolean notMusic = !event.getMessage().getContentRaw().startsWith(botPrefix + "m");
+        boolean isBot = event.getMessage().getAuthor().isBot();
 
-        if (startsWithPrefix && notBot && notMusic) {
+        if (startsWithPrefix && !isBot) {
             String botChannel;
             if (GuildSettingsUtils.getGuild(event.getGuild()).usingBotChannel()) {
                 botChannel = GuildSettingsUtils.getGuild(event.getGuild()).getBotChannel();
@@ -135,7 +134,6 @@ public class BotListener extends ListenerAdapter {
             }
 
         }
-
         return true;
     }
 

@@ -59,7 +59,7 @@ public class Config {
             discordCallback = config.getString("discord.callback").get();
             dbConnection = config.getString("settings.database").get();
             fallbackPrefix = config.getString("settings.fallbackPrefix").get();
-            discordBotsToken = config.getString("authorization.discordbots.org").get();
+            discordBotsToken = config.getString("authorization.discordbots").get();
             sentryDSN = config.getString("authorization.sentry").get();
             googleToken = config.getString("authorization.google").get();
             DB = new DBManager();
